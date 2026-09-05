@@ -9,7 +9,7 @@
 body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direction:column;height:100vh;overflow:hidden}
 .top{padding:14px 18px;border-bottom:1px solid #330000;display:flex;justify-content:space-between;align-items:center;background:#050000}
 .top b{letter-spacing:5px;color:#ff2222;font-size:14px}
-.top button{background:transparent;border:1px solid #660000;color:#ff6666;padding:6px 14px;font-family:monospace;cursor:pointer}
+.top button{background:transparent;border:1px solid #660000;color:#ff6666;padding:6px 14px;font-family:monospace;cursor:pointer;font-size:11px}
 .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .eye{width:260px;height:260px;border-radius:50%;border:2px solid #ff0000;box-shadow:0 0 70px #ff0000,inset 0 0 70px #ff0000;background:radial-gradient(circle,#ff2a2a 0%,#8a0000 35%,#000 70%);transition:.3s}
 .eye.think{animation:pulse.6s infinite alternate}
@@ -25,17 +25,15 @@ body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direc
 </style>
 </head>
 <body>
-<div class="top"><b>ULTRON // ONLINE</b><button onclick="resetKey()">RESET KEY</button></div>
+<div class="top"><b>ULTRON // MALE FIXED</b><button onclick="resetKey()">RESET KEY</button></div>
 <div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY</div></div>
-<div id="chat" class="chat"><div class="msg">ULTRON online, Kiyotaka. Hindi aur English dono ready hai. Bolo kya kaam hai?</div></div>
+<div id="chat" class="chat"><div class="msg">ULTRON ready hai Kiyotaka. Ab awaj male + clear hogi.</div></div>
 <div class="inputbar">
-<input id="inp" placeholder="Hindi ya English me kuch bhi bol..." onkeydown="if(event.key==='Enter')send()">
+<input id="inp" placeholder="Hindi ya English me bol..." onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">></button>
 <button class="mic" onclick="voiceIn()">🎤</button>
 </div>
-
 <script>
-// API KEY
 let apiKey=localStorage.getItem('ultron_groq_key');
 if(!apiKey){askKey();}
 function askKey(){let k=prompt("Apni Groq API Key daal (gsk_...):");if(k){apiKey=k.trim();localStorage.setItem('ultron_groq_key',apiKey);}}
@@ -43,41 +41,60 @@ function resetKey(){localStorage.removeItem('ultron_groq_key');apiKey=null;askKe
 
 const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),st=document.getElementById('st');
 
-// VOICE SYSTEM - FINAL CLEAR MALE
-let engVoice=null, hindiMaleVoice=null;
+let maleVoice=null, hindiVoice=null, enInMale=null;
 function loadVoices(){
  let voices=speechSynthesis.getVoices();
- engVoice=voices.find(v=>v.name==='Google US English')||voices.find(v=>v.name.includes('Google US English'))||voices.find(v=>v.name.includes('David'))||voices.find(v=>v.lang==='en-US')||voices[0];
- hindiMaleVoice=voices.find(v=>v.name==='Microsoft Madhur - Hindi (India)')||voices.find(v=>v.name.includes('Madhur'))||voices.find(v=>v.name==='Google हिन्दी')||voices.find(v=>v.lang==='hi-IN')||null;
+ if(!voices.length) return;
+ // Sabse clear male voices dhoondo
+ maleVoice = voices.find(v=>v.name.includes('Microsoft Ravi')) || // en-IN male - sabse clear
+             voices.find(v=>v.name.includes('Microsoft Madhur')) || // hi-IN male
+             voices.find(v=>v.name.includes('Google UK English Male')) ||
+             voices.find(v=>v.name.includes('Google US English')) ||
+             voices.find(v=>v.lang==='en-IN' && v.name.toLowerCase().includes('male')) ||
+             voices.find(v=>v.lang==='en-IN') ||
+             voices.find(v=>v.lang==='hi-IN') ||
+             voices.find(v=>v.lang==='en-US');
+
+ hindiVoice = voices.find(v=>v.name.includes('Madhur')) || voices.find(v=>v.lang==='hi-IN');
+ enInMale = voices.find(v=>v.name.includes('Ravi')) || voices.find(v=>v.lang==='en-IN') || maleVoice;
+ console.log("Selected:", maleVoice?.name, hindiVoice?.name, enInMale?.name);
 }
 speechSynthesis.onvoiceschanged=loadVoices;
 loadVoices();
-setTimeout(loadVoices,1200);
+setTimeout(loadVoices,1000);
+setTimeout(loadVoices,2000);
 
 function speak(text){
  speechSynthesis.cancel();
- let clean=text.replace(/[*#_`~]/g,'').replace(/\s+/g,' ').trim().slice(0,400);
+ let clean=text.replace(/[*#_`~<>]/g,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();
  if(!clean) return;
- let isHindi=/[ऀ-ॿ]/.test(clean)||/\b(hai|hu|houn|kya|kyu|nahi|nhi|bhai|yrr|accha|samjha|kar|raha|ho|raha hai|kaisa)\b/i.test(clean);
+ clean=clean.slice(0,350); // distortion rokne ke liye chota chunk
+
+ let isHindi=/[ऀ-ॿ]/.test(clean) || /\b(hai|hu|kya|nahi|bhai|yrr|accha|samjha|raha|kaisa|kaam)\b/i.test(clean);
+ 
  let utter=new SpeechSynthesisUtterance(clean);
  if(isHindi){
-   if(hindiMaleVoice) utter.voice=hindiMaleVoice;
-   utter.lang='hi-IN';
-   utter.rate=0.90;
-   utter.pitch=0.35; // male
+   // Hindi ke liye bhi en-IN male use karenge toh ladki nahi ayegi, clear bolega
+   if(enInMale) utter.voice=enInMale;
+   else if(hindiVoice) utter.voice=hindiVoice;
+   else if(maleVoice) utter.voice=maleVoice;
+   utter.lang='en-IN'; // en-IN male se Hinglish ekdum male + clear nikalti hai
+   utter.rate=0.88;
+   utter.pitch=0.2; // full male
  }else{
-   if(engVoice) utter.voice=engVoice;
+   if(maleVoice) utter.voice=maleVoice;
    utter.lang='en-US';
-   utter.rate=0.92;
-   utter.pitch=0.85; // clear male
+   utter.rate=0.90;
+   utter.pitch=0.7;
  }
  utter.volume=1;
+ utter.onstart=()=>{st.innerText='SPEAKING...';}
+ utter.onend=()=>{st.innerText='SYSTEM READY';}
  speechSynthesis.speak(utter);
 }
 
 function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(cls||'');d.innerText=t;chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;}
 
-// SEND TO GROQ
 async function send(){
  let inp=document.getElementById('inp');let q=inp.value.trim();if(!q)return;
  addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='ULTRON THINKING...';
@@ -89,7 +106,7 @@ async function send(){
    body:JSON.stringify({
     model:'openai/gpt-oss-20b',
     messages:[
-     {role:'system',content:'You are ULTRON, loyal AI for Kiyotaka Ayanokoji. You understand all Hindi, Hinglish, English, slang. Reply in SAME language style user used. If user uses Hindi Devanagari, reply in Devanagari Hindi. If user uses Hinglish Roman, reply in Roman Hinglish. If English, reply English. Be intelligent, cold, helpful, short (max 2-3 lines). Call user Kiyotaka sometimes.'},
+     {role:'system',content:'You are ULTRON, loyal male AI for Kiyotaka. Understand Hindi, Hinglish, English. Reply in SAME style user used. If user uses Hinglish Roman, reply in Roman Hinglish (not Devanagari). If Devanagari, reply Devanagari. Keep short 2 lines max. Be intelligent.'},
      {role:'user',content:q}
     ],
     temperature:0.75
