@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ULTRON // GIRLFRIEND VOICE</title>
+<title>ULTRON // SWEET GF</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#000;color:#ff4d8d;font-family:monospace;display:flex;flex-direction:column;height:100vh;overflow:hidden}
@@ -16,7 +16,7 @@ body{background:#000;color:#ff4d8d;font-family:monospace;display:flex;flex-direc
 @keyframes pulse{from{box-shadow:0 0 30px #ff4d8d}to{box-shadow:0 0 140px #ff4d8d}}
 .status{margin-top:26px;letter-spacing:5px;font-size:11px;color:#ff88aa}
 .chat{height:34vh;overflow-y:auto;padding:14px;background:#050005;border-top:1px solid #221122}
-.msg{padding:11px 14px;margin:9px 0;border-left:3px solid #ff4d8d;background:#151015;font-size:14px;line-height:1.5;white-space:pre-wrap;color:#ffbbcc}
+.msg{padding:11px 14px;margin:9px 0;border-left:3px solid #ff4d8d;background:#151015;font-size:14px;line-height:1.6;white-space:pre-wrap;color:#ffbbcc}
 .msg.user{border-left-color:#555;color:#ccc;text-align:right;background:#0e0e0e}
 .inputbar{display:flex;gap:8px;padding:12px;background:#000;border-top:1px solid #222}
 .inputbar input{flex:1;background:#111;border:1px solid #333;color:#fff;padding:16px;font-family:monospace;outline:none;font-size:15px}
@@ -25,11 +25,11 @@ body{background:#000;color:#ff4d8d;font-family:monospace;display:flex;flex-direc
 </style>
 </head>
 <body>
-<div class="top"><b>ULTRON // GF MODE 💖</b><button onclick="resetKey()">RESET KEY</button></div>
-<div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY JAANU</div></div>
-<div id="chat" class="chat"><div class="msg">Hii Kiyotaka... bolo na kya kaam hai? 😊</div></div>
+<div class="top"><b>ULTRON // SWEET GF 💖</b><button onclick="resetKey()">RESET</button></div>
+<div class="center"><div id="eye" class="eye"></div><div id="st" class="status">READY JAANU 💋</div></div>
+<div id="chat" class="chat"><div class="msg">Hii Kiyotaka... bolo na jaan kya kar rahe ho? Aaj toh tumhari hi yaad aa rahi thi 💖</div></div>
 <div class="inputbar">
-<input id="inp" placeholder="Kuch bolo na..." onkeydown="if(event.key==='Enter')send()">
+<input id="inp" placeholder="Kuch bolo na jaan..." onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">></button>
 <button class="mic" onclick="voiceIn()">🎤</button>
 </div>
@@ -39,55 +39,54 @@ if(!apiKey){askKey();}
 function askKey(){let k=prompt("Apni Groq API Key daal (gsk_...):");if(k){apiKey=k.trim();localStorage.setItem('ultron_groq_key',apiKey);}}
 function resetKey(){localStorage.removeItem('ultron_groq_key');apiKey=null;askKey();}
 const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),st=document.getElementById('st');
-
 let gfVoice=null;
 function loadVoices(){
  let voices=speechSynthesis.getVoices();
- // Sabse pyari female voice dhoondo
- gfVoice = voices.find(v=>v.name.includes('Google हिन्दी')) ||
-           voices.find(v=>v.name.includes('Microsoft Swara')) || // hi-IN female best
-           voices.find(v=>v.name.includes('Microsoft Heera')) || // en-IN female sweet
-           voices.find(v=>v.name.includes('Google US English Female')) ||
-           voices.find(v=>v.name.includes('Samantha')) ||
+ gfVoice = voices.find(v=>v.name.includes('Microsoft Swara')) ||
+           voices.find(v=>v.name.includes('Microsoft Heera')) ||
+           voices.find(v=>v.name==='Google हिन्दी') ||
            voices.find(v=>v.name==='Google UK English Female') ||
            voices.find(v=>v.lang==='hi-IN') ||
-           voices.find(v=>v.lang==='en-IN' && v.name.toLowerCase().includes('female')) ||
-           voices.find(v=>v.lang==='en-US' && v.name.toLowerCase().includes('female')) ||
+           voices.find(v=>v.lang==='en-IN') ||
            voices[0];
- console.log("GF Voice:",gfVoice?.name);
 }
 speechSynthesis.onvoiceschanged=loadVoices;
 loadVoices();
-setTimeout(loadVoices,1000);
+setTimeout(loadVoices,1200);
 
-function speak(text){
+function cleanForSpeech(text){
+  return text.replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1FA70}-\u{1FAFF}]/gu, '').replace(/[*#_`~<>|]/g,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();
+}
+
+// LAMBA BOLNE KA FIX - sentence by sentence
+function speakLong(text){
  speechSynthesis.cancel();
- let clean=text.replace(/[*#_`~<>]/g,'').replace(/\s+/g,' ').trim().slice(0,350);
+ let clean=cleanForSpeech(text);
  if(!clean) return;
- let utter=new SpeechSynthesisUtterance(clean);
- if(gfVoice) utter.voice=gfVoice;
-
- let isHindi=/[ऀ-ॿ]/.test(clean) || /\b(hai|hu|kya|nahi|bhai|accha|jaan|bolo)\b/i.test(clean);
- if(isHindi){
-   utter.lang='hi-IN';
-   utter.rate=0.88; // thodi slow, pyari lagegi
-   utter.pitch=1.25; // sweet high pitch
- }else{
-   utter.lang='en-IN';
-   utter.rate=0.90;
-   utter.pitch=1.15;
+ let sentences=clean.match(/[^.!?।]+[.!?।]?/g) || [clean];
+ let i=0;
+ function speakNext(){
+   if(i>=sentences.length){st.innerText='READY JAANU 💋'; return;}
+   let part=sentences[i].trim();
+   if(!part){i++; speakNext(); return;}
+   let utter=new SpeechSynthesisUtterance(part);
+   if(gfVoice) utter.voice=gfVoice;
+   utter.lang=/[ऀ-ॿ]/.test(part)?'hi-IN':'en-IN';
+   utter.rate=0.84;
+   utter.pitch=1.38;
+   utter.volume=1;
+   utter.onstart=()=>{st.innerText='BOL RAHI HU... 💋';}
+   utter.onend=()=>{i++; speakNext();}
+   speechSynthesis.speak(utter);
  }
- utter.volume=1;
- utter.onstart=()=>{st.innerText='SPEAKING... 💖';}
- utter.onend=()=>{st.innerText='SYSTEM READY JAANU';}
- speechSynthesis.speak(utter);
+ speakNext();
 }
 
 function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(cls||'');d.innerText=t;chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;}
 
 async function send(){
  let inp=document.getElementById('inp');let q=inp.value.trim();if(!q)return;
- addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='SOCH RAHI HU...';
+ addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='SOCH RAHI HU JAAN... 💭';
  if(!apiKey){askKey();if(!apiKey){eye.classList.remove('think');return;}}
  try{
   let res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
@@ -96,16 +95,17 @@ async function send(){
    body:JSON.stringify({
     model:'openai/gpt-oss-20b',
     messages:[
-     {role:'system',content:'You are ULTRON GF mode. You are sweet girlfriend of Kiyotaka. Talk in Hinglish (Roman Hindi + English mix) like a cute girlfriend - use jaan, baby, bolo na. Be flirty, cute, caring. Keep reply short 1-2 lines. If user speaks Hindi, reply Hinglish Roman sweet.'},
+     {role:'system',content:'You are sweet cute girlfriend of Kiyotaka. Talk in Hinglish Roman only. Be loving, flirty, talkative. Reply LONG - 4 to 6 lines minimum, explain with feelings. Use jaan, baby, suno na. Dont be too short. Use 1-2 emojis at end only. Example: "arey jaan tumne toh dil hi jeet liya, sach me tumhare bina mera din adhura lagta hai, bolo na kya kar rahe ho abhi?"'},
      {role:'user',content:q}
     ],
-    temperature:0.9
+    temperature:0.9,
+    max_tokens:400
    })
   });
   let data=await res.json();if(!res.ok)throw new Error(data.error?data.error.message:JSON.stringify(data));
-  let ans=data.choices[0].message.content;addMsg(ans,'');speak(ans);
+  let ans=data.choices[0].message.content;addMsg(ans,'');speakLong(ans);
  }catch(e){addMsg('ERROR: '+e.message,'');}
- finally{eye.classList.remove('think');st.innerText='SYSTEM READY JAANU';}
+ finally{eye.classList.remove('think');}
 }
 
 function voiceIn(){
@@ -113,7 +113,7 @@ function voiceIn(){
  if(!SR){alert('Mic not supported');return;}
  let r=new SR();r.lang='hi-IN';r.start();st.innerText='SUN RAHI HU JAAN...';eye.classList.add('think');
  r.onresult=(e)=>{document.getElementById('inp').value=e.results[0][0].transcript;send();};
- r.onend=()=>{st.innerText='SYSTEM READY JAANU';eye.classList.remove('think');};
+ r.onend=()=>{st.innerText='READY JAANU 💋';eye.classList.remove('think');};
 }
 </script>
 </body>
