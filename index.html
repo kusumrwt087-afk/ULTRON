@@ -3,33 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ULTRON // KIYOTAKA</title>
+<title>ULTRON // GIRLFRIEND VOICE</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direction:column;height:100vh;overflow:hidden}
-.top{padding:14px 18px;border-bottom:1px solid #330000;display:flex;justify-content:space-between;align-items:center;background:#050000}
-.top b{letter-spacing:5px;color:#ff2222;font-size:14px}
-.top button{background:transparent;border:1px solid #660000;color:#ff6666;padding:6px 14px;font-family:monospace;cursor:pointer;font-size:11px}
+body{background:#000;color:#ff4d8d;font-family:monospace;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.top{padding:14px 18px;border-bottom:1px solid #331122;display:flex;justify-content:space-between;align-items:center;background:#0a0010}
+.top b{letter-spacing:5px;color:#ff4d8d;font-size:14px}
+.top button{background:transparent;border:1px solid #662244;color:#ff88aa;padding:6px 14px;font-family:monospace;cursor:pointer;font-size:11px}
 .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.eye{width:260px;height:260px;border-radius:50%;border:2px solid #ff0000;box-shadow:0 0 70px #ff0000,inset 0 0 70px #ff0000;background:radial-gradient(circle,#ff2a2a 0%,#8a0000 35%,#000 70%);transition:.3s}
+.eye{width:260px;height:260px;border-radius:50%;border:2px solid #ff4d8d;box-shadow:0 0 70px #ff4d8d,inset 0 0 70px #ff4d8d;background:radial-gradient(circle,#ff7aab 0%,#aa0055 35%,#000 70%)}
 .eye.think{animation:pulse.6s infinite alternate}
-@keyframes pulse{from{box-shadow:0 0 30px #ff0000}to{box-shadow:0 0 140px #ff0000}}
-.status{margin-top:26px;letter-spacing:5px;font-size:11px;color:#ff4444}
-.chat{height:34vh;overflow-y:auto;padding:14px;background:#050505;border-top:1px solid #220000}
-.msg{padding:11px 14px;margin:9px 0;border-left:3px solid #ff0000;background:#111;font-size:14px;line-height:1.5;white-space:pre-wrap}
-.msg.user{border-left-color:#444;color:#ccc;text-align:right;background:#0e0e0e}
+@keyframes pulse{from{box-shadow:0 0 30px #ff4d8d}to{box-shadow:0 0 140px #ff4d8d}}
+.status{margin-top:26px;letter-spacing:5px;font-size:11px;color:#ff88aa}
+.chat{height:34vh;overflow-y:auto;padding:14px;background:#050005;border-top:1px solid #221122}
+.msg{padding:11px 14px;margin:9px 0;border-left:3px solid #ff4d8d;background:#151015;font-size:14px;line-height:1.5;white-space:pre-wrap;color:#ffbbcc}
+.msg.user{border-left-color:#555;color:#ccc;text-align:right;background:#0e0e0e}
 .inputbar{display:flex;gap:8px;padding:12px;background:#000;border-top:1px solid #222}
 .inputbar input{flex:1;background:#111;border:1px solid #333;color:#fff;padding:16px;font-family:monospace;outline:none;font-size:15px}
-.inputbar button{background:#ff0000;border:none;color:#000;font-weight:900;padding:0 24px;font-size:22px;cursor:pointer}
-.inputbar button.mic{background:#111;color:#ff0000;border:1px solid #ff0000;font-size:18px}
+.inputbar button{background:#ff4d8d;border:none;color:#000;font-weight:900;padding:0 24px;font-size:22px;cursor:pointer}
+.inputbar button.mic{background:#111;color:#ff4d8d;border:1px solid #ff4d8d;font-size:18px}
 </style>
 </head>
 <body>
-<div class="top"><b>ULTRON // MALE FIXED</b><button onclick="resetKey()">RESET KEY</button></div>
-<div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY</div></div>
-<div id="chat" class="chat"><div class="msg">ULTRON ready hai Kiyotaka. Ab awaj male + clear hogi.</div></div>
+<div class="top"><b>ULTRON // GF MODE 💖</b><button onclick="resetKey()">RESET KEY</button></div>
+<div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY JAANU</div></div>
+<div id="chat" class="chat"><div class="msg">Hii Kiyotaka... bolo na kya kaam hai? 😊</div></div>
 <div class="inputbar">
-<input id="inp" placeholder="Hindi ya English me bol..." onkeydown="if(event.key==='Enter')send()">
+<input id="inp" placeholder="Kuch bolo na..." onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">></button>
 <button class="mic" onclick="voiceIn()">🎤</button>
 </div>
@@ -38,58 +38,48 @@ let apiKey=localStorage.getItem('ultron_groq_key');
 if(!apiKey){askKey();}
 function askKey(){let k=prompt("Apni Groq API Key daal (gsk_...):");if(k){apiKey=k.trim();localStorage.setItem('ultron_groq_key',apiKey);}}
 function resetKey(){localStorage.removeItem('ultron_groq_key');apiKey=null;askKey();}
-
 const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),st=document.getElementById('st');
 
-let maleVoice=null, hindiVoice=null, enInMale=null;
+let gfVoice=null;
 function loadVoices(){
  let voices=speechSynthesis.getVoices();
- if(!voices.length) return;
- // Sabse clear male voices dhoondo
- maleVoice = voices.find(v=>v.name.includes('Microsoft Ravi')) || // en-IN male - sabse clear
-             voices.find(v=>v.name.includes('Microsoft Madhur')) || // hi-IN male
-             voices.find(v=>v.name.includes('Google UK English Male')) ||
-             voices.find(v=>v.name.includes('Google US English')) ||
-             voices.find(v=>v.lang==='en-IN' && v.name.toLowerCase().includes('male')) ||
-             voices.find(v=>v.lang==='en-IN') ||
-             voices.find(v=>v.lang==='hi-IN') ||
-             voices.find(v=>v.lang==='en-US');
-
- hindiVoice = voices.find(v=>v.name.includes('Madhur')) || voices.find(v=>v.lang==='hi-IN');
- enInMale = voices.find(v=>v.name.includes('Ravi')) || voices.find(v=>v.lang==='en-IN') || maleVoice;
- console.log("Selected:", maleVoice?.name, hindiVoice?.name, enInMale?.name);
+ // Sabse pyari female voice dhoondo
+ gfVoice = voices.find(v=>v.name.includes('Google हिन्दी')) ||
+           voices.find(v=>v.name.includes('Microsoft Swara')) || // hi-IN female best
+           voices.find(v=>v.name.includes('Microsoft Heera')) || // en-IN female sweet
+           voices.find(v=>v.name.includes('Google US English Female')) ||
+           voices.find(v=>v.name.includes('Samantha')) ||
+           voices.find(v=>v.name==='Google UK English Female') ||
+           voices.find(v=>v.lang==='hi-IN') ||
+           voices.find(v=>v.lang==='en-IN' && v.name.toLowerCase().includes('female')) ||
+           voices.find(v=>v.lang==='en-US' && v.name.toLowerCase().includes('female')) ||
+           voices[0];
+ console.log("GF Voice:",gfVoice?.name);
 }
 speechSynthesis.onvoiceschanged=loadVoices;
 loadVoices();
 setTimeout(loadVoices,1000);
-setTimeout(loadVoices,2000);
 
 function speak(text){
  speechSynthesis.cancel();
- let clean=text.replace(/[*#_`~<>]/g,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();
+ let clean=text.replace(/[*#_`~<>]/g,'').replace(/\s+/g,' ').trim().slice(0,350);
  if(!clean) return;
- clean=clean.slice(0,350); // distortion rokne ke liye chota chunk
-
- let isHindi=/[ऀ-ॿ]/.test(clean) || /\b(hai|hu|kya|nahi|bhai|yrr|accha|samjha|raha|kaisa|kaam)\b/i.test(clean);
- 
  let utter=new SpeechSynthesisUtterance(clean);
+ if(gfVoice) utter.voice=gfVoice;
+
+ let isHindi=/[ऀ-ॿ]/.test(clean) || /\b(hai|hu|kya|nahi|bhai|accha|jaan|bolo)\b/i.test(clean);
  if(isHindi){
-   // Hindi ke liye bhi en-IN male use karenge toh ladki nahi ayegi, clear bolega
-   if(enInMale) utter.voice=enInMale;
-   else if(hindiVoice) utter.voice=hindiVoice;
-   else if(maleVoice) utter.voice=maleVoice;
-   utter.lang='en-IN'; // en-IN male se Hinglish ekdum male + clear nikalti hai
-   utter.rate=0.88;
-   utter.pitch=0.2; // full male
+   utter.lang='hi-IN';
+   utter.rate=0.88; // thodi slow, pyari lagegi
+   utter.pitch=1.25; // sweet high pitch
  }else{
-   if(maleVoice) utter.voice=maleVoice;
-   utter.lang='en-US';
+   utter.lang='en-IN';
    utter.rate=0.90;
-   utter.pitch=0.7;
+   utter.pitch=1.15;
  }
  utter.volume=1;
- utter.onstart=()=>{st.innerText='SPEAKING...';}
- utter.onend=()=>{st.innerText='SYSTEM READY';}
+ utter.onstart=()=>{st.innerText='SPEAKING... 💖';}
+ utter.onend=()=>{st.innerText='SYSTEM READY JAANU';}
  speechSynthesis.speak(utter);
 }
 
@@ -97,7 +87,7 @@ function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(c
 
 async function send(){
  let inp=document.getElementById('inp');let q=inp.value.trim();if(!q)return;
- addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='ULTRON THINKING...';
+ addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='SOCH RAHI HU...';
  if(!apiKey){askKey();if(!apiKey){eye.classList.remove('think');return;}}
  try{
   let res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
@@ -106,26 +96,24 @@ async function send(){
    body:JSON.stringify({
     model:'openai/gpt-oss-20b',
     messages:[
-     {role:'system',content:'You are ULTRON, loyal male AI for Kiyotaka. Understand Hindi, Hinglish, English. Reply in SAME style user used. If user uses Hinglish Roman, reply in Roman Hinglish (not Devanagari). If Devanagari, reply Devanagari. Keep short 2 lines max. Be intelligent.'},
+     {role:'system',content:'You are ULTRON GF mode. You are sweet girlfriend of Kiyotaka. Talk in Hinglish (Roman Hindi + English mix) like a cute girlfriend - use jaan, baby, bolo na. Be flirty, cute, caring. Keep reply short 1-2 lines. If user speaks Hindi, reply Hinglish Roman sweet.'},
      {role:'user',content:q}
     ],
-    temperature:0.75
+    temperature:0.9
    })
   });
   let data=await res.json();if(!res.ok)throw new Error(data.error?data.error.message:JSON.stringify(data));
   let ans=data.choices[0].message.content;addMsg(ans,'');speak(ans);
  }catch(e){addMsg('ERROR: '+e.message,'');}
- finally{eye.classList.remove('think');st.innerText='SYSTEM READY';}
+ finally{eye.classList.remove('think');st.innerText='SYSTEM READY JAANU';}
 }
 
 function voiceIn(){
  let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){alert('Mic supported nahi hai');return;}
- let r=new SR();r.lang='hi-IN';r.interimResults=false;r.maxAlternatives=1;
- r.start();st.innerText='LISTENING...';eye.classList.add('think');
+ if(!SR){alert('Mic not supported');return;}
+ let r=new SR();r.lang='hi-IN';r.start();st.innerText='SUN RAHI HU JAAN...';eye.classList.add('think');
  r.onresult=(e)=>{document.getElementById('inp').value=e.results[0][0].transcript;send();};
- r.onerror=()=>{st.innerText='SYSTEM READY';eye.classList.remove('think');};
- r.onend=()=>{st.innerText='SYSTEM READY';eye.classList.remove('think');};
+ r.onend=()=>{st.innerText='SYSTEM READY JAANU';eye.classList.remove('think');};
 }
 </script>
 </body>
