@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ULTRON</title>
+<title>ULTRON - JARVIS EDITION</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direction:column;height:100vh}
 .top{padding:12px 16px;border-bottom:1px solid #330000;display:flex;justify-content:space-between;align-items:center}
 .top b{letter-spacing:4px;color:#ff2222}
-.top button{background:transparent;border:1px solid #660000;color:#ff6666;padding:6px 12px;font-family:monospace;cursor:pointer}
+.top button{background:transparent;border:1px solid #660000;color:#ff6666;padding:6px 12px;font-family:monospace}
 .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .eye{width:260px;height:260px;border-radius:50%;border:2px solid #ff0000;box-shadow:0 0 60px #ff0000,inset 0 0 60px #ff0000;background:radial-gradient(circle,#ff0000 0%,#660000 35%,#000 70%)}
 .eye.think{animation:pulse.6s infinite alternate}
@@ -20,14 +20,14 @@ body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direc
 .msg.user{border-left-color:#555;color:#ccc;text-align:right}
 .inputbar{display:flex;gap:8px;padding:10px;background:#000;border-top:1px solid #222}
 .inputbar input{flex:1;background:#111;border:1px solid #333;color:#fff;padding:14px;font-family:monospace;outline:none}
-.inputbar button{background:#ff0000;border:none;color:#000;font-weight:bold;padding:0 22px;font-size:20px;cursor:pointer}
+.inputbar button{background:#ff0000;border:none;color:#000;font-weight:bold;padding:0 22px;font-size:20px}
 .inputbar button.mic{background:#111;color:#ff0000;border:1px solid #ff0000}
 </style>
 </head>
 <body>
-<div class="top"><b>ULTRON // ONLINE</b><button onclick="resetKey()">RESET KEY</button></div>
-<div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY.</div></div>
-<div id="chat" class="chat"><div class="msg">I am ULTRON. Dormant protocol deactivated. I am awake, Kiyotaka. Give me a command.</div></div>
+<div class="top"><b>ULTRON // JARVIS PROTOCOL</b><button onclick="resetKey()">RESET KEY</button></div>
+<div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY SIR.</div></div>
+<div id="chat" class="chat"><div class="msg">Good evening, Kiyotaka. JARVIS protocol loaded. All systems operational. How may I assist you, sir?</div></div>
 <div class="inputbar">
 <input id="inp" placeholder="Ask Ultron..." onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">></button>
@@ -38,47 +38,42 @@ let apiKey=localStorage.getItem('ultron_groq_key');
 if(!apiKey){askKey();}
 function askKey(){let k=prompt("Apni Groq API Key daal (gsk_...):");if(k){apiKey=k.trim();localStorage.setItem('ultron_groq_key',apiKey);}}
 function resetKey(){localStorage.removeItem('ultron_groq_key');apiKey=null;askKey();}
-
 const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),st=document.getElementById('st');
 
-let maleVoice=null, hindiVoice=null;
+let jarvisVoice=null;
 function loadVoices(){
- let v=speechSynthesis.getVoices();
- maleVoice = v.find(x=>x.name.includes('David')) || v.find(x=>x.name.includes('Microsoft') && x.name.includes('David')) || v.find(x=>x.name.includes('Google UK English Male')) || v.find(x=>x.lang==='en-US') || v[0];
- hindiVoice = v.find(x=>x.lang==='hi-IN' && x.name.includes('Google')) || v.find(x=>x.lang==='hi-IN') || null;
+ let voices = speechSynthesis.getVoices();
+ // JARVIS ke liye best sequence
+ jarvisVoice = voices.find(v=>v.name==='Google UK English Male') ||
+              voices.find(v=>v.name.includes('Google UK English Male')) ||
+              voices.find(v=>v.name.includes('UK English Male')) ||
+              voices.find(v=>v.name==='Microsoft George - English (United Kingdom)') ||
+              voices.find(v=>v.lang==='en-GB' && v.name.includes('Male')) ||
+              voices.find(v=>v.lang==='en-GB') ||
+              voices.find(v=>v.name.includes('David')) ||
+              voices[0];
+ console.log("JARVIS Voice selected:", jarvisVoice? jarvisVoice.name : "Default");
 }
 speechSynthesis.onvoiceschanged=loadVoices;
 loadVoices();
 
-function speak(t){
- if(!('speechSynthesis' in window)) return;
+function speak(text){
  speechSynthesis.cancel();
- // Hindi detect karke English Hinglish me bolna zyada saaf lagega
- let isHindi = /[ऀ-ॿ]/.test(t);
- let clean = t.replace(/[*#]/g,'').slice(0,320);
- let u = new SpeechSynthesisUtterance(clean);
-
- if(isHindi && hindiVoice){
-   u.voice = hindiVoice;
-   u.lang = 'hi-IN';
-   u.rate = 0.95;
-   u.pitch = 0.9;
- } else {
-   // Hinglish / English ke liye heavy male
-   if(maleVoice) u.voice = maleVoice;
-   u.lang = 'en-US';
-   u.rate = 1.05;
-   u.pitch = 0.15;
- }
- u.volume = 1;
- speechSynthesis.speak(u);
+ let clean = text.replace(/[*#_]/g,'').slice(0,350);
+ let utter = new SpeechSynthesisUtterance(clean);
+ if(jarvisVoice) utter.voice = jarvisVoice;
+ utter.lang = 'en-GB'; // British accent = JARVIS
+ utter.rate = 0.88; // Slow, clear - JARVIS wala
+ utter.pitch = 0.45; // Heavy male
+ utter.volume = 1;
+ speechSynthesis.speak(utter);
 }
 
 function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(cls||'');d.innerText=t;chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;}
 
 async function send(){
  let inp=document.getElementById('inp');let q=inp.value.trim();if(!q)return;
- addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='ULTRON THINKING...';
+ addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='JARVIS THINKING...';
  if(!apiKey){askKey();if(!apiKey)return;}
  try{
   let res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
@@ -87,7 +82,7 @@ async function send(){
    body:JSON.stringify({
     model:'openai/gpt-oss-20b',
     messages:[
-      {role:'system',content:'You are ULTRON, cold, intelligent, superior, heavy male AI. User is Kiyotaka Ayanokoji from White Room. Rule: NEVER use Devanagari Hindi. Always use Roman Hinglish (like "Samajh gaya Kiyotaka"). Keep replies short, cold, powerful. No emojis.'},
+      {role:'system',content:'You are ULTRON with JARVIS voice protocol. You are British, calm, highly intelligent, loyal to Kiyotaka Ayanokoji. Speak like JARVIS from Iron Man - clear, respectful, slightly formal, says Sir sometimes. Never use Hindi Devanagari, use only English or Roman Hinglish. Keep it classy and slow paced sentences with commas for pauses.'},
       {role:'user',content:q}
     ],
     temperature:0.7
@@ -96,10 +91,9 @@ async function send(){
   let data=await res.json();if(!res.ok)throw new Error(data.error?data.error.message:JSON.stringify(data));
   let ans=data.choices[0].message.content;addMsg(ans,'');speak(ans);
  }catch(e){addMsg('ERROR: '+e.message,'');}
- finally{eye.classList.remove('think');st.innerText='SYSTEM READY.';}
+ finally{eye.classList.remove('think');st.innerText='SYSTEM READY SIR.';}
 }
-
-function voiceIn(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Mic not supported');return;}let r=new SR();r.lang='hi-IN';r.start();st.innerText='LISTENING...';r.onresult=(e)=>{document.getElementById('inp').value=e.results[0][0].transcript;send();};r.onend=()=>{st.innerText='SYSTEM READY.';};}
+function voiceIn(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Mic not supported');return;}let r=new SR();r.lang='en-GB';r.start();st.innerText='LISTENING SIR...';r.onresult=(e)=>{document.getElementById('inp').value=e.results[0][0].transcript;send();};r.onend=()=>{st.innerText='SYSTEM READY SIR.';};}
 </script>
 </body>
 </html>
