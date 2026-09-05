@@ -107,16 +107,59 @@ async function send(){
  }catch(e){addMsg('ERROR: '+e.message,'');}
  finally{eye.classList.remove('think');st.innerText='SYSTEM READY';}
 }
-
 function voiceIn(){
  let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SR){alert('Mic supported nahi hai');return;}
- let r=new SR();r.lang='hi-IN';r.interimResults=false;r.maxAlternatives=1;
- r.start();st.innerText='LISTENING...';eye.classList.add('think');
- r.onresult=(e)=>{document.getElementById('inp').value=e.results[0][0].transcript;send();};
- r.onerror=()=>{st.innerText='SYSTEM READY';eye.classList.remove('think');};
- r.onend=()=>{st.innerText='SYSTEM READY';eye.classList.remove('think');};
+
+ let r=new SR();
+ r.lang='hi-IN';
+ r.continuous=true;
+ r.interimResults=true;
+ r.maxAlternatives=1;
+
+ let finalText='';
+ let silenceTimer=null;
+
+ r.start();
+ st.innerText='SUN RAHA HU... BOLO';
+ eye.classList.add('think');
+ document.getElementById('inp').placeholder='Sun raha hu... bolte raho, 2 sec rukunga to bhej dunga...';
+
+ r.onresult=(e)=>{
+   let interim='';
+   for(let i=e.resultIndex;i<e.results.length;i++){
+     if(e.results[i].isFinal){
+       finalText+=e.results[i][0].transcript+' ';
+     }else{
+       interim+=e.results[i][0].transcript;
+     }
+   }
+   document.getElementById('inp').value=finalText+interim;
+
+   clearTimeout(silenceTimer);
+   silenceTimer=setTimeout(()=>{
+     r.stop();
+   },2000); // 2 sec chup = send
+ };
+
+ r.onend=()=>{
+   st.innerText='SYSTEM READY';
+   eye.classList.remove('think');
+   document.getElementById('inp').placeholder='Hindi ya English me bolo...';
+   clearTimeout(silenceTimer);
+   let txt=document.getElementById('inp').value.trim();
+   if(txt){
+     send(); // auto send ON
+   }
+ };
+
+ r.onerror=()=>{
+   st.innerText='SYSTEM READY';
+   eye.classList.remove('think');
+   clearTimeout(silenceTimer);
+ };
 }
+
 </script>
 </body>
 </html>
