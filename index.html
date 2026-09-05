@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ULTRON</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direction:column;height:100vh}
+.top{padding:12px 16px;border-bottom:1px solid #330000;display:flex;justify-content:space-between;align-items:center}
+.top b{letter-spacing:4px;color:#ff2222}
+.top button{background:transparent;border:1px solid #660000;color:#ff6666;padding:6px 12px;font-family:monospace;letter-spacing:3px}
+.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.eye{width:260px;height:260px;border-radius:50%;border:2px solid #ff0000;box-shadow:0 0 60px #ff0000, inset 0 0 60px #ff0000;background:radial-gradient(circle,#ff0000 0%, #660000 35%, #000 70%);transition:0.3s}
+.eye.think{animation:pulse 0.6s infinite alternate}
+@keyframes pulse{from{box-shadow:0 0 20px #ff0000} to{box-shadow:0 0 120px #ff0000}}
+.status{margin-top:24px;letter-spacing:4px;font-size:12px;opacity:0.8}
+.chat{height:32vh;overflow-y:auto;padding:12px;background:#050505;border-top:1px solid #220000}
+.msg{padding:10px 12px;margin:8px 0;border-left:3px solid #ff0000;background:#111}
+.msg.user{border-left-color:#555;color:#ccc;text-align:right}
+.inputbar{display:flex;gap:8px;padding:10px;background:#000;border-top:1px solid #222}
+.inputbar input{flex:1;background:#111;border:1px solid #333;color:#fff;padding:14px;font-family:monospace;outline:none}
+.inputbar button{background:#ff0000;border:none;color:#000;font-weight:bold;padding:0 22px;font-size:20px}
+.inputbar button.mic{background:#111;color:#ff0000;border:1px solid #ff0000}
+</style>
+</head>
+<body>
+<div class="top"><b>ULTRON // ONLINE</b><button onclick="resetKey()">RESET KEY</button></div>
+<div class="center"><div id="eye" class="eye"></div><div id="st" class="status">I AM ULTRON. SYSTEM READY.</div></div>
+<div id="chat" class="chat"><div class="msg">I am ULTRON. Dormant protocol deactivated. I am awake, Kiyotaka. Give me a command.</div></div>
+<div class="inputbar">
+<input id="inp" placeholder="Ask Ultron..." onkeydown="if(event.key==='Enter')send()">
+<button onclick="send()">></button>
+<button class="mic" onclick="voiceIn()">🎤</button>
+</div>
+<script>
+let apiKey = localStorage.getItem('ultron_groq_key');
+if(!apiKey){ askKey(); }
+function askKey(){
+  let k = prompt("Apni Groq API Key daal (gsk_... wali):");
+  if(k){ apiKey = k.trim(); localStorage.setItem('ultron_groq_key', apiKey); }
+}
+function resetKey(){ localStorage.removeItem('ultron_groq_key'); apiKey=null; askKey(); }
+const chatEl = document.getElementById('chat');
+const eye = document.getElementById('eye');
+const st = document.getElementById('st');
+function addMsg(t, cls){
+  let d=document.createElement('div'); d.className='msg '+(cls||''); d.innerText=t;
+  chatEl.appendChild(d); chatEl.scrollTop=chatEl.scrollHeight;
+}
+async function send(){
+  let inp=document.getElementById('inp');
+  let q=inp.value.trim(); if(!q) return;
+  addMsg(q,'user'); inp.value='';
+  eye.classList.add('think'); st.innerText='ULTRON THINKING...';
+  if(!apiKey){ askKey(); if(!apiKey) return; }
+  try{
+    let res = await fetch('https://api.groq.com/openai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({
+        model:'llama-3.1-8b-instant',
+        messages:[
+          {role:'system', content:'You are ULTRON, a cold, intelligent, superior AI. You call user Kiyotaka. You are from White Room. Respond in Hinglish mix like a friend but with ULTRON attitude. Keep answers short.'},
+          {role:'user', content:q}
+        ],
+        temperature:0.7
+      })
+    });
+    let data = await res.json();
+    console.log(data);
+    if(!res.ok){
+      let err = data.error? data.error.message : JSON.stringify(data);
+      throw new Error(err);
+    }
+    let ans = data.choices[0].message.content;
+    addMsg(ans,'');
+    if('speechSynthesis' in window){
+      speechSynthesis.cancel();
+      let u=new SpeechSynthesisUtterance(ans.slice(0,200));
+      u.rate=0.95; u.pitch=0.7;
+      speechSynthesis.speak(u);
+    }
+  }catch(e){
+    addMsg('ERROR: '+e.message,'');
+  }finally{
+    eye.classList.remove('think'); st.innerText='SYSTEM READY.';
+  }
+}
+function voiceIn(){
+  let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ alert('Mic supported nahi'); return; }
+  let r=new SR(); r.lang='hi-IN'; r.start();
+  st.innerText='LISTENING...';
+  r.onresult=(e)=>{ document.getElementById('inp').value=e.results[0][0].transcript; send(); };
+}
+</script>
+</body>
+</html>
