@@ -43,10 +43,9 @@ const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),
 let mainVoice=null;
 function loadVoices(){
  let voices=speechSynthesis.getVoices();
- mainVoice = voices.find(v=>v.name.includes('Microsoft Ravi')) || // en-IN male - sabse clear
+ mainVoice = voices.find(v=>v.name.includes('Microsoft Ravi')) ||
              voices.find(v=>v.name.includes('Microsoft Madhur')) ||
              voices.find(v=>v.name.includes('Google UK English Male')) ||
-             voices.find(v=>v.name.includes('Google US English')) ||
              voices.find(v=>v.lang==='en-IN') ||
              voices.find(v=>v.lang==='en-US') ||
              voices[0];
@@ -58,7 +57,6 @@ setTimeout(loadVoices,1200);
 function cleanForSpeech(text){
   return text.replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1FA70}-\u{1FAFF}]/gu, '').replace(/[*#_`~<>|]/g,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();
 }
-
 function speakLong(text){
  speechSynthesis.cancel();
  let clean=cleanForSpeech(text);
@@ -73,7 +71,7 @@ function speakLong(text){
    if(mainVoice) u.voice=mainVoice;
    u.lang=/[ऀ-ॿ]/.test(part)?'hi-IN':'en-IN';
    u.rate=0.88;
-   u.pitch=0.8; // clear male
+   u.pitch=0.85;
    u.volume=1;
    u.onstart=()=>{st.innerText='SPEAKING...';}
    u.onend=()=>{i++; next();}
@@ -81,7 +79,6 @@ function speakLong(text){
  }
  next();
 }
-
 function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(cls||'');d.innerText=t;chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;}
 
 async function send(){
@@ -107,79 +104,42 @@ async function send(){
  }catch(e){addMsg('ERROR: '+e.message,'');}
  finally{eye.classList.remove('think');st.innerText='SYSTEM READY';}
 }
+
 function voiceIn(){
  let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SR){alert('Mic supported nahi hai');return;}
-
  let r=new SR();
  r.lang='hi-IN';
  r.continuous=true;
  r.interimResults=true;
-
  let silenceTimer=null;
-
  r.start();
  st.innerText='SUN RAHA HU... BOLO';
  eye.classList.add('think');
  document.getElementById('inp').placeholder='Sun raha hu... bolte raho...';
-
  r.onresult=(e)=>{
-   // SAHI TAREEKA - har baar pura transcript fresh banao, add mat karo
    let fullTranscript='';
    for(let i=0;i<e.results.length;i++){
      fullTranscript+=e.results[i][0].transcript+' ';
    }
    document.getElementById('inp').value=fullTranscript.trim();
-
    clearTimeout(silenceTimer);
-   silenceTimer=setTimeout(()=>{
-     r.stop();
-   },2000);
+   silenceTimer=setTimeout(()=>{r.stop();},2000);
  };
-
  r.onend=()=>{
    st.innerText='SYSTEM READY';
    eye.classList.remove('think');
    document.getElementById('inp').placeholder='Hindi ya English me bolo...';
    clearTimeout(silenceTimer);
    let txt=document.getElementById('inp').value.trim();
-   if(txt){
-     send();
-   }
+   if(txt){send();}
  };
-
  r.onerror=()=>{
    st.innerText='SYSTEM READY';
    eye.classList.remove('think');
    clearTimeout(silenceTimer);
  };
 }
-   document.getElementById('inp').value=finalText+interim;
-
-   clearTimeout(silenceTimer);
-   silenceTimer=setTimeout(()=>{
-     r.stop();
-   },2000); // 2 sec chup = send
- };
-
- r.onend=()=>{
-   st.innerText='SYSTEM READY';
-   eye.classList.remove('think');
-   document.getElementById('inp').placeholder='Hindi ya English me bolo...';
-   clearTimeout(silenceTimer);
-   let txt=document.getElementById('inp').value.trim();
-   if(txt){
-     send(); // auto send ON
-   }
- };
-
- r.onerror=()=>{
-   st.innerText='SYSTEM READY';
-   eye.classList.remove('think');
-   clearTimeout(silenceTimer);
- };
-}
-
 </script>
 </body>
 </html>
