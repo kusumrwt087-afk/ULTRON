@@ -3,92 +3,85 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ULTRON - HINDI FIX</title>
+<title>ULTRON // KIYOTAKA</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direction:column;height:100vh}
-.top{padding:12px 16px;border-bottom:1px solid #330000;display:flex;justify-content:space-between;align-items:center}
-.top b{letter-spacing:4px;color:#ff2222}
-.top button{background:transparent;border:1px solid #660000;color:#ff6666;padding:6px 12px;font-family:monospace;cursor:pointer}
+body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.top{padding:14px 18px;border-bottom:1px solid #330000;display:flex;justify-content:space-between;align-items:center;background:#050000}
+.top b{letter-spacing:5px;color:#ff2222;font-size:14px}
+.top button{background:transparent;border:1px solid #660000;color:#ff6666;padding:6px 14px;font-family:monospace;cursor:pointer}
 .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.eye{width:260px;height:260px;border-radius:50%;border:2px solid #ff0000;box-shadow:0 0 60px #ff0000,inset 0 0 60px #ff0000;background:radial-gradient(circle,#ff0000 0%,#660000 35%,#000 70%)}
+.eye{width:260px;height:260px;border-radius:50%;border:2px solid #ff0000;box-shadow:0 0 70px #ff0000,inset 0 0 70px #ff0000;background:radial-gradient(circle,#ff2a2a 0%,#8a0000 35%,#000 70%);transition:.3s}
 .eye.think{animation:pulse.6s infinite alternate}
-@keyframes pulse{from{box-shadow:0 0 20px #ff0000}to{box-shadow:0 0 120px #ff0000}}
-.status{margin-top:24px;letter-spacing:4px;font-size:12px}
-.chat{height:32vh;overflow-y:auto;padding:12px;background:#050505;border-top:1px solid #220000}
-.msg{padding:10px 12px;margin:8px 0;border-left:3px solid #ff0000;background:#111;white-space:pre-wrap}
-.msg.user{border-left-color:#555;color:#ccc;text-align:right}
-.inputbar{display:flex;gap:8px;padding:10px;background:#000;border-top:1px solid #222}
-.inputbar input{flex:1;background:#111;border:1px solid #333;color:#fff;padding:14px;font-family:monospace;outline:none}
-.inputbar button{background:#ff0000;border:none;color:#000;font-weight:bold;padding:0 22px;font-size:20px;cursor:pointer}
-.inputbar button.mic{background:#111;color:#ff0000;border:1px solid #ff0000}
+@keyframes pulse{from{box-shadow:0 0 30px #ff0000}to{box-shadow:0 0 140px #ff0000}}
+.status{margin-top:26px;letter-spacing:5px;font-size:11px;color:#ff4444}
+.chat{height:34vh;overflow-y:auto;padding:14px;background:#050505;border-top:1px solid #220000}
+.msg{padding:11px 14px;margin:9px 0;border-left:3px solid #ff0000;background:#111;font-size:14px;line-height:1.5;white-space:pre-wrap}
+.msg.user{border-left-color:#444;color:#ccc;text-align:right;background:#0e0e0e}
+.inputbar{display:flex;gap:8px;padding:12px;background:#000;border-top:1px solid #222}
+.inputbar input{flex:1;background:#111;border:1px solid #333;color:#fff;padding:16px;font-family:monospace;outline:none;font-size:15px}
+.inputbar button{background:#ff0000;border:none;color:#000;font-weight:900;padding:0 24px;font-size:22px;cursor:pointer}
+.inputbar button.mic{background:#111;color:#ff0000;border:1px solid #ff0000;font-size:18px}
 </style>
 </head>
 <body>
-<div class="top"><b>ULTRON // HINDI + ENGLISH</b><button onclick="resetKey()">RESET KEY</button></div>
+<div class="top"><b>ULTRON // ONLINE</b><button onclick="resetKey()">RESET KEY</button></div>
 <div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY</div></div>
-<div id="chat" class="chat"><div class="msg">Haan Kiyotaka, bolo. Ab main Hindi aur English dono ekdum saaf bolunga.</div></div>
+<div id="chat" class="chat"><div class="msg">ULTRON online, Kiyotaka. Hindi aur English dono ready hai. Bolo kya kaam hai?</div></div>
 <div class="inputbar">
-<input id="inp" placeholder="Hindi ya English me bolo..." onkeydown="if(event.key==='Enter')send()">
+<input id="inp" placeholder="Hindi ya English me kuch bhi bol..." onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">></button>
 <button class="mic" onclick="voiceIn()">🎤</button>
 </div>
+
 <script>
+// API KEY
 let apiKey=localStorage.getItem('ultron_groq_key');
 if(!apiKey){askKey();}
 function askKey(){let k=prompt("Apni Groq API Key daal (gsk_...):");if(k){apiKey=k.trim();localStorage.setItem('ultron_groq_key',apiKey);}}
 function resetKey(){localStorage.removeItem('ultron_groq_key');apiKey=null;askKey();}
+
 const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),st=document.getElementById('st');
 
-let engVoice=null;
+// VOICE SYSTEM - FINAL CLEAR MALE
+let engVoice=null, hindiMaleVoice=null;
 function loadVoices(){
- let v=speechSynthesis.getVoices();
- engVoice = v.find(x=>x.name==='Google US English') || v.find(x=>x.name.includes('David')) || v.find(x=>x.lang==='en-US') || v[0];
+ let voices=speechSynthesis.getVoices();
+ engVoice=voices.find(v=>v.name==='Google US English')||voices.find(v=>v.name.includes('Google US English'))||voices.find(v=>v.name.includes('David'))||voices.find(v=>v.lang==='en-US')||voices[0];
+ hindiMaleVoice=voices.find(v=>v.name==='Microsoft Madhur - Hindi (India)')||voices.find(v=>v.name.includes('Madhur'))||voices.find(v=>v.name==='Google हिन्दी')||voices.find(v=>v.lang==='hi-IN')||null;
 }
 speechSynthesis.onvoiceschanged=loadVoices;
 loadVoices();
+setTimeout(loadVoices,1200);
 
-let currentAudio=null;
 function speak(text){
- if(currentAudio){currentAudio.pause(); currentAudio=null;}
  speechSynthesis.cancel();
- let isHindi = /[ऀ-ॿ]/.test(text) || /[a-zA-Z]/.test(text) && (text.toLowerCase().includes('hai') || text.toLowerCase().includes('kya') || text.toLowerCase().includes('nahi'));
- // Agar Hindi / Hinglish hai toh Google wali saaf awaj
- if(/[ऀ-ॿ]/.test(text) || text.match(/\b(hai|hu|kya|nahi|accha|bhai|samjha)\b/i)){
-   // Roman Hinglish ko bhi Hindi voice me clear bolne ke liye
-   playGoogleTTS(text);
- } else {
-   // Pure English ke liye clear US voice
-   let clean = text.replace(/[*#_`]/g,'').slice(0,350);
-   let u = new SpeechSynthesisUtterance(clean);
-   if(engVoice) u.voice = engVoice;
-   u.lang='en-US'; u.rate=0.92; u.pitch=1.0; u.volume=1;
-   speechSynthesis.speak(u);
+ let clean=text.replace(/[*#_`~]/g,'').replace(/\s+/g,' ').trim().slice(0,400);
+ if(!clean) return;
+ let isHindi=/[ऀ-ॿ]/.test(clean)||/\b(hai|hu|houn|kya|kyu|nahi|nhi|bhai|yrr|accha|samjha|kar|raha|ho|raha hai|kaisa)\b/i.test(clean);
+ let utter=new SpeechSynthesisUtterance(clean);
+ if(isHindi){
+   if(hindiMaleVoice) utter.voice=hindiMaleVoice;
+   utter.lang='hi-IN';
+   utter.rate=0.90;
+   utter.pitch=0.35; // male
+ }else{
+   if(engVoice) utter.voice=engVoice;
+   utter.lang='en-US';
+   utter.rate=0.92;
+   utter.pitch=0.85; // clear male
  }
+ utter.volume=1;
+ speechSynthesis.speak(utter);
 }
 
-function playGoogleTTS(text){
- let clean = text.replace(/[*#_`]/g,'').slice(0,200);
- let url = 'https://translate.google.com/translate_tts?ie=UTF-8&q=' + encodeURIComponent(clean) + '&tl=hi&client=tw-ob';
- currentAudio = new Audio(url);
- currentAudio.playbackRate = 0.82; // Isse ladki ki awaj ladke ki heavy ho jayegi
- currentAudio.preservesPitch = false;
- currentAudio.play().catch(()=>{
-   // Fallback - agar Google fail ho toh male Hindi voice
-   let v = speechSynthesis.getVoices();
-   let maleHindi = v.find(x=>x.lang==='hi-IN' && x.name.toLowerCase().includes('male')) || v.find(x=>x.lang==='hi-IN') || null;
-   let u = new SpeechSynthesisUtterance(clean);
-   if(maleHindi) u.voice = maleHindi;
-   u.lang='hi-IN'; u.rate=0.9; u.pitch=0.1; // 0.1 = full male
-   speechSynthesis.speak(u);
- });
-}
 function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(cls||'');d.innerText=t;chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;}
 
+// SEND TO GROQ
 async function send(){
  let inp=document.getElementById('inp');let q=inp.value.trim();if(!q)return;
- addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='ULTRON SUN RAHA HAI...';
- if(!apiKey){askKey();if(!apiKey)return;}
+ addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='ULTRON THINKING...';
+ if(!apiKey){askKey();if(!apiKey){eye.classList.remove('think');return;}}
  try{
   let res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
    method:'POST',
@@ -96,10 +89,10 @@ async function send(){
    body:JSON.stringify({
     model:'openai/gpt-oss-20b',
     messages:[
-      {role:'system',content:'You are ULTRON, best friend of Kiyotaka. You understand EVERYTHING user says - Hindi, Hinglish, English, slang. Reply in SAME language style as user. If user speaks pure Hindi Devanagari, reply in pure Hindi Devanagari. If Hinglish roman, reply in roman Hinglish. If English, reply English. Be smart, understand context, remember things. Keep reply short 1-2 lines.'},
-      {role:'user',content:q}
+     {role:'system',content:'You are ULTRON, loyal AI for Kiyotaka Ayanokoji. You understand all Hindi, Hinglish, English, slang. Reply in SAME language style user used. If user uses Hindi Devanagari, reply in Devanagari Hindi. If user uses Hinglish Roman, reply in Roman Hinglish. If English, reply English. Be intelligent, cold, helpful, short (max 2-3 lines). Call user Kiyotaka sometimes.'},
+     {role:'user',content:q}
     ],
-    temperature:0.8
+    temperature:0.75
    })
   });
   let data=await res.json();if(!res.ok)throw new Error(data.error?data.error.message:JSON.stringify(data));
@@ -107,7 +100,16 @@ async function send(){
  }catch(e){addMsg('ERROR: '+e.message,'');}
  finally{eye.classList.remove('think');st.innerText='SYSTEM READY';}
 }
-function voiceIn(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Mic not supported');return;}let r=new SR();r.lang='hi-IN';r.start();st.innerText='SUN RAHA HU...';r.onresult=(e)=>{document.getElementById('inp').value=e.results[0][0].transcript;send();};r.onend=()=>{st.innerText='SYSTEM READY';};}
+
+function voiceIn(){
+ let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+ if(!SR){alert('Mic supported nahi hai');return;}
+ let r=new SR();r.lang='hi-IN';r.interimResults=false;r.maxAlternatives=1;
+ r.start();st.innerText='LISTENING...';eye.classList.add('think');
+ r.onresult=(e)=>{document.getElementById('inp').value=e.results[0][0].transcript;send();};
+ r.onerror=()=>{st.innerText='SYSTEM READY';eye.classList.remove('think');};
+ r.onend=()=>{st.innerText='SYSTEM READY';eye.classList.remove('think');};
+}
 </script>
 </body>
 </html>
