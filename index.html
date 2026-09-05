@@ -39,6 +39,20 @@ if(!apiKey){askKey();}
 function askKey(){let k=prompt("Apni Groq API Key daal (gsk_...):");if(k){apiKey=k.trim();localStorage.setItem('ultron_groq_key',apiKey);}}
 function resetKey(){localStorage.removeItem('ultron_groq_key');apiKey=null;askKey();}
 const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),st=document.getElementById('st');
+let maleVoice=null;
+function loadVoices(){
+ let v=speechSynthesis.getVoices();
+ maleVoice=v.find(x=>x.name.includes('David'))||v.find(x=>x.name.includes('Male'))||v.find(x=>x.name.includes('Google UK English Male'))||v[0];
+}
+speechSynthesis.onvoiceschanged=loadVoices;
+loadVoices();
+function speak(t){
+ speechSynthesis.cancel();
+ let u=new SpeechSynthesisUtterance(t.replace(/\./g,'... ').slice(0,250));
+ if(maleVoice) u.voice=maleVoice;
+ u.rate=1.05; u.pitch=0.2; u.volume=1;
+ speechSynthesis.speak(u);
+}
 function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(cls||'');d.innerText=t;chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;}
 async function send(){
  let inp=document.getElementById('inp');let q=inp.value.trim();if(!q)return;
@@ -55,8 +69,7 @@ async function send(){
    })
   });
   let data=await res.json();if(!res.ok)throw new Error(data.error?data.error.message:JSON.stringify(data));
-  let ans=data.choices[0].message.content;addMsg(ans,'');
-  if('speechSynthesis' in window){speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(ans.slice(0,200));u.rate=0.95;u.pitch=0.7;speechSynthesis.speak(u);}
+  let ans=data.choices[0].message.content;addMsg(ans,'');speak(ans);
  }catch(e){addMsg('ERROR: '+e.message,'');}
  finally{eye.classList.remove('think');st.innerText='SYSTEM READY.';}
 }
