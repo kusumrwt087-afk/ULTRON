@@ -115,25 +115,45 @@ function voiceIn(){
  r.lang='hi-IN';
  r.continuous=true;
  r.interimResults=true;
- r.maxAlternatives=1;
 
- let finalText='';
  let silenceTimer=null;
 
  r.start();
  st.innerText='SUN RAHA HU... BOLO';
  eye.classList.add('think');
- document.getElementById('inp').placeholder='Sun raha hu... bolte raho, 2 sec rukunga to bhej dunga...';
+ document.getElementById('inp').placeholder='Sun raha hu... bolte raho...';
 
  r.onresult=(e)=>{
-   let interim='';
-   for(let i=e.resultIndex;i<e.results.length;i++){
-     if(e.results[i].isFinal){
-       finalText+=e.results[i][0].transcript+' ';
-     }else{
-       interim+=e.results[i][0].transcript;
-     }
+   // SAHI TAREEKA - har baar pura transcript fresh banao, add mat karo
+   let fullTranscript='';
+   for(let i=0;i<e.results.length;i++){
+     fullTranscript+=e.results[i][0].transcript+' ';
    }
+   document.getElementById('inp').value=fullTranscript.trim();
+
+   clearTimeout(silenceTimer);
+   silenceTimer=setTimeout(()=>{
+     r.stop();
+   },2000);
+ };
+
+ r.onend=()=>{
+   st.innerText='SYSTEM READY';
+   eye.classList.remove('think');
+   document.getElementById('inp').placeholder='Hindi ya English me bolo...';
+   clearTimeout(silenceTimer);
+   let txt=document.getElementById('inp').value.trim();
+   if(txt){
+     send();
+   }
+ };
+
+ r.onerror=()=>{
+   st.innerText='SYSTEM READY';
+   eye.classList.remove('think');
+   clearTimeout(silenceTimer);
+ };
+}
    document.getElementById('inp').value=finalText+interim;
 
    clearTimeout(silenceTimer);
