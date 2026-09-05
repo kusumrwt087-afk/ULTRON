@@ -73,7 +73,7 @@ function speakLong(text){
    if(mainVoice) u.voice=mainVoice;
    u.lang=/[ऀ-ॿ]/.test(part)?'hi-IN':'en-IN';
    u.rate=0.88;
-   u.pitch=0.3; // clear male
+   u.pitch=0.8; // clear male
    u.volume=1;
    u.onstart=()=>{st.innerText='SPEAKING...';}
    u.onend=()=>{i++; next();}
