@@ -68,18 +68,21 @@ function speak(text){
 }
 
 function playGoogleTTS(text){
- // Google Translate TTS - sabse saaf Hindi
  let clean = text.replace(/[*#_`]/g,'').slice(0,200);
  let url = 'https://translate.google.com/translate_tts?ie=UTF-8&q=' + encodeURIComponent(clean) + '&tl=hi&client=tw-ob';
  currentAudio = new Audio(url);
+ currentAudio.playbackRate = 0.82; // Isse ladki ki awaj ladke ki heavy ho jayegi
+ currentAudio.preservesPitch = false;
  currentAudio.play().catch(()=>{
-   // Agar Google block kare toh fallback
+   // Fallback - agar Google fail ho toh male Hindi voice
+   let v = speechSynthesis.getVoices();
+   let maleHindi = v.find(x=>x.lang==='hi-IN' && x.name.toLowerCase().includes('male')) || v.find(x=>x.lang==='hi-IN') || null;
    let u = new SpeechSynthesisUtterance(clean);
-   u.lang='hi-IN'; u.rate=0.9;
+   if(maleHindi) u.voice = maleHindi;
+   u.lang='hi-IN'; u.rate=0.9; u.pitch=0.1; // 0.1 = full male
    speechSynthesis.speak(u);
  });
 }
-
 function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(cls||'');d.innerText=t;chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;}
 
 async function send(){
