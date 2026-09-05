@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ULTRON</title>
+<title>ULTRON - HINDI FIX</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direction:column;height:100vh}
@@ -25,11 +25,11 @@ body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direc
 </style>
 </head>
 <body>
-<div class="top"><b>ULTRON // ONLINE</b><button onclick="resetKey()">RESET KEY</button></div>
+<div class="top"><b>ULTRON // HINDI + ENGLISH</b><button onclick="resetKey()">RESET KEY</button></div>
 <div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY</div></div>
-<div id="chat" class="chat"><div class="msg">Systems online, Kiyotaka. I am listening. Speak in English or Hinglish, I will respond the same.</div></div>
+<div id="chat" class="chat"><div class="msg">Haan Kiyotaka, bolo. Ab main Hindi aur English dono ekdum saaf bolunga.</div></div>
 <div class="inputbar">
-<input id="inp" placeholder="Ask Ultron in English or Hinglish..." onkeydown="if(event.key==='Enter')send()">
+<input id="inp" placeholder="Hindi ya English me bolo..." onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">></button>
 <button class="mic" onclick="voiceIn()">🎤</button>
 </div>
@@ -40,39 +40,51 @@ function askKey(){let k=prompt("Apni Groq API Key daal (gsk_...):");if(k){apiKey
 function resetKey(){localStorage.removeItem('ultron_groq_key');apiKey=null;askKey();}
 const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),st=document.getElementById('st');
 
-let clearVoice=null;
+let engVoice=null;
 function loadVoices(){
  let v=speechSynthesis.getVoices();
- // Sabse clear wali voice ka order - US wali sabse clear hoti hai
- clearVoice = v.find(x=>x.name==='Google US English') ||
-              v.find(x=>x.name.includes('Google US English Male')) ||
-              v.find(x=>x.name.includes('Google US English')) ||
-              v.find(x=>x.name==='Microsoft David - English (United States)') ||
-              v.find(x=>x.name.includes('David')) ||
-              v.find(x=>x.lang==='en-US') ||
-              v[0];
+ engVoice = v.find(x=>x.name==='Google US English') || v.find(x=>x.name.includes('David')) || v.find(x=>x.lang==='en-US') || v[0];
 }
 speechSynthesis.onvoiceschanged=loadVoices;
 loadVoices();
-setTimeout(loadVoices, 1000);
 
+let currentAudio=null;
 function speak(text){
+ if(currentAudio){currentAudio.pause(); currentAudio=null;}
  speechSynthesis.cancel();
- let clean = text.replace(/[*#_`]/g,'').replace(/ {2,}/g,' ').trim().slice(0,400);
- let u = new SpeechSynthesisUtterance(clean);
- if(clearVoice) u.voice = clearVoice;
- u.lang = 'en-US';
- u.rate = 0.92; // Thoda slow taaki clear lage
- u.pitch = 1.0; // 1.0 = sabse clear, heavy karne se ghatiya hoti hai
- u.volume = 1;
- speechSynthesis.speak(u);
+ let isHindi = /[ऀ-ॿ]/.test(text) || /[a-zA-Z]/.test(text) && (text.toLowerCase().includes('hai') || text.toLowerCase().includes('kya') || text.toLowerCase().includes('nahi'));
+ // Agar Hindi / Hinglish hai toh Google wali saaf awaj
+ if(/[ऀ-ॿ]/.test(text) || text.match(/\b(hai|hu|kya|nahi|accha|bhai|samjha)\b/i)){
+   // Roman Hinglish ko bhi Hindi voice me clear bolne ke liye
+   playGoogleTTS(text);
+ } else {
+   // Pure English ke liye clear US voice
+   let clean = text.replace(/[*#_`]/g,'').slice(0,350);
+   let u = new SpeechSynthesisUtterance(clean);
+   if(engVoice) u.voice = engVoice;
+   u.lang='en-US'; u.rate=0.92; u.pitch=1.0; u.volume=1;
+   speechSynthesis.speak(u);
+ }
+}
+
+function playGoogleTTS(text){
+ // Google Translate TTS - sabse saaf Hindi
+ let clean = text.replace(/[*#_`]/g,'').slice(0,200);
+ let url = 'https://translate.google.com/translate_tts?ie=UTF-8&q=' + encodeURIComponent(clean) + '&tl=hi&client=tw-ob';
+ currentAudio = new Audio(url);
+ currentAudio.play().catch(()=>{
+   // Agar Google block kare toh fallback
+   let u = new SpeechSynthesisUtterance(clean);
+   u.lang='hi-IN'; u.rate=0.9;
+   speechSynthesis.speak(u);
+ });
 }
 
 function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(cls||'');d.innerText=t;chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;}
 
 async function send(){
  let inp=document.getElementById('inp');let q=inp.value.trim();if(!q)return;
- addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='ULTRON THINKING...';
+ addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='ULTRON SUN RAHA HAI...';
  if(!apiKey){askKey();if(!apiKey)return;}
  try{
   let res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
@@ -81,10 +93,10 @@ async function send(){
    body:JSON.stringify({
     model:'openai/gpt-oss-20b',
     messages:[
-      {role:'system',content:'You are ULTRON, loyal to Kiyotaka. Rule: Respond in SAME language as user. If user speaks English, reply in English. If user speaks Hinglish (roman Hindi + English mix), reply in same Roman Hinglish, like "Haan Kiyotaka, ho jayega". NEVER use Devanagari script, only Roman English. Keep tone cool, intelligent, short.'},
+      {role:'system',content:'You are ULTRON, best friend of Kiyotaka. You understand EVERYTHING user says - Hindi, Hinglish, English, slang. Reply in SAME language style as user. If user speaks pure Hindi Devanagari, reply in pure Hindi Devanagari. If Hinglish roman, reply in roman Hinglish. If English, reply English. Be smart, understand context, remember things. Keep reply short 1-2 lines.'},
       {role:'user',content:q}
     ],
-    temperature:0.7
+    temperature:0.8
    })
   });
   let data=await res.json();if(!res.ok)throw new Error(data.error?data.error.message:JSON.stringify(data));
@@ -92,7 +104,7 @@ async function send(){
  }catch(e){addMsg('ERROR: '+e.message,'');}
  finally{eye.classList.remove('think');st.innerText='SYSTEM READY';}
 }
-function voiceIn(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Mic not supported');return;}let r=new SR();r.lang='en-IN';r.start();st.innerText='LISTENING...';r.onresult=(e)=>{document.getElementById('inp').value=e.results[0][0].transcript;send();};r.onend=()=>{st.innerText='SYSTEM READY';};}
+function voiceIn(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Mic not supported');return;}let r=new SR();r.lang='hi-IN';r.start();st.innerText='SUN RAHA HU...';r.onresult=(e)=>{document.getElementById('inp').value=e.results[0][0].transcript;send();};r.onend=()=>{st.innerText='SYSTEM READY';};}
 </script>
 </body>
 </html>
