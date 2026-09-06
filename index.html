@@ -16,7 +16,7 @@ body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direc
 .top button.on{background:#ff0000;color:#000;box-shadow:0 0 15px #ff0000;border-color:#ff0000}
 .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .eye{width:260px;height:260px;border-radius:50%;border:2px solid #ff0000;box-shadow:0 0 70px #ff0000,inset 0 0 70px #ff0000;background:radial-gradient(circle,#ff2a2a 0%,#8a0000 35%,#000 70%);transition:.3s}
-.eye.think{animation:pulse.6s infinite alternate}
+.eye.think{animation:pulse .6s infinite alternate}
 @keyframes pulse{from{box-shadow:0 0 30px #ff0000}to{box-shadow:0 0 140px #ff0000}}
 .status{margin-top:26px;letter-spacing:5px;font-size:11px;color:#ff4444}
 .chat{height:42vh;overflow-y:auto;padding:14px;background:#050505;border-top:1px solid #220000}
@@ -31,7 +31,7 @@ body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direc
 <body>
 <div class="top"><b>ULTRON V6 GOD</b><div><button id="voiceModeBtn" onclick="toggleUnlimited()">VOICE: OFF</button><button onclick="resetKey()">RESET</button></div></div>
 <div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY - COMPOUND MINI LIVE</div></div>
-<div id="chat" class="chat"><div class="msg">ULTRON V6 GOD MODE - groq/compound-mini (Free + Built-in Live Search) online hai Kiyotaka.</div></div>
+<div id="chat" class="chat"><div class="msg">ULTRON V6 GOD MODE - groq/compound-mini online hai Kiyotaka. 500 chats memory active.</div></div>
 <div class="inputbar">
 <input id="inp" placeholder="Hindi ya English me bolo..." onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">></button>
@@ -41,27 +41,40 @@ body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direc
 let apiKey=localStorage.getItem('ultron_groq_key');
 if(!apiKey){askKey();}
 function askKey(){let k=prompt("Apni Groq API Key daal (gsk_...):");if(k){apiKey=k.trim();localStorage.setItem('ultron_groq_key',apiKey);}}
-function resetKey(){localStorage.removeItem('ultron_groq_key');localStorage.removeItem('ultron_memory');apiKey=null;alert('Memory clear ho gayi!');askKey();location.reload();}
+function resetKey(){localStorage.removeItem('ultron_groq_key');localStorage.removeItem('ultron_v6_god_memory');localStorage.removeItem('ultron_memory');apiKey=null;alert('Memory clear ho gayi!');askKey();location.reload();}
 const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),st=document.getElementById('st');
 let unlimitedMode=false, isListening=false;
-let memory=JSON.parse(localStorage.getItem('ultron_memory')||'[]');
+
+// === GOD MEMORY V3 - FIXED (NO 413 ERROR) ===
+let ultronMemory = JSON.parse(localStorage.getItem('ultron_v6_god_memory') || '{"personal":[],"chats":[]}');
+function extractPersonalInfo(text){
+  let t = text.toLowerCase();
+  let keys = ['mera naam','my name','meri age','mai rehta','i live','mera kaam','i work','meri gf','my gf','meri pasand','i like','mujhe pasand','yaad rakh','remember this'];
+  return keys.some(k=>t.includes(k));
+}
+function saveToMemory(q,a){
+  if(extractPersonalInfo(q)){ ultronMemory.personal.push(q.slice(0,200)); if(ultronMemory.personal.length>100) ultronMemory.personal.shift(); }
+  ultronMemory.chats.push({u:q.slice(0,200), a:a.slice(0,200)}); if(ultronMemory.chats.length>500) ultronMemory.chats.shift();
+  localStorage.setItem('ultron_v6_god_memory', JSON.stringify(ultronMemory));
+}
+function getMemoryContext(){
+  let p = ultronMemory.personal.slice(-5).join(' | ').slice(0,300);
+  let c = ultronMemory.chats.slice(-3).map(x=>`U:${x.u.slice(0,50)}`).join('\n').slice(0,300);
+  return `PERSONAL: ${p} | CHATS: ${c}`.slice(0,600);
+}
 
 async function searchDuck(query){
   try{
     let res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`);
     let data = await res.json();
-    let out = [];
-    if(data.AbstractText) out.push(data.AbstractText);
-    if(data.Results && data.Results.length) out.push(...data.Results.slice(0,3).map(r=>r.Text));
-    if(data.RelatedTopics) out.push(...data.RelatedTopics.slice(0,4).map(t=>t.Text||'').filter(Boolean));
-    return out.join('\n').slice(0,3000);
+    let out = data.AbstractText || '';
+    return out.slice(0,400);
   }catch(e){ return ''; }
 }
 async function getLiveKnowledge(q){
-  st.innerText='DUCK + COMPOUND SEARCHING...';
+  // Compound-mini khud live search karta hai, isliye bahut chota backup bhej rahe hai
   let d = await searchDuck(q);
-  if(d) return `[DUCK BACKUP DATA]:\n${d}`;
-  return '';
+  return d ? `[BACKUP]: ${d}` : '';
 }
 
 function toggleUnlimited(){
@@ -75,10 +88,10 @@ function toggleUnlimited(){
 let mainVoice=null;
 function loadVoices(){
  let voices=speechSynthesis.getVoices();
- mainVoice = voices.find(v=>v.name.includes('Microsoft Ravi')) || voices.find(v=>v.name.includes('Google UK English Male')) || voices.find(v=>v.lang==='en-IN') || voices[0];
+ mainVoice = voices.find(v=>v.name.includes('Microsoft Ravi')) || voices.find(v=>v.lang==='en-IN') || voices[0];
 }
-speechSynthesis.onvoiceschanged=loadVoices; loadVoices(); setTimeout(loadVoices,1200);
-function cleanForSpeech(t){return t.replace(/\*\*/g,'').replace(/[*#_`~<>|]/g,'').replace(/[\u{1F600}-\u{1F6FF}]/gu,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();}
+speechSynthesis.onvoiceschanged=loadVoices; loadVoices(); setTimeout(loadVoices,800);
+function cleanForSpeech(t){return t.replace(/\*\*/g,'').replace(/[*#_`~<>|]/g,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();}
 function cleanForDisplay(t){return t.replace(/\*\*/g,'').replace(/##/g,'').trim();}
 function speakLong(text){
  speechSynthesis.cancel();
@@ -91,50 +104,13 @@ function speakLong(text){
    u.lang=/[ऀ-ॿ]/.test(part)?'hi-IN':'en-IN'; u.rate=0.88; u.pitch=0.85;
    u.onstart=()=>{st.innerText='SPEAKING...'; eye.classList.add('think');}
    u.onend=()=>{i++; next();}
+   u.onerror=()=>{i++; next();}
    speechSynthesis.speak(u);
  }
  next();
 }
 function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(cls||'');d.innerText=cleanForDisplay(t);chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;}
-// === ULTRON V6 - PERSONAL GOD MEMORY V3 - UNLIMITED ===
-let ultronMemory = JSON.parse(localStorage.getItem('ultron_v6_god_memory') || '{"personal":[],"facts":[],"chats":[]}');
 
-function extractPersonalInfo(text){
-  let t = text.toLowerCase();
-  let keywords = ['mera naam','my name','meri age','mai rehta','i live','mera kaam','i work','meri gf','my gf','meri pasand','i like','mujhe pasand','yaad rakh','remember this','personal'];
-  return keywords.some(k=>t.includes(k));
-}
-
-function saveToMemory(userMsg, aiMsg){
-  // PERSONAL MEMORY
-  if(extractPersonalInfo(userMsg)){
-    ultronMemory.personal.push(userMsg);
-    if(ultronMemory.personal.length > 100) ultronMemory.personal.shift();
-  }
-  // FACTS
-  ultronMemory.facts.push(userMsg.substring(0,150)); // chota summary
-  if(ultronMemory.facts.length > 100) ultronMemory.facts.shift();
-
-  // CHATS - 500 chats tak yaad rakhega = BAHUT BADI MEMORY
-  ultronMemory.chats.push({u: userMsg, a: aiMsg, t: new Date().toLocaleString()});
-  if(ultronMemory.chats.length > 500) ultronMemory.chats.shift();
-
-  localStorage.setItem('ultron_v6_god_memory', JSON.stringify(ultronMemory));
-  console.log("Memory Saved:", ultronMemory.chats.length + " chats");
-}
-
-function getMemoryContext(){
-  let personal = ultronMemory.personal.slice(-30).join(' | ');
-  let chats = ultronMemory.chats.slice(-15).map(c=>`User said: ${c.u} | You replied: ${c.a}`).join('\n');
-  return `USER PERSONAL SECRETS (NEVER FORGET, NEVER SHARE): ${personal}\n\nRECENT CONVERSATIONS (15):\n${chats}`;
-}
-
-function clearUltronMemory(){
-  if(confirm('Saari memory delete karni hai?')){
-    localStorage.removeItem('ultron_v6_god_memory');
-    location.reload();
-  }
-      }
 async function send(){
  let inp=document.getElementById('inp');let q=inp.value.trim();if(!q)return;
  q=q.replace(/(\b\w+\b)(?:\s+\1\b)+/gi,'$1');
@@ -142,14 +118,16 @@ async function send(){
  if(!apiKey){askKey();if(!apiKey){eye.classList.remove('think');return;}}
  try{
   let liveData = await getLiveKnowledge(q);
+  if(liveData.length>400) liveData=liveData.slice(0,400);
   let memContext=getMemoryContext();
+
   let res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
    method:'POST',
    headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
    body:JSON.stringify({
     model:'groq/compound-mini',
     messages:[
-        {role:'system',content:`You are ULTRON V6 GOD MODE. You have UNLIMITED memory. RULES: Plain text only. MEMORY: ${memContext} LIVE: ${liveData}`},
+     {role:'system',content:`You are ULTRON V6 GOD MODE. Creator: Kiyotaka. Style: Short, powerful, Hindi+English. Memory: ${memContext}. Live: ${liveData}. RULES: No **, No latex, plain text.`},
      {role:'user',content:q}
     ],
     max_tokens:800
@@ -170,8 +148,8 @@ function voiceIn(){
  let finalText=""; isListening=true;
  r.start(); st.innerText='SUN RAHA HU...'; eye.classList.add('think');
  r.onresult=(e)=>{ finalText=e.results[0][0].transcript; finalText=finalText.replace(/(\b\w+\b)(?:\s+\1\b)+/gi,'$1'); document.getElementById('inp').value=finalText; };
- r.onend=()=>{ isListening=false; st.innerText='SYSTEM READY - FIXED'; eye.classList.remove('think'); if(finalText.trim()) send(); else if(unlimitedMode) setTimeout(()=>voiceIn(),600); };
- r.onerror=()=>{ isListening=false; st.innerText='SYSTEM READY - FIXED'; eye.classList.remove('think'); };
+ r.onend=()=>{ isListening=false; st.innerText='SYSTEM READY - COMPOUND MINI LIVE'; eye.classList.remove('think'); if(finalText.trim()) send(); else if(unlimitedMode) setTimeout(()=>voiceIn(),600); };
+ r.onerror=()=>{ isListening=false; st.innerText='SYSTEM READY - COMPOUND MINI LIVE'; eye.classList.remove('think'); if(unlimitedMode) setTimeout(()=>voiceIn(),800); };
 }
 </script>
 </body>
