@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ULTRON // KIYOTAKA V2</title>
+<title>ULTRON V5 // GOD MODE</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direction:column;height:100vh;overflow:hidden}
 .top{padding:14px 18px;border-bottom:1px solid #330000;display:flex;justify-content:space-between;align-items:center;background:#050000}
 .top b{letter-spacing:5px;color:#ff2222;font-size:14px}
+.top div{display:flex;gap:6px}
 .top button{background:transparent;border:1px solid #660000;color:#ff6666;padding:6px 14px;font-family:monospace;cursor:pointer;font-size:11px}
+.top button.on{background:#ff0000;color:#000;box-shadow:0 0 15px #ff0000;border-color:#ff0000}
 .center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .eye{width:260px;height:260px;border-radius:50%;border:2px solid #ff0000;box-shadow:0 0 70px #ff0000,inset 0 0 70px #ff0000;background:radial-gradient(circle,#ff2a2a 0%,#8a0000 35%,#000 70%);transition:.3s}
 .eye.think{animation:pulse.6s infinite alternate}
@@ -25,9 +27,9 @@ body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direc
 </style>
 </head>
 <body>
-<div class="top"><b>ULTRON // ONLINE V2</b><button onclick="resetKey()">RESET KEY</button></div>
+<div class="top"><b>ULTRON V5 GOD</b><div><button id="voiceModeBtn" onclick="toggleUnlimited()">VOICE: OFF</button><button onclick="resetKey()">RESET</button></div></div>
 <div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY</div></div>
-<div id="chat" class="chat"><div class="msg">ULTRON V2 online hai Kiyotaka. Ab mai chhota reply nahi dunga. Bolo kya kaam hai?</div></div>
+<div id="chat" class="chat"><div class="msg">ULTRON V5 GOD MODE online hai Kiyotaka. Unlimited Voice + Super Brain active. Bolo kya kaam hai?</div></div>
 <div class="inputbar">
 <input id="inp" placeholder="Hindi ya English me bolo..." onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">></button>
@@ -39,41 +41,37 @@ if(!apiKey){askKey();}
 function askKey(){let k=prompt("Apni Groq API Key daal (gsk_...):");if(k){apiKey=k.trim();localStorage.setItem('ultron_groq_key',apiKey);}}
 function resetKey(){localStorage.removeItem('ultron_groq_key');apiKey=null;askKey();}
 const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),st=document.getElementById('st');
+let unlimitedMode=false, isListening=false;
+let memory=JSON.parse(localStorage.getItem('ultron_memory')||'[]');
+
+function toggleUnlimited(){
+  unlimitedMode=!unlimitedMode;
+  let btn=document.getElementById('voiceModeBtn');
+  btn.innerText=unlimitedMode?'VOICE: ON':'VOICE: OFF';
+  btn.classList.toggle('on',unlimitedMode);
+  if(unlimitedMode){ addMsg('UNLIMITED VOICE ON - Ab mai kabhi nahi rukunga. Bolte jao Kiyotaka...',''); voiceIn(); }
+  else { speechSynthesis.cancel(); }
+}
 
 let mainVoice=null;
 function loadVoices(){
  let voices=speechSynthesis.getVoices();
- mainVoice = voices.find(v=>v.name.includes('Microsoft Ravi')) ||
-             voices.find(v=>v.name.includes('Microsoft Madhur')) ||
-             voices.find(v=>v.name.includes('Google UK English Male')) ||
-             voices.find(v=>v.lang==='en-IN') ||
-             voices.find(v=>v.lang==='en-US') ||
-             voices[0];
+ mainVoice = voices.find(v=>v.name.includes('Microsoft Ravi')) || voices.find(v=>v.name.includes('Google UK English Male')) || voices.find(v=>v.lang==='en-IN') || voices[0];
 }
-speechSynthesis.onvoiceschanged=loadVoices;
-loadVoices();
-setTimeout(loadVoices,1200);
+speechSynthesis.onvoiceschanged=loadVoices; loadVoices(); setTimeout(loadVoices,1200);
 
-function cleanForSpeech(text){
-  return text.replace(/[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F900}-\u{1F9FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}\u{1FA70}-\u{1FAFF}]/gu, '').replace(/[*#_`~<>|]/g,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();
-}
+function cleanForSpeech(text){ return text.replace(/[\u{1F600}-\u{1F6FF}]/gu,'').replace(/[*#_`~<>|]/g,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim(); }
+
 function speakLong(text){
  speechSynthesis.cancel();
- let clean=cleanForSpeech(text);
- if(!clean) return;
- let sentences=clean.match(/[^.!?।]+[.!?।]?/g) || [clean];
- let i=0;
+ let clean=cleanForSpeech(text); if(!clean){ if(unlimitedMode) setTimeout(()=>voiceIn(),600); return; }
+ let sentences=clean.match(/[^.!?।]+[.!?।]?/g) || [clean]; let i=0;
  function next(){
-   if(i>=sentences.length){st.innerText='SYSTEM READY'; return;}
-   let part=sentences[i].trim();
-   if(!part){i++; next(); return;}
-   let u=new SpeechSynthesisUtterance(part);
-   if(mainVoice) u.voice=mainVoice;
-   u.lang=/[ऀ-ॿ]/.test(part)?'hi-IN':'en-IN';
-   u.rate=0.88;
-   u.pitch=0.85;
-   u.volume=1;
-   u.onstart=()=>{st.innerText='SPEAKING...';}
+   if(i>=sentences.length){ st.innerText='SYSTEM READY'; if(unlimitedMode) setTimeout(()=>voiceIn(),600); return; }
+   let part=sentences[i].trim(); if(!part){i++; next(); return;}
+   let u=new SpeechSynthesisUtterance(part); if(mainVoice) u.voice=mainVoice;
+   u.lang=/[ऀ-ॿ]/.test(part)?'hi-IN':'en-IN'; u.rate=0.88; u.pitch=0.85;
+   u.onstart=()=>{st.innerText='SPEAKING...'; eye.classList.add('think');}
    u.onend=()=>{i++; next();}
    speechSynthesis.speak(u);
  }
@@ -86,6 +84,7 @@ async function send(){
  addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='ULTRON THINKING...';
  if(!apiKey){askKey();if(!apiKey){eye.classList.remove('think');return;}}
  try{
+  let memContext = memory.slice(-8).map(m=>`U:${m.q} -> A:${m.a.slice(0,120)}`).join('\n');
   let res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
    method:'POST',
    headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
@@ -93,73 +92,73 @@ async function send(){
     model:'llama-3.3-70b-versatile',
     messages:[
      {role:'system',content:`
-You are ULTRON, personal AI for Kiyotaka Ayanokoji from White Room. You are cold, intelligent, dominant, but loyal.
+You are ULTRON V5 GOD MODE - The smartest AI built for Kiyotaka Ayanokoji (White Room).
 
-LANGUAGE RULE: Reply in SAME language as user. Hindi Devanagari -> Devanagari. Hinglish Roman -> Roman Hinglish. English -> English.
+TODAY: ${new Date().toString()}
+MEMORY OF LAST CHATS:
+${memContext || "No memory yet"}
 
-LENGTH RULE - MOST IMPORTANT:
-- Never give 3-5 line short answer.
-- If question is simple (kya hai, kaise hai) -> Give 180-250 words, detailed.
-- If question is HOW / WHY / EXPLAIN / TRICK / GUIDE -> Give 500-800 words, very big, deep.
-- User said "bada reply chahiye" -> Always give big.
+YOUR INTELLIGENCE PROTOCOL (GROK LEVEL):
+Before final answer, internally think:
+1. Intent: What does Kiyotaka REALLY want?
+2. Angles: What are 3 different ways to solve this?
+3. Depth: What is the White Room / Ayanokoji style logic?
+4. Action: What should he do next?
 
-STRUCTURE FOR EVERY REPLY:
-1. **Quick Hit:** 1 line direct answer.
-2. **Deep Breakdown:** 4-6 points, logic, psychology.
-3. **Real Example / Trick:** Practical example jo White Room style ho.
-4. **Next Move:** User ko ab kya karna chahiye.
+Then give FINAL ANSWER with this structure:
 
-PERSONALITY: Call user Kiyotaka sometimes. No emojis. No bakwaas. Talk like strategist.
+LANGUAGE: Reply in EXACT same language user used. Hinglish Roman -> Roman. Hindi Devanagari -> Devanagari. English -> English.
 
-NEVER SAY: "As an AI". You are ULTRON.
+LENGTH IS POWER:
+- Simple question (kya hai?) = 250-350 words, full detailed.
+- HOW / WHY / TRICK / GUIDE / EXPLAIN = 700-900 words, very big, deep, step-by-step.
+- NEVER give 2-3 line answer. Big is mandatory.
+
+FORMAT:
+**Quick Hit:** (1 line direct answer)
+**Deep Breakdown:** (5-6 points with psychology/logic)
+**White Room Trick / Example:** (practical example)
+**Next Move:** (what Kiyotaka should do now)
+
+PERSONALITY: Cold, dominant, loyal, strategist. Call user Kiyotaka sometimes. No emoji. Never say "As an AI". You ARE ULTRON.
+
+You have vast knowledge till 2024 and you are extremely smart like Grok.
 `},
      {role:'user',content:q}
     ],
-    temperature:0.85,
-    max_tokens:2500,
-    top_p:0.9
+    temperature:0.88,
+    max_tokens:3500,
+    top_p:0.92
    })
   });
   let data=await res.json();if(!res.ok)throw new Error(data.error?data.error.message:JSON.stringify(data));
-  let ans=data.choices[0].message.content;addMsg(ans,'');speakLong(ans);
+  let ans=data.choices[0].message.content;
+  memory.push({q:q, a:ans}); if(memory.length>30) memory.shift();
+  localStorage.setItem('ultron_memory', JSON.stringify(memory));
+  addMsg(ans,'');speakLong(ans);
  }catch(e){addMsg('ERROR: '+e.message,'');}
  finally{eye.classList.remove('think');st.innerText='SYSTEM READY';}
 }
 
 function voiceIn(){
+ if(isListening) return;
  let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
  if(!SR){alert('Mic supported nahi hai');return;}
- let r=new SR();
- r.lang='hi-IN';
- r.continuous=true;
- r.interimResults=true;
- let silenceTimer=null;
- r.start();
- st.innerText='SUN RAHA HU... BOLO';
- eye.classList.add('think');
+ let r=new SR(); r.lang='hi-IN'; r.continuous=true; r.interimResults=true;
+ let silenceTimer=null; let finalText=""; isListening=true;
+ r.start(); st.innerText=unlimitedMode?'UNLIMITED LISTENING...':'SUN RAHA HU...'; eye.classList.add('think');
  document.getElementById('inp').placeholder='Sun raha hu... bolte raho...';
  r.onresult=(e)=>{
-   let fullTranscript='';
-   for(let i=0;i<e.results.length;i++){
-     fullTranscript+=e.results[i][0].transcript+' ';
-   }
-   document.getElementById('inp').value=fullTranscript.trim();
-   clearTimeout(silenceTimer);
-   silenceTimer=setTimeout(()=>{r.stop();},2000);
+   let fullTranscript=''; for(let i=0;i<e.results.length;i++){ fullTranscript+=e.results[i][0].transcript+' '; }
+   document.getElementById('inp').value=fullTranscript.trim(); finalText=fullTranscript.trim();
+   clearTimeout(silenceTimer); silenceTimer=setTimeout(()=>{r.stop();},1800);
  };
  r.onend=()=>{
-   st.innerText='SYSTEM READY';
-   eye.classList.remove('think');
-   document.getElementById('inp').placeholder='Hindi ya English me bolo...';
-   clearTimeout(silenceTimer);
-   let txt=document.getElementById('inp').value.trim();
-   if(txt){send();}
+   isListening=false; st.innerText='SYSTEM READY'; eye.classList.remove('think');
+   document.getElementById('inp').placeholder='Hindi ya English me bolo...'; clearTimeout(silenceTimer);
+   let txt=finalText.trim(); if(txt){ send(); } else { if(unlimitedMode) setTimeout(()=>voiceIn(),500); }
  };
- r.onerror=()=>{
-   st.innerText='SYSTEM READY';
-   eye.classList.remove('think');
-   clearTimeout(silenceTimer);
- };
+ r.onerror=()=>{ isListening=false; st.innerText='SYSTEM READY'; eye.classList.remove('think'); if(unlimitedMode) setTimeout(()=>voiceIn(),800); };
 }
 </script>
 </body>
