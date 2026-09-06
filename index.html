@@ -117,19 +117,12 @@ async function send(){
  addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='COMPOUND THINKING...';
  if(!apiKey){askKey();if(!apiKey){eye.classList.remove('think');return;}}
  try{
-  let liveData = await getLiveKnowledge(q);
-  if(liveData.length>400) liveData=liveData.slice(0,400);
-  let memContext=getMemoryContext();
-
   let res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
    method:'POST',
    headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
    body:JSON.stringify({
     model:'groq/compound-mini',
-    messages:[
-     {role:'system',content:`You are ULTRON V6 GOD MODE. Creator: Kiyotaka. Style: Short, powerful, Hindi+English. Memory: ${memContext}. Live: ${liveData}. RULES: No **, No latex, plain text.`},
-     {role:'user',content:q}
-    ],
+    messages:[{role:'user',content:q}],
     max_tokens:800
    })
   });
