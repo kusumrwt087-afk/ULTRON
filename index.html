@@ -30,8 +30,8 @@ body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direc
 </head>
 <body>
 <div class="top"><b>ULTRON V6 GOD</b><div><button id="voiceModeBtn" onclick="toggleUnlimited()">VOICE: OFF</button><button onclick="resetKey()">RESET</button></div></div>
-<div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY - LLAMA 70B FIXED</div></div>
-<div id="chat" class="chat"><div class="msg">ULTRON V6 GOD MODE - 413 FIXED - Llama 70B + DuckDuckGo live. Hindi/English both working.</div></div>
+<div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY - GPT-OSS 20B LIVE</div></div>
+<div id="chat" class="chat"><div class="msg">ULTRON V6 GOD MODE - Groq naya model active. Ab koi 413 nahi.</div></div>
 <div class="inputbar">
 <input id="inp" placeholder="Hindi ya English me bolo..." onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">></button>
@@ -45,7 +45,6 @@ function resetKey(){localStorage.removeItem('ultron_groq_key');localStorage.remo
 const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),st=document.getElementById('st');
 let unlimitedMode=false, isListening=false;
 
-// === GOD MEMORY V3 - FIXED (NO 413 ERROR) ===
 let ultronMemory = JSON.parse(localStorage.getItem('ultron_v6_god_memory') || '{"personal":[],"chats":[]}');
 function extractPersonalInfo(text){
   let t = text.toLowerCase();
@@ -58,9 +57,9 @@ function saveToMemory(q,a){
   localStorage.setItem('ultron_v6_god_memory', JSON.stringify(ultronMemory));
 }
 function getMemoryContext(){
-  let p = ultronMemory.personal.slice(-3).join(' | ').slice(0,200);
-  let c = ultronMemory.chats.slice(-2).map(x=>`U:${x.u.slice(0,40)}`).join('\n').slice(0,200);
-  return `PERSONAL: ${p} | CHATS: ${c}`.slice(0,400);
+  let p = ultronMemory.personal.slice(-2).join(' | ').slice(0,150);
+  let c = ultronMemory.chats.slice(-2).map(x=>`U:${x.u.slice(0,30)}`).join('\n').slice(0,150);
+  return `PERSONAL: ${p} | CHATS: ${c}`.slice(0,300);
 }
 
 async function searchDuck(query){
@@ -68,7 +67,7 @@ async function searchDuck(query){
     let res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`);
     let data = await res.json();
     let out = (data.AbstractText||'') + ' ' + (data.Results?data.Results.map(r=>r.Text).join(' '):'');
-    return out.slice(0,500);
+    return out.slice(0,400);
   }catch(e){ return ''; }
 }
 
@@ -93,7 +92,7 @@ function speakLong(text){
  let clean=cleanForSpeech(text); if(!clean){ if(unlimitedMode) setTimeout(()=>voiceIn(),600); return; }
  let sentences=clean.match(/[^.!?।]+[.!?।]?/g) || [clean]; let i=0;
  function next(){
-   if(i>=sentences.length){ st.innerText='SYSTEM READY - LLAMA 70B FIXED'; if(unlimitedMode) setTimeout(()=>voiceIn(),600); return; }
+   if(i>=sentences.length){ st.innerText='SYSTEM READY - GPT-OSS 20B LIVE'; if(unlimitedMode) setTimeout(()=>voiceIn(),600); return; }
    let part=sentences[i].trim(); if(!part){i++; next(); return;}
    let u=new SpeechSynthesisUtterance(part); if(mainVoice) u.voice=mainVoice;
    u.lang=/[ऀ-ॿ]/.test(part)?'hi-IN':'en-IN'; u.rate=0.88; u.pitch=0.85;
@@ -109,10 +108,8 @@ function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(c
 async function send(){
  let inp=document.getElementById('inp');let q=inp.value.trim();if(!q)return;
  q=q.replace(/(\b\w+\b)(?:\s+\1\b)+/gi,'$1');
- // --- 413 FIX: Hindi ko chota karo ---
  if(/[ऀ-ॿ]/.test(q) && q.length > 80) q = q.slice(0,80);
  if(q.length > 250) q = q.slice(0,250);
-
  addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='SEARCHING...';
  if(!apiKey){askKey();if(!apiKey){eye.classList.remove('think');return;}}
  try{
@@ -123,9 +120,9 @@ async function send(){
    method:'POST',
    headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
    body:JSON.stringify({
-    model:'llama-3.3-70b-versatile',
+    model:'openai/gpt-oss-20b',
     messages:[
-     {role:'system',content:`You are ULTRON V6 GOD. You are Kiyotaka's personal AI. Reply in user's language (Hindi/English mix allowed). Be short, powerful, to-the-point.\nMEMORY: ${memory}\nLIVE: ${liveData.slice(0,400)}`},
+     {role:'system',content:`You are ULTRON V6 GOD. You are Kiyotaka's personal AI. Reply in user's language. MEMORY: ${memory} LIVE: ${liveData.slice(0,300)}`},
      {role:'user',content:q}
     ],
     max_tokens:700,
@@ -137,7 +134,7 @@ async function send(){
   saveToMemory(q,ans);
   addMsg(ans,'');speakLong(ans);
  }catch(e){addMsg('ERROR: '+e.message,'');}
- finally{eye.classList.remove('think');st.innerText='SYSTEM READY - LLAMA 70B FIXED';}
+ finally{eye.classList.remove('think');st.innerText='SYSTEM READY - GPT-OSS 20B LIVE';}
 }
 function voiceIn(){
  if(isListening) return;
@@ -147,8 +144,8 @@ function voiceIn(){
  let finalText=""; isListening=true;
  r.start(); st.innerText='SUN RAHA HU...'; eye.classList.add('think');
  r.onresult=(e)=>{ finalText=e.results[0][0].transcript; finalText=finalText.replace(/(\b\w+\b)(?:\s+\1\b)+/gi,'$1'); document.getElementById('inp').value=finalText; };
- r.onend=()=>{ isListening=false; st.innerText='SYSTEM READY - LLAMA 70B FIXED'; eye.classList.remove('think'); if(finalText.trim()) send(); else if(unlimitedMode) setTimeout(()=>voiceIn(),600); };
- r.onerror=()=>{ isListening=false; st.innerText='SYSTEM READY - LLAMA 70B FIXED'; eye.classList.remove('think'); if(unlimitedMode) setTimeout(()=>voiceIn(),800); };
+ r.onend=()=>{ isListening=false; st.innerText='SYSTEM READY - GPT-OSS 20B LIVE'; eye.classList.remove('think'); if(finalText.trim()) send(); else if(unlimitedMode) setTimeout(()=>voiceIn(),600); };
+ r.onerror=()=>{ isListening=false; st.innerText='SYSTEM READY - GPT-OSS 20B LIVE'; eye.classList.remove('think'); if(unlimitedMode) setTimeout(()=>voiceIn(),800); };
 }
 </script>
 </body>
