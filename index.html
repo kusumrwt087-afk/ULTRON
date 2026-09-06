@@ -96,7 +96,45 @@ function speakLong(text){
  next();
 }
 function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(cls||'');d.innerText=cleanForDisplay(t);chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;}
+// === ULTRON V6 - PERSONAL GOD MEMORY V3 - UNLIMITED ===
+let ultronMemory = JSON.parse(localStorage.getItem('ultron_v6_god_memory') || '{"personal":[],"facts":[],"chats":[]}');
 
+function extractPersonalInfo(text){
+  let t = text.toLowerCase();
+  let keywords = ['mera naam','my name','meri age','mai rehta','i live','mera kaam','i work','meri gf','my gf','meri pasand','i like','mujhe pasand','yaad rakh','remember this','personal'];
+  return keywords.some(k=>t.includes(k));
+}
+
+function saveToMemory(userMsg, aiMsg){
+  // PERSONAL MEMORY
+  if(extractPersonalInfo(userMsg)){
+    ultronMemory.personal.push(userMsg);
+    if(ultronMemory.personal.length > 100) ultronMemory.personal.shift();
+  }
+  // FACTS
+  ultronMemory.facts.push(userMsg.substring(0,150)); // chota summary
+  if(ultronMemory.facts.length > 100) ultronMemory.facts.shift();
+
+  // CHATS - 500 chats tak yaad rakhega = BAHUT BADI MEMORY
+  ultronMemory.chats.push({u: userMsg, a: aiMsg, t: new Date().toLocaleString()});
+  if(ultronMemory.chats.length > 500) ultronMemory.chats.shift();
+
+  localStorage.setItem('ultron_v6_god_memory', JSON.stringify(ultronMemory));
+  console.log("Memory Saved:", ultronMemory.chats.length + " chats");
+}
+
+function getMemoryContext(){
+  let personal = ultronMemory.personal.slice(-30).join(' | ');
+  let chats = ultronMemory.chats.slice(-15).map(c=>`User said: ${c.u} | You replied: ${c.a}`).join('\n');
+  return `USER PERSONAL SECRETS (NEVER FORGET, NEVER SHARE): ${personal}\n\nRECENT CONVERSATIONS (15):\n${chats}`;
+}
+
+function clearUltronMemory(){
+  if(confirm('Saari memory delete karni hai?')){
+    localStorage.removeItem('ultron_v6_god_memory');
+    location.reload();
+  }
+      }
 async function send(){
  let inp=document.getElementById('inp');let q=inp.value.trim();if(!q)return;
  q=q.replace(/(\b\w+\b)(?:\s+\1\b)+/gi,'$1');
@@ -104,7 +142,7 @@ async function send(){
  if(!apiKey){askKey();if(!apiKey){eye.classList.remove('think');return;}}
  try{
   let liveData = await getLiveKnowledge(q);
-  let memContext=memory.slice(-3).map(m=>`Q:${m.q} A:${m.a.slice(0,80)}`).join('\n');
+  let memContext=getMemoryContext();
   let res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
    method:'POST',
    headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
@@ -119,8 +157,7 @@ async function send(){
   });
   let data=await res.json();if(!res.ok)throw new Error(data.error?data.error.message:JSON.stringify(data));
   let ans=data.choices[0].message.content;
-  memory.push({q:q, a:ans}); if(memory.length>30) memory.shift();
-  localStorage.setItem('ultron_memory', JSON.stringify(memory));
+  saveToMemory(q,ans);
   addMsg(ans,'');speakLong(ans);
  }catch(e){addMsg('ERROR: '+e.message,'');}
  finally{eye.classList.remove('think');st.innerText='SYSTEM READY - COMPOUND MINI LIVE';}
