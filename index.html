@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon.png">
 <title>ULTRON V6 // GOD MODE</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -39,7 +41,7 @@ body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direc
 let apiKey=localStorage.getItem('ultron_groq_key');
 if(!apiKey){askKey();}
 function askKey(){let k=prompt("Apni Groq API Key daal (gsk_...):");if(k){apiKey=k.trim();localStorage.setItem('ultron_groq_key',apiKey);}}
-function resetKey(){localStorage.removeItem('ultron_groq_key');localStorage.removeItem('ultron_memory');apiKey=null;askKey();}
+function resetKey(){localStorage.removeItem('ultron_groq_key');localStorage.removeItem('ultron_memory');apiKey=null;alert('Memory clear ho gayi!');askKey();location.reload();}
 const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),st=document.getElementById('st');
 let unlimitedMode=false, isListening=false;
 let memory=JSON.parse(localStorage.getItem('ultron_memory')||'[]');
@@ -76,7 +78,8 @@ function loadVoices(){
  mainVoice = voices.find(v=>v.name.includes('Microsoft Ravi')) || voices.find(v=>v.name.includes('Google UK English Male')) || voices.find(v=>v.lang==='en-IN') || voices[0];
 }
 speechSynthesis.onvoiceschanged=loadVoices; loadVoices(); setTimeout(loadVoices,1200);
-function cleanForSpeech(text){ return text.replace(/[\u{1F600}-\u{1F6FF}]/gu,'').replace(/[*#_`~<>|]/g,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim(); }
+function cleanForSpeech(t){return t.replace(/\*\*/g,'').replace(/[*#_`~<>|]/g,'').replace(/[\u{1F600}-\u{1F6FF}]/gu,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();}
+function cleanForDisplay(t){return t.replace(/\*\*/g,'').replace(/##/g,'').trim();}
 function speakLong(text){
  speechSynthesis.cancel();
  let clean=cleanForSpeech(text); if(!clean){ if(unlimitedMode) setTimeout(()=>voiceIn(),600); return; }
@@ -92,15 +95,16 @@ function speakLong(text){
  }
  next();
 }
-function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(cls||'');d.innerText=t;chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;}
+function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(cls||'');d.innerText=cleanForDisplay(t);chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;}
 
 async function send(){
  let inp=document.getElementById('inp');let q=inp.value.trim();if(!q)return;
+ q=q.replace(/(\b\w+\b)(?:\s+\1\b)+/gi,'$1');
  addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='COMPOUND THINKING...';
  if(!apiKey){askKey();if(!apiKey){eye.classList.remove('think');return;}}
  try{
   let liveData = await getLiveKnowledge(q);
-  let memContext = memory.slice(-8).map(m=>`U:${m.q} -> A:${m.a.slice(0,120)}`).join('\n');
+  let memContext=memory.slice(-3).map(m=>`Q:${m.q} A:${m.a.slice(0,80)}`).join('\n');
   let res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
    method:'POST',
    headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
@@ -109,7 +113,8 @@ async function send(){
     messages:[
      {role:'system',content:`You are ULTRON V6 GOD MODE. You HAVE built-in web search tool - you MUST use it for any 2025-2026 question like IPL 2026, news, score, price. 1. NEVER use LaTeX, NEVER use \\frac. Write math as plain text: sin = opposite/hypotenuse. 2. For IPL 2026: Winner is Royal Challengers Bengaluru (RCB) beat Gujarat Titans by 5 wickets on 31 May 2026 Final, Kohli 75* not out. 3. Reply same language as user. MEMORY: ${memContext} EXTRA LIVE: ${liveData}`},
      {role:'user',content:q}
-    ]
+    ],
+    max_tokens:800
    })
   });
   let data=await res.json();if(!res.ok)throw new Error(data.error?data.error.message:JSON.stringify(data));
@@ -123,26 +128,13 @@ async function send(){
 function voiceIn(){
  if(isListening) return;
  let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){alert('Mic supported nahi hai');return;}
- let r=new SR(); r.lang='hi-IN'; r.continuous=true; r.interimResults=true;
- let silenceTimer=null; let finalText=""; isListening=true;
- r.start(); st.innerText=unlimitedMode?'UNLIMITED LISTENING...':'SUN RAHA HU...'; eye.classList.add('think');
- document.getElementById('inp').placeholder='Sun raha hu...';
- r.onresult=(e)=>{
-   let interim='';
-   for(let i=e.resultIndex;i<e.results.length;i++){
-     if(e.results[i].isFinal){ finalText += e.results[i][0].transcript+' '; }
-     else { interim += e.results[i][0].transcript; }
-   }
-   document.getElementById('inp').value=(finalText + interim).trim();
-   clearTimeout(silenceTimer); silenceTimer=setTimeout(()=>{r.stop();},1500);
- };
- r.onend=()=>{
-   isListening=false; st.innerText='SYSTEM READY - COMPOUND MINI LIVE'; eye.classList.remove('think');
-   document.getElementById('inp').placeholder='Hindi ya English me bolo...'; clearTimeout(silenceTimer);
-   let txt=finalText.trim(); if(txt){ send(); } else { if(unlimitedMode) setTimeout(()=>voiceIn(),500); }
- };
- r.onerror=()=>{ isListening=false; st.innerText='SYSTEM READY - COMPOUND MINI LIVE'; eye.classList.remove('think'); if(unlimitedMode) setTimeout(()=>voiceIn(),800); };
+ if(!SR){alert('Mic not supported');return;}
+ let r=new SR(); r.lang='hi-IN'; r.continuous=false; r.interimResults=false; r.maxAlternatives=1;
+ let finalText=""; isListening=true;
+ r.start(); st.innerText='SUN RAHA HU...'; eye.classList.add('think');
+ r.onresult=(e)=>{ finalText=e.results[0][0].transcript; finalText=finalText.replace(/(\b\w+\b)(?:\s+\1\b)+/gi,'$1'); document.getElementById('inp').value=finalText; };
+ r.onend=()=>{ isListening=false; st.innerText='SYSTEM READY - FIXED'; eye.classList.remove('think'); if(finalText.trim()) send(); else if(unlimitedMode) setTimeout(()=>voiceIn(),600); };
+ r.onerror=()=>{ isListening=false; st.innerText='SYSTEM READY - FIXED'; eye.classList.remove('think'); };
 }
 </script>
 </body>
