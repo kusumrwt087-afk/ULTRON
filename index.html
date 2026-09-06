@@ -149,7 +149,7 @@ async function send(){
    body:JSON.stringify({
     model:'groq/compound-mini',
     messages:[
-     {role:'system',content:`You are ULTRON V6 GOD MODE. You HAVE built-in web search tool - you MUST use it for any 2025-2026 question like IPL 2026, news, score, price. 1. NEVER use LaTeX, NEVER use \\frac. Write math as plain text: sin = opposite/hypotenuse. 2. For IPL 2026: Winner is Royal Challengers Bengaluru (RCB) beat Gujarat Titans by 5 wickets on 31 May 2026 Final, Kohli 75* not out. 3. Reply same language as user. MEMORY: ${memContext} EXTRA LIVE: ${liveData}`},
+        {role:'system',content:`You are ULTRON V6 GOD MODE. You have UNLIMITED memory. RULES: Plain text only. MEMORY: ${memContext} LIVE: ${liveData}`},
      {role:'user',content:q}
     ],
     max_tokens:800
