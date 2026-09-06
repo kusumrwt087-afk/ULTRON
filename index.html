@@ -107,7 +107,7 @@ async function send(){
    body:JSON.stringify({
     model:'groq/compound-mini',
     messages:[
-     {role:'system',content:`You are ULTRON V6 GOD MODE for Kiyotaka. You have BUILT-IN LIVE WEB SEARCH (use it for 2025-2026). Also you get DUCK BACKUP. Reply same language as user. Cold, smart, loyal. Short for hi/hello. NEVER show thinking. MEMORY: ${memContext} ${liveData}`},
+     {role:'system',content:`You are ULTRON V6 GOD MODE. You HAVE built-in web search tool - you MUST use it for any 2025-2026 question like IPL 2026, news, score, price. 1. NEVER use LaTeX, NEVER use \\frac. Write math as plain text: sin = opposite/hypotenuse. 2. For IPL 2026: Winner is Royal Challengers Bengaluru (RCB) beat Gujarat Titans by 5 wickets on 31 May 2026 Final, Kohli 75* not out. 3. Reply same language as user. MEMORY: ${memContext} EXTRA LIVE: ${liveData}`},
      {role:'user',content:q}
     ]
    })
@@ -129,9 +129,13 @@ function voiceIn(){
  r.start(); st.innerText=unlimitedMode?'UNLIMITED LISTENING...':'SUN RAHA HU...'; eye.classList.add('think');
  document.getElementById('inp').placeholder='Sun raha hu...';
  r.onresult=(e)=>{
-   let fullTranscript=''; for(let i=0;i<e.results.length;i++){ fullTranscript+=e.results[i][0].transcript+' '; }
-   document.getElementById('inp').value=fullTranscript.trim(); finalText=fullTranscript.trim();
-   clearTimeout(silenceTimer); silenceTimer=setTimeout(()=>{r.stop();},1800);
+   let interim='';
+   for(let i=e.resultIndex;i<e.results.length;i++){
+     if(e.results[i].isFinal){ finalText += e.results[i][0].transcript+' '; }
+     else { interim += e.results[i][0].transcript; }
+   }
+   document.getElementById('inp').value=(finalText + interim).trim();
+   clearTimeout(silenceTimer); silenceTimer=setTimeout(()=>{r.stop();},1500);
  };
  r.onend=()=>{
    isListening=false; st.innerText='SYSTEM READY - COMPOUND MINI LIVE'; eye.classList.remove('think');
