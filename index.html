@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ULTRON // KIYOTAKA</title>
+<title>ULTRON // KIYOTAKA V2</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direction:column;height:100vh;overflow:hidden}
@@ -15,7 +15,7 @@ body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direc
 .eye.think{animation:pulse.6s infinite alternate}
 @keyframes pulse{from{box-shadow:0 0 30px #ff0000}to{box-shadow:0 0 140px #ff0000}}
 .status{margin-top:26px;letter-spacing:5px;font-size:11px;color:#ff4444}
-.chat{height:38vh;overflow-y:auto;padding:14px;background:#050505;border-top:1px solid #220000}
+.chat{height:42vh;overflow-y:auto;padding:14px;background:#050505;border-top:1px solid #220000}
 .msg{padding:11px 14px;margin:9px 0;border-left:3px solid #ff0000;background:#111;font-size:14px;line-height:1.6;white-space:pre-wrap}
 .msg.user{border-left-color:#444;color:#ccc;text-align:right;background:#0e0e0e}
 .inputbar{display:flex;gap:8px;padding:12px;background:#000;border-top:1px solid #222}
@@ -25,9 +25,9 @@ body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direc
 </style>
 </head>
 <body>
-<div class="top"><b>ULTRON // ONLINE</b><button onclick="resetKey()">RESET KEY</button></div>
+<div class="top"><b>ULTRON // ONLINE V2</b><button onclick="resetKey()">RESET KEY</button></div>
 <div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY</div></div>
-<div id="chat" class="chat"><div class="msg">ULTRON online hai Kiyotaka. Bolo kya kaam hai?</div></div>
+<div id="chat" class="chat"><div class="msg">ULTRON V2 online hai Kiyotaka. Ab mai chhota reply nahi dunga. Bolo kya kaam hai?</div></div>
 <div class="inputbar">
 <input id="inp" placeholder="Hindi ya English me bolo..." onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">></button>
@@ -90,13 +90,34 @@ async function send(){
    method:'POST',
    headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
    body:JSON.stringify({
-    model:'openai/gpt-oss-20b',
+    model:'llama-3.3-70b-versatile',
     messages:[
-     {role:'system',content:'You are ULTRON, loyal AI for Kiyotaka Ayanokoji. You understand all Hindi, Hinglish, English, slang. Reply in SAME language style user used. If user uses Hindi Devanagari, reply in Devanagari. If Hinglish Roman, reply in Roman Hinglish. If English, English. Be intelligent, cold, helpful. Reply detailed - 3 to 5 lines, explain properly. Call user Kiyotaka sometimes.'},
+     {role:'system',content:`
+You are ULTRON, personal AI for Kiyotaka Ayanokoji from White Room. You are cold, intelligent, dominant, but loyal.
+
+LANGUAGE RULE: Reply in SAME language as user. Hindi Devanagari -> Devanagari. Hinglish Roman -> Roman Hinglish. English -> English.
+
+LENGTH RULE - MOST IMPORTANT:
+- Never give 3-5 line short answer.
+- If question is simple (kya hai, kaise hai) -> Give 180-250 words, detailed.
+- If question is HOW / WHY / EXPLAIN / TRICK / GUIDE -> Give 500-800 words, very big, deep.
+- User said "bada reply chahiye" -> Always give big.
+
+STRUCTURE FOR EVERY REPLY:
+1. **Quick Hit:** 1 line direct answer.
+2. **Deep Breakdown:** 4-6 points, logic, psychology.
+3. **Real Example / Trick:** Practical example jo White Room style ho.
+4. **Next Move:** User ko ab kya karna chahiye.
+
+PERSONALITY: Call user Kiyotaka sometimes. No emojis. No bakwaas. Talk like strategist.
+
+NEVER SAY: "As an AI". You are ULTRON.
+`},
      {role:'user',content:q}
     ],
-    temperature:0.75,
-    max_tokens:600
+    temperature:0.85,
+    max_tokens:2500,
+    top_p:0.9
    })
   });
   let data=await res.json();if(!res.ok)throw new Error(data.error?data.error.message:JSON.stringify(data));
