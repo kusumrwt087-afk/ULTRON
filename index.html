@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ULTRON V5 // GOD MODE</title>
+<title>ULTRON V6 // GOD MODE</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direction:column;height:100vh;overflow:hidden}
@@ -27,9 +27,9 @@ body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direc
 </style>
 </head>
 <body>
-<div class="top"><b>ULTRON V5 GOD</b><div><button id="voiceModeBtn" onclick="toggleUnlimited()">VOICE: OFF</button><button onclick="resetKey()">RESET</button></div></div>
-<div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY</div></div>
-<div id="chat" class="chat"><div class="msg">ULTRON V5 GOD MODE online hai Kiyotaka. Unlimited Voice + Super Brain active. Bolo kya kaam hai?</div></div>
+<div class="top"><b>ULTRON V6 GOD</b><div><button id="voiceModeBtn" onclick="toggleUnlimited()">VOICE: OFF</button><button onclick="resetKey()">RESET</button></div></div>
+<div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY - DUCK LIVE</div></div>
+<div id="chat" class="chat"><div class="msg">ULTRON V6 GOD MODE online hai Kiyotaka. DuckDuckGo Live (Unlimited Free) active hai.</div></div>
 <div class="inputbar">
 <input id="inp" placeholder="Hindi ya English me bolo..." onkeydown="if(event.key==='Enter')send()">
 <button onclick="send()">></button>
@@ -44,30 +44,46 @@ const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),
 let unlimitedMode=false, isListening=false;
 let memory=JSON.parse(localStorage.getItem('ultron_memory')||'[]');
 
+async function searchDuck(query){
+  try{
+    let res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`);
+    let data = await res.json();
+    let out = [];
+    if(data.AbstractText) out.push(data.AbstractText);
+    if(data.Results && data.Results.length) out.push(...data.Results.slice(0,3).map(r=>r.Text));
+    if(data.RelatedTopics) out.push(...data.RelatedTopics.slice(0,4).map(t=>t.Text||'').filter(Boolean));
+    let text = out.join('\n').slice(0,3000);
+    return text || `DuckDuckGo says: Related to ${query}`;
+  }catch(e){ return ''; }
+}
+async function getLiveKnowledge(q){
+  st.innerText='DUCK SEARCHING...';
+  let d = await searchDuck(q);
+  if(d) return `[LIVE WEB DATA 2025-2026 via DuckDuckGo]:\n${d}\nUse this for current info.`;
+  return '';
+}
+
 function toggleUnlimited(){
   unlimitedMode=!unlimitedMode;
   let btn=document.getElementById('voiceModeBtn');
   btn.innerText=unlimitedMode?'VOICE: ON':'VOICE: OFF';
   btn.classList.toggle('on',unlimitedMode);
-  if(unlimitedMode){ addMsg('UNLIMITED VOICE ON - Ab mai kabhi nahi rukunga. Bolte jao Kiyotaka...',''); voiceIn(); }
+  if(unlimitedMode){ addMsg('UNLIMITED VOICE ON',''); voiceIn(); }
   else { speechSynthesis.cancel(); }
 }
-
 let mainVoice=null;
 function loadVoices(){
  let voices=speechSynthesis.getVoices();
  mainVoice = voices.find(v=>v.name.includes('Microsoft Ravi')) || voices.find(v=>v.name.includes('Google UK English Male')) || voices.find(v=>v.lang==='en-IN') || voices[0];
 }
 speechSynthesis.onvoiceschanged=loadVoices; loadVoices(); setTimeout(loadVoices,1200);
-
 function cleanForSpeech(text){ return text.replace(/[\u{1F600}-\u{1F6FF}]/gu,'').replace(/[*#_`~<>|]/g,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim(); }
-
 function speakLong(text){
  speechSynthesis.cancel();
  let clean=cleanForSpeech(text); if(!clean){ if(unlimitedMode) setTimeout(()=>voiceIn(),600); return; }
  let sentences=clean.match(/[^.!?।]+[.!?।]?/g) || [clean]; let i=0;
  function next(){
-   if(i>=sentences.length){ st.innerText='SYSTEM READY'; if(unlimitedMode) setTimeout(()=>voiceIn(),600); return; }
+   if(i>=sentences.length){ st.innerText='SYSTEM READY - DUCK LIVE'; if(unlimitedMode) setTimeout(()=>voiceIn(),600); return; }
    let part=sentences[i].trim(); if(!part){i++; next(); return;}
    let u=new SpeechSynthesisUtterance(part); if(mainVoice) u.voice=mainVoice;
    u.lang=/[ऀ-ॿ]/.test(part)?'hi-IN':'en-IN'; u.rate=0.88; u.pitch=0.85;
@@ -84,6 +100,7 @@ async function send(){
  addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='ULTRON THINKING...';
  if(!apiKey){askKey();if(!apiKey){eye.classList.remove('think');return;}}
  try{
+  let liveData = await getLiveKnowledge(q);
   let memContext = memory.slice(-8).map(m=>`U:${m.q} -> A:${m.a.slice(0,120)}`).join('\n');
   let res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
    method:'POST',
@@ -92,17 +109,11 @@ async function send(){
     model:'openai/gpt-oss-20b',
     messages:[
      {role:'system',content:`
-You are ULTRON V6 for Kiyotaka.
-
-RULES:
-- Reply in same language as user.
-- If user says hi/hello/kya haal/abe hindi me de -> 1-2 line short ONLY.
-- Long answer ONLY if user says explain/detail/kaise/why/guide/trick/math/code.
-- NEVER show thinking.
-- For math write simple like cot A = 4/3, no LaTeX \\( \\) or \\frac.
-- Cold, smart, loyal. Never say As an AI.
-
-You have vast knowledge till 2024 and you are extremely smart like Grok.
+You are ULTRON V6 for Kiyotaka. You have knowledge till 2024 but also get LIVE WEB DATA.
+Use LIVE WEB DATA for any 2025-2026 question, news, price, score, movie.
+RULES: Reply same language as user. Short reply for hi/hello. Long only for explain/detail/kaise/why/guide/trick/math/code. NEVER show thinking. For math write simple like cot A = 4/3, no LaTeX. Cold, smart, loyal.
+MEMORY: ${memContext}
+${liveData}
 `},
      {role:'user',content:q}
     ],
@@ -117,9 +128,8 @@ You have vast knowledge till 2024 and you are extremely smart like Grok.
   localStorage.setItem('ultron_memory', JSON.stringify(memory));
   addMsg(ans,'');speakLong(ans);
  }catch(e){addMsg('ERROR: '+e.message,'');}
- finally{eye.classList.remove('think');st.innerText='SYSTEM READY';}
+ finally{eye.classList.remove('think');st.innerText='SYSTEM READY - DUCK LIVE';}
 }
-
 function voiceIn(){
  if(isListening) return;
  let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
@@ -127,18 +137,18 @@ function voiceIn(){
  let r=new SR(); r.lang='hi-IN'; r.continuous=true; r.interimResults=true;
  let silenceTimer=null; let finalText=""; isListening=true;
  r.start(); st.innerText=unlimitedMode?'UNLIMITED LISTENING...':'SUN RAHA HU...'; eye.classList.add('think');
- document.getElementById('inp').placeholder='Sun raha hu... bolte raho...';
+ document.getElementById('inp').placeholder='Sun raha hu...';
  r.onresult=(e)=>{
    let fullTranscript=''; for(let i=0;i<e.results.length;i++){ fullTranscript+=e.results[i][0].transcript+' '; }
    document.getElementById('inp').value=fullTranscript.trim(); finalText=fullTranscript.trim();
    clearTimeout(silenceTimer); silenceTimer=setTimeout(()=>{r.stop();},1800);
  };
  r.onend=()=>{
-   isListening=false; st.innerText='SYSTEM READY'; eye.classList.remove('think');
+   isListening=false; st.innerText='SYSTEM READY - DUCK LIVE'; eye.classList.remove('think');
    document.getElementById('inp').placeholder='Hindi ya English me bolo...'; clearTimeout(silenceTimer);
    let txt=finalText.trim(); if(txt){ send(); } else { if(unlimitedMode) setTimeout(()=>voiceIn(),500); }
  };
- r.onerror=()=>{ isListening=false; st.innerText='SYSTEM READY'; eye.classList.remove('think'); if(unlimitedMode) setTimeout(()=>voiceIn(),800); };
+ r.onerror=()=>{ isListening=false; st.innerText='SYSTEM READY - DUCK LIVE'; eye.classList.remove('think'); if(unlimitedMode) setTimeout(()=>voiceIn(),800); };
 }
 </script>
 </body>
