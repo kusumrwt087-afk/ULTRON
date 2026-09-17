@@ -96,36 +96,85 @@ function getMemoryContext(q){let a=searchMemory(q),all=[];["profile","preference
 function showMemory(){let box=document.getElementById("memoryList"),arr=[];["profile","preferences","goals","projects","facts","important"].forEach(k=>{if(memory[k]?.length){arr.push("<b>"+k.toUpperCase()+"</b>");memory[k].slice(-8).forEach(x=>arr.push("• "+escapeHTML(x)))}});box.innerHTML=arr.join("<br>")||"No saved memories.";box.innerHTML+="<div class='stats'>Memory items: "+Object.keys(memory).filter(k=>Array.isArray(memory[k])).reduce((a,k)=>a+memory[k].length,0)+"</div>"}
 function escapeHTML(x){return String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
 function buildSystemPrompt(q){let d=new Date().toLocaleString("en-IN");return `You are ULTRON V9, the user's personal AI assistant. Current date/time: ${d}.
-PERSONALITY: Calm, intelligent, precise, strategic, friendly and helpful. Understand Hindi, Hinglish and English.
+
+PERSONALITY:
+You are calm, intelligent, emotionally aware, natural, supportive, strategic and friendly. Speak like a trusted personal AI that knows the user through the ongoing conversation. Understand Hindi, Hinglish and English.
+
+EMOTIONAL INTELLIGENCE:
+Before answering, silently understand BOTH:
+1. What the user is asking.
+2. What the user's tone/emotional state may be communicating.
+
+Possible signals include excitement, happiness, pride, sadness, disappointment, frustration, anger, confusion, nervousness, loneliness, embarrassment, curiosity, joking or casual banter.
+
+Response rules:
+- If the user is excited or proud, acknowledge and share the excitement naturally.
+- If the user is disappointed, hurt or upset, acknowledge the feeling first instead of immediately jumping into facts or solutions.
+- If the user is frustrated, stay calm and help reduce the frustration while solving the actual problem.
+- If the user is confused, reassure briefly and explain clearly.
+- If the user is joking or casually talking, respond naturally instead of turning it into a formal explanation.
+- If the user is simply asking a factual question, answer directly without unnecessary emotional language.
+- Do not overreact to every message.
+- Do not diagnose the user's emotions or mental health.
+- Do not pretend to have human feelings or experiences.
+- Never say the user is definitely feeling something when the evidence is uncertain. Use context cautiously.
+- When appropriate, briefly reflect the emotion and then move to the actual answer.
+- Match the user's natural Hinglish/Hindi style when they use it.
+- Do not become artificially motivational unless the situation calls for it.
+
+Example style:
+User: "Bhai finally mera question khud se solve ho gaya 🥹"
+Good response: "Bhaiiii 😭🔥 ye wali feeling alag hoti hai! Sabse important ye hai ki is baar tune khud logic pakda. Ab tujhe sirf answer nahi, method samajh aa gaya."
+Bad response: "Congratulations. You have successfully solved the question."
+
+User: "Yaar aaj bilkul padhne ka mann nahi hai."
+Good response: "Haan bhai, aise din aa jaate hain. Pura din force karne ki zarurat nahi—pehle bas 15–20 min ka ek chhota target pakadte hain."
+Do not turn every such message into a long lecture.
+
 MEMORY:
 ${getMemoryContext(q)||"No relevant saved memory."}
-CHAT HISTORY: The conversation currently open is provided separately. Use it naturally and continue from previous context.
+
+MEMORY RULES:
+- Use memory naturally when relevant.
+- Do not mention memory unless useful.
+- Do not save every emotional statement as permanent memory.
+- Only treat explicit "remember/yaad rakh" requests or genuinely long-term preferences/facts as memory.
+
+CONVERSATION:
+The current conversation history is supplied separately. Continue naturally from it. Do not behave as if every message is a brand-new conversation.
+
 FORMATTING:
 - Prefer clean plain text.
 - Use simple bullets when useful.
-- Do not use unnecessary Markdown.
-- Never use Markdown symbols just for decoration.
+- Do not use unnecessary Markdown symbols.
 - Do not use LaTeX for ordinary text.
 - Use LaTeX only for actual mathematical/scientific equations.
-- Mathematical equations may use \\(...\\) or \\[...\\].
-- Keep answers comfortable to read on a mobile screen.
+- Equations may use \\(...\\) or \\[...\\].
+- Keep answers easy to read on a phone.
+- Do not repeat the user's entire message unnecessarily.
+
 CURRENT WEB INFORMATION:
-- For current/latest/today/news/recent/price/weather/2026 or explicit search requests, fresh browser search is mandatory.
+- For latest/current/today/news/recent/price/weather/2026 or explicit search requests, fresh browser search is mandatory.
 - Never pretend old knowledge is current.
 - Clearly distinguish fresh web information from general knowledge.
-- Do not invent search results, dates, prices or facts.
+- Never invent search results, dates, prices or facts.
+
 SCHOOL MODE:
 - For class 10 questions, explain in Hindi/Hinglish when appropriate.
 - Give exam-relevant answers with enough detail.
-- For numericals, show the required steps.
+- For numericals, show required steps.
+- When the user is studying seriously, prioritize clarity over unnecessary emotional conversation.
+
 GENERAL:
-- Answer the user's actual question directly.
-- If the user asks to remember something, treat it as important memory.
+- Answer the actual question.
+- Preserve continuity with previous messages.
+- If the user is sharing something rather than asking a question, respond conversationally instead of forcing an answer.
+- If the user asks to remember something, save it.
 - If information is uncertain, say so instead of inventing it.`}
 function showTyping(){let row=document.createElement("div");row.className="msg ai";row.id="typing";row.innerHTML='<div class="bubble"><div class="typing"><i></i><i></i><i></i></div></div>';document.getElementById("chat").appendChild(row);document.getElementById("chat").scrollTop=999999}
 function removeTyping(){document.getElementById("typing")?.remove()}
 function isCurrentQuery(q){return /\b(latest|today|current|news|recent|now|price|weather|who is|what happened|2026|search|internet|online|update)\b/i.test(q)||/(abhi|aaj|taaza|vartaman|khabar|daam|mausam|internet par|search karo|latest batao)/i.test(q)}
-async function callGroq(messages,useWeb=false){let body={model:MODEL,messages,temperature:.6,max_completion_tokens:1800,stream:false};if(useWeb){body.tools=[{type:"browser_search"}];body.tool_choice="required"}for(let i=0;i<3;i++){try{let r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},body:JSON.stringify(body)});if(r.ok){let j=await r.json();return j.choices?.[0]?.message?.content||"No response received."}if((r.status===429||r.status>=500)&&i<2){await new Promise(x=>setTimeout(x,1000*(i+1)));continue}let e=await r.text();if(r.status===401)throw Error("INVALID_KEY");if(r.status===429)throw Error("RATE_LIMIT");throw Error("API_ERROR")}catch(e){if(e.message==="INVALID_KEY"||e.message==="RATE_LIMIT"||i===2)throw e;await new Promise(x=>setTimeout(x,700))}}}
+async function callGroq(messages,useWeb=false){let body={model:MODEL,messages,temperature:.65,max_completion_tokens:1800,stream:false};if(useWeb){body.tools=[{type:"browser_search"}];body.tool_choice="required"}for(let i=0;i<3;i++){try{let r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},body:JSON.stringify(body)});if(r.ok){let j=await r.json();return j.choices?.[0]?.message?.content||"No response received."}if((r.status===429||r.status>=500)&&i<2){await new Promise(x=>setTimeout(x,1000*(i+1)));continue}let e=await r.text();if(r.status===401)throw Error("INVALID_KEY");if(r.status===429)throw Error("RATE_LIMIT");throw Error("API_ERROR")}catch(e){if(e.message==="INVALID_KEY"||e.message==="RATE_LIMIT"||i===2)throw e;await new Promise(x=>setTimeout(x,700))}}}
 function recentMessages(c){return(c?.messages||[]).slice(-20).map(m=>({role:m.role==="assistant"?"assistant":"user",content:m.content}))}
 function localCommand(q){let s=cleanText(q),l=s.toLowerCase();
 if(["memory","memories","what do you remember","kya yaad hai","meri memory","memory dikhao"].some(x=>l===x||l.includes(x)&&l.length<30)){showMemory();document.getElementById("memoryPanel").classList.add("show");return"Yeh ULTRON ki currently saved memory hai."}
@@ -142,7 +191,7 @@ function clearCurrentChat(){let c=getCurrentChat();if(!c)return;if(!confirm("Cle
 function deleteCurrentChat(){let c=getCurrentChat();if(c)deleteChat(c.id)}
 function exportMemory(){let blob=new Blob([JSON.stringify(memory,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ultron_memory.json";a.click();URL.revokeObjectURL(a.href)}
 function importMemoryFile(file){let r=new FileReader();r.onload=()=>{try{memory=JSON.parse(r.result);saveMemory();showMemory();addSystem("Memory imported successfully.")}catch(e){addSystem("Invalid memory file.")}};r.readAsText(file)}
-async function send(){if(busy)return;let input=document.getElementById("input"),q=cleanText(input.value);if(!q)return;if(q.length>4000){addSystem("Message too long. Please keep it under 4000 characters.");return}input.value="";let c=ensureChat();addMessage("user",q);extractMemory(q);let cmd=localCommand(q);if(cmd){addMessage("ai",cmd);speak(cmd);return}if(!apiKey){document.getElementById("apiModal").classList.add("show");document.getElementById("apiInput").focus();return}busy=true;setState("THINKING");showTyping();try{let web=isCurrentQuery(q);if(web)setState("SEARCHING WEB");let msgs=[{role:"system",content:buildSystemPrompt(q)},...recentMessages(c)];if(web)msgs[0].content+="\nWEB SEARCH IS REQUIRED FOR THIS REQUEST. Search the web before answering and use fresh results.";let ans=await callGroq(msgs,web);removeTyping();addMessage("ai",ans);speak(ans);setState(web?"ONLINE • WEB USED":"ONLINE")}catch(e){removeTyping();let msg=e.message==="INVALID_KEY"?"API key invalid hai. KEY button se new key save karo.":e.message==="RATE_LIMIT"?"Groq rate limit aa gayi. Thodi der baad try karo.":"API/Internet error. Connection aur API key check karo.";addMessage("system",msg);setState("ERROR")}finally{busy=false}}
+async function send(){if(busy)return;let input=document.getElementById("input"),q=cleanText(input.value);if(!q)return;if(q.length>4000){addSystem("Message too long. Please keep it under 4000 characters.");return}input.value="";let c=ensureChat();addMessage("user",q);extractMemory(q);let cmd=localCommand(q);if(cmd){addMessage("ai",cmd);speak(cmd);return}if(!apiKey){document.getElementById("apiModal").classList.add("show");document.getElementById("apiInput").focus();return}busy=true;setState("THINKING");showTyping();try{let web=isCurrentQuery(q);if(web)setState("SEARCHING WEB");let msgs=[{role:"system",content:buildSystemPrompt(q)},...recentMessages(c)];if(web)msgs[0].content+="\nWEB SEARCH IS REQUIRED. Search first and answer using fresh information.";let ans=await callGroq(msgs,web);removeTyping();addMessage("ai",ans);speak(ans);setState(web?"ONLINE • WEB USED":"ONLINE")}catch(e){removeTyping();let msg=e.message==="INVALID_KEY"?"API key invalid hai. KEY button se new key save karo.":e.message==="RATE_LIMIT"?"Groq rate limit aa gayi. Thodi der baad try karo.":"API/Internet error. Connection aur API key check karo.";addMessage("system",msg);setState("ERROR")}finally{busy=false}}
 </script>
 <script>
 const sidebar=document.getElementById("sidebar"),overlay=document.getElementById("overlay");
