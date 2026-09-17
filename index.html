@@ -3,658 +3,174 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<meta name="theme-color" content="#030303">
-<title>ULTRON V7 // GOD MODE</title>
+<title>ULTRON V9 // GOD MODE</title>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+<script>
+window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"],["$$","$$"]]},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;background:#030303;color:#eee;font-family:Arial,sans-serif;overflow:hidden}
-body{display:flex;justify-content:center;align-items:center}
-.app{width:100%;height:100%;max-width:1500px;display:flex;flex-direction:column;background:radial-gradient(circle at 50% 20%,rgba(255,0,0,.08),transparent 35%),#030303}
-.topbar{height:64px;min-height:64px;border-bottom:1px solid rgba(255,0,0,.25);display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(0,0,0,.8);backdrop-filter:blur(10px)}
-.logo{display:flex;align-items:center;gap:12px}
-.logo-dot{width:12px;height:12px;border-radius:50%;background:#f11;box-shadow:0 0 10px red,0 0 25px rgba(255,0,0,.7);animation:pulse 1.5s infinite}
-.logo-text{font-weight:900;letter-spacing:3px;color:#f33;font-size:18px}
-.version{color:#777;font-size:10px;letter-spacing:2px}
-.top-actions{display:flex;gap:8px}
-.icon-btn{width:38px;height:38px;border:1px solid #292929;border-radius:10px;background:#090909;color:#aaa;cursor:pointer;transition:.2s}
-.icon-btn:hover{color:#fff;border-color:#f22;box-shadow:0 0 12px rgba(255,0,0,.2)}
-.main{flex:1;min-height:0;display:grid;grid-template-columns:280px 1fr 280px;gap:1px}
-.side{background:rgba(5,5,5,.9);border-right:1px solid rgba(255,255,255,.05);padding:16px;overflow-y:auto}
-.side.right{border-right:0;border-left:1px solid rgba(255,255,255,.05)}
-.panel-title{color:#777;font-size:10px;letter-spacing:2px;margin-bottom:10px}
-.card{background:#080808;border:1px solid #181818;border-radius:14px;padding:14px;margin-bottom:12px}
-.stat{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #111}
-.stat:last-child{border-bottom:0}
-.stat-name{color:#777;font-size:11px}
-.stat-value{color:#eee;font-weight:bold;font-size:12px}
-.red{color:#f33!important}
-.core{min-width:0;min-height:0;display:flex;flex-direction:column;position:relative}
-.visual{height:205px;min-height:205px;display:flex;align-items:center;justify-content:center;position:relative}
-.eye{width:135px;height:135px;border-radius:50%;border:2px solid rgba(255,0,0,.4);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 25px rgba(255,0,0,.12),inset 0 0 30px rgba(255,0,0,.05);animation:float 4s ease-in-out infinite}
-.eye:before{content:"";position:absolute;width:105px;height:105px;border-radius:50%;border:1px solid rgba(255,0,0,.45);box-shadow:0 0 20px rgba(255,0,0,.15)}
-.eye:after{content:"";position:absolute;width:72px;height:72px;border-radius:50%;border:1px dashed rgba(255,0,0,.5);animation:rotate 8s linear infinite}
-.eye-core{width:38px;height:38px;border-radius:50%;background:#f11;box-shadow:0 0 10px red,0 0 30px red,0 0 60px rgba(255,0,0,.8);animation:core 1.2s infinite;z-index:2}
-.eye-label{position:absolute;bottom:-30px;font-size:9px;color:#f33;letter-spacing:3px;font-weight:bold}
-.status-box{text-align:center;margin:4px 0 8px}
-.status{display:inline-flex;align-items:center;gap:7px;color:#666;font-size:10px;letter-spacing:2px}
-.status-dot{width:7px;height:7px;border-radius:50%;background:#555}
-.status.online .status-dot{background:#f22;box-shadow:0 0 10px red}
-.status.thinking .status-dot{background:#f80;box-shadow:0 0 10px #f80;animation:pulse .6s infinite}
-.chat{flex:1;min-height:0;overflow-y:auto;padding:10px 18px;scroll-behavior:smooth}
-.chat::-webkit-scrollbar,.side::-webkit-scrollbar{width:5px}
-.chat::-webkit-scrollbar-thumb,.side::-webkit-scrollbar-thumb{background:#222;border-radius:10px}
-.message{max-width:88%;margin-bottom:12px;padding:11px 13px;border-radius:13px;line-height:1.5;font-size:14px;word-wrap:break-word;white-space:pre-wrap}
-.message.user{margin-left:auto;background:#160707;border:1px solid rgba(255,0,0,.2);color:#eee}
-.message.ai{margin-right:auto;background:#080808;border:1px solid #191919;color:#ddd}
-.message.system{margin:7px auto;max-width:95%;text-align:center;color:#666;font-size:9px;letter-spacing:1px;padding:6px}
-.msg-label{display:block;font-size:8px;letter-spacing:2px;color:#f33;margin-bottom:4px;font-weight:bold}
-.message.user .msg-label{color:#888}
-.typing{display:flex;gap:5px;align-items:center}
-.typing span{width:6px;height:6px;border-radius:50%;background:#f22;animation:typing 1s infinite}
-.typing span:nth-child(2){animation-delay:.15s}
-.typing span:nth-child(3){animation-delay:.3s}
-.input-area{padding:10px 15px 14px;border-top:1px solid rgba(255,255,255,.05);background:rgba(0,0,0,.75)}
-.input-box{display:flex;gap:7px;background:#080808;border:1px solid #202020;border-radius:15px;padding:6px;transition:.2s}
-.input-box:focus-within{border-color:rgba(255,0,0,.45);box-shadow:0 0 18px rgba(255,0,0,.08)}
-#userInput{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#fff;font-size:14px;padding:10px}
-#userInput::placeholder{color:#555}
-.action-btn{width:42px;height:42px;border:0;border-radius:11px;background:#111;color:#aaa;cursor:pointer;transition:.2s}
-.action-btn:hover{background:#1a1a1a;color:#fff}
-.send-btn{background:#c80000;color:#fff;font-weight:bold}
-.send-btn:hover{background:#ef0000;box-shadow:0 0 18px rgba(255,0,0,.3)}
-.input-info{display:flex;justify-content:space-between;margin-top:6px;padding:0 5px;color:#444;font-size:8px}
-.memory-item{padding:7px 0;border-bottom:1px solid #111;font-size:11px;color:#aaa}
-.memory-item:last-child{border-bottom:0}
-.memory-category{color:#f33;font-size:8px;letter-spacing:1px;margin-bottom:3px}
-.mini-btn{width:100%;padding:8px;margin-top:6px;border-radius:9px;border:1px solid #222;background:#0a0a0a;color:#999;cursor:pointer;font-size:10px}
-.mini-btn:hover{border-color:#f22;color:#fff}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
-.modal.show{display:flex}
-.modal-box{width:100%;max-width:460px;background:#080808;border:1px solid rgba(255,0,0,.3);border-radius:18px;padding:24px;box-shadow:0 0 50px rgba(255,0,0,.12),0 20px 80px rgba(0,0,0,.8)}
-.modal-title{color:#f22;font-size:20px;font-weight:900;letter-spacing:2px;margin-bottom:8px}
-.modal-subtitle{color:#777;font-size:12px;line-height:1.5;margin-bottom:18px}
-.key-input{width:100%;padding:13px;background:#030303;border:1px solid #242424;border-radius:10px;color:#fff;outline:0;margin-bottom:10px}
-.key-input:focus{border-color:#f22}
-.modal-actions{display:flex;gap:8px}
-.modal-btn{flex:1;padding:12px;border-radius:10px;border:1px solid #222;background:#111;color:#aaa;cursor:pointer}
-.modal-btn.primary{background:#c90000;border-color:#f22;color:#fff;font-weight:bold}
-.modal-note{color:#555;font-size:9px;line-height:1.5;margin-top:12px}
-@media(max-width:1000px){.main{grid-template-columns:210px 1fr}.side.right{display:none}}
-@media(max-width:700px){.topbar{padding:0 12px}.logo-text{font-size:14px;letter-spacing:2px}.version{display:none}.main{display:block}.side.left{display:none}.core{height:calc(100vh - 64px)}.visual{height:135px;min-height:135px}.eye{width:100px;height:100px}.eye:before{width:78px;height:78px}.eye:after{width:55px;height:55px}.eye-core{width:28px;height:28px}.chat{padding:8px}.message{max-width:94%;font-size:13px}}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.75)}}
-@keyframes core{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.75);opacity:.7}}
-@keyframes rotate{from{transform:rotate(0)}to{transform:rotate(360deg)}}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
-@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+*{box-sizing:border-box}body{margin:0;background:#030303;color:#eee;font-family:Arial,sans-serif;overflow:hidden}button,input{font:inherit}.app{height:100vh;display:flex;background:#050505}.sidebar{width:280px;background:#080808;border-right:1px solid #272727;display:flex;flex-direction:column;transition:.25s;z-index:20}.sideTop{padding:14px 12px;border-bottom:1px solid #191919}.logo{display:flex;align-items:center;gap:10px;margin-bottom:14px}.eye{width:38px;height:38px;border-radius:50%;background:#180000;border:2px solid #f22;box-shadow:0 0 14px #f00;position:relative;flex:none}.eye:after{content:"";position:absolute;width:11px;height:11px;background:#f33;border-radius:50%;left:11px;top:11px;box-shadow:0 0 10px #f00}.logo b{color:#f33;font-size:19px;letter-spacing:2px}.logo small{display:block;color:#666;font-size:9px;margin-top:2px}.newChat{width:100%;padding:11px;border-radius:9px;background:#280606;border:1px solid #671414;color:#f55;cursor:pointer}.newChat:hover{background:#430909}.recentTitle{padding:15px 13px 8px;color:#777;font-size:11px;letter-spacing:1px}.history{flex:1;overflow-y:auto;padding:0 7px}.chatItem{padding:11px 10px;border-radius:8px;color:#bbb;cursor:pointer;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}.chatItem:hover{background:#171717;color:#fff}.chatItem.active{background:#202020;color:#fff;border-left:2px solid #f33}.emptyHistory{padding:18px 10px;color:#555;font-size:12px;text-align:center}.sideBottom{padding:10px;border-top:1px solid #191919}.sideBtn{width:100%;background:none;border:1px solid #292929;color:#888;border-radius:7px;padding:8px;margin-top:5px;cursor:pointer}.sideBtn:hover{color:#f55;border-color:#551111}.main{flex:1;min-width:0;display:flex;flex-direction:column;background:radial-gradient(circle at 50% -10%,#300000 0,#090909 30%,#030303 75%)}header{height:64px;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid #292929;background:#080808}.headLeft{display:flex;align-items:center;gap:10px;min-width:0}.menu{display:none;background:none;border:0;color:#ddd;font-size:24px;cursor:pointer}.title{min-width:0}.title b{display:block;color:#eee;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.title small{color:#666;font-size:9px}.headBtns{display:flex;gap:6px}.btn{background:#110000;color:#f55;border:1px solid #571111;border-radius:7px;padding:7px 9px;cursor:pointer}.btn:hover{background:#260000;border-color:#f33}.status{height:25px;padding:5px 12px;font-size:10px;color:#666;border-bottom:1px solid #171717}.status b{color:#f33}.chat{flex:1;overflow-y:auto;padding:16px 12px 105px}.msg{max-width:850px;margin:0 auto 13px;display:flex}.msg.user{justify-content:flex-end}.bubble{max-width:85%;padding:11px 13px;border-radius:12px;line-height:1.5;font-size:14px;word-wrap:break-word}.user .bubble{background:#2a0909;border:1px solid #661414;color:#fff}.ai .bubble{background:#0d0d0d;border:1px solid #292929;color:#ddd}.system .bubble{margin:auto;background:#080808;color:#777;border:1px dashed #333;font-size:11px}.bubble p{margin:0 0 8px}.bubble p:last-child{margin-bottom:0}.bubble ul,.bubble ol{margin:6px 0 8px 20px}.bubble h1,.bubble h2,.bubble h3{margin:8px 0}.bubble code{background:#171717;border:1px solid #292929;border-radius:4px;padding:2px 5px}.bubble pre{background:#050505;border:1px solid #292929;padding:10px;border-radius:7px;overflow:auto}.bubble pre code{border:0;padding:0;background:none}.bubble a{color:#ff5555}.bubble blockquote{border-left:3px solid #f33;margin:8px 0;padding-left:10px;color:#aaa}.typing{display:flex;gap:4px;padding:5px}.typing i{width:6px;height:6px;background:#f33;border-radius:50%;animation:blink 1s infinite}@keyframes blink{50%{opacity:.2;transform:translateY(-3px)}}.bottom{position:fixed;bottom:0;left:280px;right:0;padding:10px 12px;background:linear-gradient(transparent,#050505 25%);z-index:4}.inputBox{max-width:850px;margin:auto;display:flex;gap:7px;background:#0c0c0c;border:1px solid #3b1111;border-radius:12px;padding:7px}.inputBox input{flex:1;background:none;border:0;outline:0;color:#fff;padding:10px}.send,.mic{width:44px;border:0;border-radius:8px;background:#3b0808;color:#f55;cursor:pointer}.send:hover,.mic:hover{background:#650909}.overlay{display:none;position:fixed;inset:0;background:#000b;z-index:15}.overlay.show{display:block}.mobileSide{display:none}.modal{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:20px;z-index:30}.modal.show{display:flex}.modalBox{width:min(500px,100%);background:#0c0c0c;border:1px solid #5a1111;border-radius:14px;padding:20px;box-shadow:0 0 40px #000}.modalBox h2{color:#f33;margin-top:0}.modalBox p{color:#999;font-size:13px;line-height:1.5}.modalBox input{width:100%;background:#050505;border:1px solid #422020;color:#fff;border-radius:8px;padding:11px;outline:0}.modalActions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.memoryPanel{position:fixed;right:15px;bottom:75px;width:300px;max-height:60vh;overflow:auto;background:#090909;border:1px solid #421111;border-radius:10px;padding:12px;display:none;z-index:25}.memoryPanel.show{display:block}.memoryPanel h3{margin:0 0 8px;color:#f33}.memoryPanel div{font-size:11px;color:#aaa;margin:5px 0}.renameInput{position:absolute;opacity:0;pointer-events:none}
+@media(max-width:700px){.sidebar{position:fixed;left:-290px;top:0;bottom:0}.sidebar.open{left:0}.menu{display:block}.bottom{left:0}.headBtns .optional{display:none}.bubble{max-width:92%}}
 </style>
 </head>
 <body>
 <div class="app">
-<header class="topbar">
-<div class="logo"><div class="logo-dot"></div><div><div class="logo-text">ULTRON</div><div class="version">V7 // GOD MODE</div></div></div>
-<div class="top-actions">
-<button class="icon-btn" id="memoryBtn" title="Memory">🧠</button>
-<button class="icon-btn" id="voiceToggle" title="Voice">🔊</button>
-<button class="icon-btn" id="keyBtn" title="API Key">🔑</button>
-<button class="icon-btn" id="clearBtn" title="Clear Chat">⌫</button>
+<aside class="sidebar" id="sidebar">
+<div class="sideTop">
+<div class="logo"><div class="eye"></div><div><b>ULTRON V9</b><small>PERSONAL AI // GOD MODE</small></div></div>
+<button class="newChat" id="newChat">＋ New Chat</button>
 </div>
-</header>
-<main class="main">
-<aside class="side left">
-<div class="panel-title">SYSTEM STATUS</div>
-<div class="card">
-<div class="stat"><span class="stat-name">CORE</span><span class="stat-value red">ONLINE</span></div>
-<div class="stat"><span class="stat-name">AI MODEL</span><span class="stat-value" id="modelName">GPT-OSS-120B</span></div>
-<div class="stat"><span class="stat-name">MEMORY</span><span class="stat-value" id="memoryCount">0</span></div>
-<div class="stat"><span class="stat-name">MESSAGES</span><span class="stat-value" id="messageCount">0</span></div>
-</div>
-<div class="panel-title">CAPABILITIES</div>
-<div class="card">
-<div class="memory-item"><div class="memory-category">01</div>Smart Conversation</div>
-<div class="memory-item"><div class="memory-category">02</div>Long-Term Memory</div>
-<div class="memory-item"><div class="memory-category">03</div>Voice Input</div>
-<div class="memory-item"><div class="memory-category">04</div>Voice Output</div>
-<div class="memory-item"><div class="memory-category">05</div>Web Search</div>
-</div>
-<div class="panel-title">QUICK ACTIONS</div>
-<div class="card">
-<button class="mini-btn" id="rememberBtn">+ REMEMBER SOMETHING</button>
-<button class="mini-btn" id="showMemoryBtn">VIEW MEMORY</button>
-<button class="mini-btn" id="exportBtn">EXPORT MEMORY</button>
-<button class="mini-btn" id="importBtn">IMPORT MEMORY</button>
+<div class="recentTitle">RECENTS</div>
+<div class="history" id="history"></div>
+<div class="sideBottom">
+<button class="sideBtn" id="exportBtn">⇩ Export Memory</button>
+<button class="sideBtn" id="importBtn">⇧ Import Memory</button>
+<button class="sideBtn" id="clearHistoryBtn">🗑 Clear Chat History</button>
+<button class="sideBtn" id="clearMemoryBtn">⚠ Clear All Memory</button>
 <input type="file" id="importFile" accept=".json" style="display:none">
 </div>
 </aside>
-<section class="core">
-<div class="visual"><div class="eye"><div class="eye-core"></div><div class="eye-label">ACTIVE</div></div></div>
-<div class="status-box"><div class="status online" id="status"><span class="status-dot"></span><span id="statusText">ULTRON ONLINE</span></div></div>
-<div class="chat" id="chat"><div class="message system">ULTRON V7 GOD MODE INITIALIZED</div></div>
-<div class="input-area">
-<div class="input-box">
-<input id="userInput" type="text" autocomplete="off" placeholder="Talk to ULTRON...">
-<button class="action-btn" id="micBtn" title="Voice Input">🎙️</button>
-<button class="action-btn send-btn" id="sendBtn" title="Send">➤</button>
+<div class="overlay" id="overlay"></div>
+<section class="main">
+<header>
+<div class="headLeft">
+<button class="menu" id="menuBtn">☰</button>
+<div class="title"><b id="chatTitle">New Chat</b><small>ULTRON V9 • GPT-OSS 120B</small></div>
 </div>
-<div class="input-info"><span id="voiceStatus">VOICE: OFF</span><span>ENTER = SEND</span></div>
+<div class="headBtns">
+<button class="btn" id="keyBtn">KEY</button>
+<button class="btn optional" id="voiceBtn">VOICE</button>
+<button class="btn optional" id="memBtn">MEM</button>
+<button class="btn" id="resetBtn">RESET</button>
 </div>
+</header>
+<div class="status" id="status">SYSTEM: <b>ONLINE</b> • MODEL: GPT-OSS 120B • WEB: READY</div>
+<main class="chat" id="chat"></main>
+<div class="memoryPanel" id="memoryPanel"><h3>ULTRON MEMORY</h3><div id="memoryList"></div></div>
+<div class="bottom"><div class="inputBox"><input id="input" autocomplete="off" placeholder="Talk to ULTRON..."><button class="mic" id="micBtn">🎙</button><button class="send" id="sendBtn">➤</button></div></div>
 </section>
-<aside class="side right">
-<div class="panel-title">MEMORY CORE</div>
-<div class="card" id="memoryPreview"><div class="memory-item"><div class="memory-category">SYSTEM</div>Memory system ready.</div></div>
-<div class="panel-title">CURRENT SESSION</div>
-<div class="card">
-<div class="stat"><span class="stat-name">USER MSG</span><span class="stat-value" id="userMsgCount">0</span></div>
-<div class="stat"><span class="stat-name">AI RESPONSES</span><span class="stat-value" id="aiMsgCount">0</span></div>
-<div class="stat"><span class="stat-name">VOICE</span><span class="stat-value" id="voiceState">OFF</span></div>
 </div>
-<div class="panel-title">COMMANDS</div>
-<div class="card">
-<div class="memory-item"><div class="memory-category">MEMORY</div>"remember ..."</div>
-<div class="memory-item"><div class="memory-category">MEMORY</div>"forget ..."</div>
-<div class="memory-item"><div class="memory-category">SYSTEM</div>"clear memory"</div>
-<div class="memory-item"><div class="memory-category">VOICE</div>"stop"</div>
-</div>
-</aside>
-</main>
-</div>
-<div class="modal" id="keyModal">
-<div class="modal-box">
-<div class="modal-title">🔐 API ACCESS</div>
-<div class="modal-subtitle">Enter your Groq API key to activate ULTRON. The key is not written inside the source code.</div>
-<input type="password" id="apiKeyInput" class="key-input" placeholder="gsk_..." autocomplete="off">
-<div class="modal-actions">
-<button class="modal-btn" id="closeKeyBtn">CANCEL</button>
-<button class="modal-btn primary" id="saveKeyBtn">ACTIVATE</button>
-</div>
-<div class="modal-note">Your key is stored locally in this browser. Do not publish a personal API key in a public website.</div>
-</div>
+<div class="modal" id="apiModal">
+<div class="modalBox"><h2>ULTRON API KEY</h2><p>Apni Groq API key yahan enter karo. Key browser ke localStorage mein save hogi. Apni key kisi ke saath share mat karna.</p><input id="apiInput" type="password" placeholder="gsk_..."><div class="modalActions"><button class="btn" id="cancelKey">CANCEL</button><button class="btn" id="saveKey">SAVE KEY</button></div></div>
 </div>
 <script>
-const MODEL="openai/gpt-oss-120b";
-const API_URL="https://api.groq.com/openai/v1/chat/completions";
-const $=id=>document.getElementById(id);
+const MODEL="openai/gpt-oss-120b",API_URL="https://api.groq.com/openai/v1/chat/completions",MEMORY_KEY="ultron_v8_memory",HISTORY_KEY="ultron_v9_chats";
 let apiKey=localStorage.getItem("ultron_api_key")||"",voiceMode=false,listening=false,busy=false,recognition=null,mainVoice=null;
-const MEMORY_KEY="ultron_v7_memory";
-let memory={profile:[],preferences:[],goals:[],projects:[],facts:[],important:[],conversations:[],created:Date.now()};
-
-function loadMemory(){
-try{
-const saved=localStorage.getItem(MEMORY_KEY);
-if(saved)memory={...memory,...JSON.parse(saved)};
-}catch(e){console.error("Memory load error:",e)}
-}
-function saveMemory(){
-try{localStorage.setItem(MEMORY_KEY,JSON.stringify(memory))}
-catch(e){console.error("Memory save error:",e)}
-}
-function cleanText(text){return String(text||"").replace(/\s+/g," ").trim()}
-function addMemory(category,text,importance=5){
-text=cleanText(text);
-if(!text)return;
-if(!memory[category])memory[category]=[];
-if(memory[category].some(x=>x.text.toLowerCase()===text.toLowerCase()))return;
-memory[category].push({text,importance,time:Date.now()});
-memory[category].sort((a,b)=>(b.importance||0)-(a.importance||0));
-if(memory[category].length>100)memory[category]=memory[category].slice(0,100);
-saveMemory();
-updateStats();
-}
-function extractMemory(text){
-const original=cleanText(text);
-let m=original.match(/(?:mera naam|my name is|main hu|i am)\s+([a-zA-Z][a-zA-Z0-9 _-]{1,30})/i);
-if(m)addMemory("profile","User's name is "+cleanText(m[1]),10);
-m=original.match(/(?:meri age|my age is|i am)\s*(\d{1,2})\s*(?:years?|saal)?/i);
-if(m)addMemory("profile","User's age is "+m[1],10);
-m=original.match(/(?:mujhe|i)\s+(?:pasand hai|like|love)\s+(.+)/i);
-if(m)addMemory("preferences","User likes "+cleanText(m[1]),7);
-m=original.match(/(?:mujhe|i)\s+(?:pasand nahi|don't like|dislike)\s+(.+)/i);
-if(m)addMemory("preferences","User dislikes "+cleanText(m[1]),7);
-m=original.match(/(?:mera goal|my goal|mera target|my target)\s*(?:hai|is)?\s*(.+)/i);
-if(m)addMemory("goals",cleanText(m[1]),9);
-m=original.match(/(?:mera project|my project|i am building|main bana raha hu)\s*(?:hai|is)?\s*(.+)/i);
-if(m)addMemory("projects",cleanText(m[1]),9);
-m=original.match(/(?:remember|yaad rakh|yaad rakhna)\s*[:,-]?\s*(.+)/i);
-if(m)addMemory("important",cleanText(m[1]),10);
-}
-function searchMemory(query){
-const words=cleanText(query).toLowerCase().split(/\s+/).filter(w=>w.length>2),results=[];
-for(const category of Object.keys(memory)){
-if(!Array.isArray(memory[category]))continue;
-for(const item of memory[category]){
-if(!item?.text)continue;
-const t=item.text.toLowerCase();
-let score=0;
-for(const word of words)if(t.includes(word))score++;
-if(score)results.push({...item,category,score});
-}}
-results.sort((a,b)=>(b.score-a.score)||((b.importance||0)-(a.importance||0)));
-return results.slice(0,12);
-}
-function getMemoryContext(query){
-const sections=[];
-for(const category of ["profile","preferences","goals","projects","important","facts"]){
-const items=memory[category]||[];
-if(!items.length)continue;
-sections.push(category.toUpperCase()+":\n"+items.slice().sort((a,b)=>(b.importance||0)-(a.importance||0)).slice(0,8).map(x=>"- "+x.text).join("\n"));
-}
-const relevant=searchMemory(query);
-if(relevant.length)sections.push("RELEVANT MEMORY:\n"+relevant.map(x=>"- "+x.text).join("\n"));
-return sections.join("\n\n");
-}
-function saveConversation(user,assistant){
-memory.conversations.push({user:cleanText(user),assistant:cleanText(assistant),time:Date.now()});
-if(memory.conversations.length>150)memory.conversations=memory.conversations.slice(-150);
-saveMemory();
-updateStats();
-}
-function buildSystemPrompt(query){
-return `You are ULTRON V7, the user's personal AI assistant.
-PERSONALITY:
-- Calm, intelligent, precise, helpful, strategic and friendly.
-- Never manipulate the user or treat people as tools.
-LANGUAGE:
-- Understand Hindi, Hinglish and English.
-- Reply in the same language style the user uses.
-- For school questions, explain clearly and exam-relevantly.
-STYLE:
-- Be direct and natural.
-- Use bullets and examples when useful.
-- For difficult concepts, explain step-by-step.
-- Do not invent facts.
+let memory=loadMemory(),chats=loadChats(),currentChatId=null;
+function defaultMemory(){return{profile:[],preferences:[],goals:[],projects:[],facts:[],important:[],conversations:[],created:Date.now()}}
+function loadMemory(){try{return JSON.parse(localStorage.getItem(MEMORY_KEY))||defaultMemory()}catch(e){return defaultMemory()}}
+function saveMemory(){localStorage.setItem(MEMORY_KEY,JSON.stringify(memory))}
+function loadChats(){try{let x=JSON.parse(localStorage.getItem(HISTORY_KEY));return Array.isArray(x)?x:[]}catch(e){return[]}}
+function saveChats(){localStorage.setItem(HISTORY_KEY,JSON.stringify(chats))}
+function newId(){return"chat_"+Date.now()+"_"+Math.random().toString(36).slice(2,8)}
+function cleanText(x){return String(x||"").replace(/\s+/g," ").trim()}
+function makeTitle(t){t=cleanText(t);if(!t)return"New Chat";return t.length>38?t.slice(0,38)+"…":t}
+function getCurrentChat(){return chats.find(x=>x.id===currentChatId)||null}
+function createChat(){let c={id:newId(),title:"New Chat",messages:[],created:Date.now(),updated:Date.now()};chats.unshift(c);currentChatId=c.id;saveChats();renderHistory();renderChat();updateTitle();return c}
+function ensureChat(){return getCurrentChat()||createChat()}
+function renderHistory(){let box=document.getElementById("history");box.innerHTML="";if(!chats.length){box.innerHTML='<div class="emptyHistory">No previous chats yet.<br>Start a new conversation.</div>';return}let sorted=[...chats].sort((a,b)=>(b.updated||b.created)-(a.updated||a.created));sorted.forEach(c=>{let d=document.createElement("div");d.className="chatItem"+(c.id===currentChatId?" active":"");d.textContent=c.title||"New Chat";d.title=c.title||"New Chat";d.onclick=()=>openChat(c.id);box.appendChild(d)})}
+function openChat(id){let c=chats.find(x=>x.id===id);if(!c)return;currentChatId=id;renderHistory();renderChat();updateTitle();closeSidebar()}
+function renderChat(){let box=document.getElementById("chat");box.innerHTML="";let c=getCurrentChat();if(!c){addSystem("ULTRON V9 initialized. Create a new chat to begin.");return}if(!c.messages.length){addSystem("New conversation ready. Chat history will be saved automatically.");return}c.messages.forEach(m=>addMessage(m.role==="user"?"user":"ai",m.content,false));setTimeout(()=>box.scrollTop=box.scrollHeight,30)}
+function updateTitle(){let c=getCurrentChat();document.getElementById("chatTitle").textContent=c?.title||"New Chat"}
+function addChatMessage(role,text){let c=ensureChat();c.messages.push({role,content:String(text),time:Date.now()});c.updated=Date.now();if(role==="user"&&c.title==="New Chat")c.title=makeTitle(text);saveChats();renderHistory();updateTitle()}
+function deleteChat(id){let i=chats.findIndex(x=>x.id===id);if(i<0)return;chats.splice(i,1);if(currentChatId===id)currentChatId=chats[0]?.id||null;saveChats();renderHistory();renderChat();updateTitle()}
+function clearHistory(){if(!confirm("Delete all saved conversations? Your ULTRON memory will remain."))return;chats=[];currentChatId=null;saveChats();renderHistory();renderChat();updateTitle()}
+function setStatus(t){document.getElementById("status").innerHTML=t}
+function setState(t){setStatus("SYSTEM: <b>"+t+"</b> • MODEL: GPT-OSS 120B • WEB: READY")}
+function renderContent(el,text){let raw=String(text||"");try{el.innerHTML=DOMPurify.sanitize(marked.parse(raw,{breaks:true}));if(window.MathJax?.typesetPromise)MathJax.typesetPromise([el]).catch(()=>{})}catch(e){el.textContent=raw}}
+function addMessage(type,text,save=true){let row=document.createElement("div");row.className="msg "+type;let b=document.createElement("div");b.className="bubble";renderContent(b,text);row.appendChild(b);document.getElementById("chat").appendChild(row);if(save&&(type==="user"||type==="ai"))addChatMessage(type==="user"?"user":"assistant",text);document.getElementById("chat").scrollTop=999999;return b}
+function addSystem(text){addMessage("system",text,false)}
+</script>
+<script>
+function addMemory(type,text){text=cleanText(text);if(!text||!memory[type])return;if(!memory[type].some(x=>x.toLowerCase()===text.toLowerCase())){memory[type].push(text);if(memory[type].length>100)memory[type].shift();saveMemory();showMemory()}}
+function extractMemory(t){let s=cleanText(t),m;
+m=s.match(/(?:my name is|mera naam|मेरा नाम)\s+([A-Za-z\u0900-\u097F ]{2,30})/i);if(m)addMemory("profile","Name: "+m[1]);
+if(/remember|yaad rakh|याद रख/i.test(s))addMemory("important",s.replace(/.*?(remember|yaad rakh|याद रख)\s*/i,""));
+if(/my goal|mera goal|मेरा लक्ष्य/i.test(s))addMemory("goals",s);
+if(/i like|mujhe .* pasand|मुझे .* पसंद/i.test(s))addMemory("preferences",s);
+if(/project|mera project|मेरा प्रोजेक्ट/i.test(s))addMemory("projects",s)}
+function searchMemory(q){let all=[];Object.keys(memory).forEach(k=>{if(Array.isArray(memory[k]))memory[k].forEach(v=>all.push({type:k,text:v}))});let w=cleanText(q).toLowerCase().split(" ");return all.filter(x=>w.some(a=>a.length>2&&x.text.toLowerCase().includes(a))).slice(-20)}
+function getMemoryContext(q){let a=searchMemory(q),all=[];["profile","preferences","goals","projects","facts","important"].forEach(k=>memory[k]?.slice(-5).forEach(v=>all.push(k+": "+v)));let relevant=a.map(x=>x.type+": "+x.text);return [...new Set([...relevant,...all])].slice(-30).join("\n")}
+function showMemory(){let box=document.getElementById("memoryList"),arr=[];["profile","preferences","goals","projects","facts","important"].forEach(k=>{if(memory[k]?.length){arr.push("<b>"+k.toUpperCase()+"</b>");memory[k].slice(-8).forEach(x=>arr.push("• "+escapeHTML(x)))}});box.innerHTML=arr.join("<br>")||"No saved memories.";box.innerHTML+="<div class='stats'>Memory items: "+Object.keys(memory).filter(k=>Array.isArray(memory[k])).reduce((a,k)=>a+memory[k].length,0)+"</div>"}
+function escapeHTML(x){return String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
+function buildSystemPrompt(q){let d=new Date().toLocaleString("en-IN");return `You are ULTRON V9, the user's personal AI assistant. Current date/time: ${d}.
+PERSONALITY: Calm, intelligent, precise, strategic, friendly and helpful. Understand Hindi, Hinglish and English.
 MEMORY:
-Use the following local memory only when relevant:
-${getMemoryContext(query)||"No stored memory yet."}
-CURRENT DATE: ${new Date().toLocaleDateString("en-IN")}
-You are ULTRON V7. Help the user learn, build, think and improve.`;
-}
-function setStatus(text,state="online"){
-$("statusText").textContent=text;
-$("status").className="status "+state;
-}
-function setState(state){
-if(state==="thinking")setStatus("PROCESSING...","thinking");
-else if(state==="online")setStatus("ULTRON ONLINE","online");
-else setStatus(state,"online");
-}
-function updateStats(){
-let total=0;
-for(const k of Object.keys(memory))if(Array.isArray(memory[k]))total+=memory[k].length;
-$("memoryCount").textContent=total;
-$("messageCount").textContent=memory.conversations.length;
-$("modelName").textContent="GPT-OSS-120B";
-if($("userMsgCount"))$("userMsgCount").textContent=memory.conversations.length;
-if($("aiMsgCount"))$("aiMsgCount").textContent=memory.conversations.length;
-if($("voiceState"))$("voiceState").textContent=voiceMode?"ON":"OFF";
-if($("voiceStatus"))$("voiceStatus").textContent="VOICE: "+(voiceMode?"ON":"OFF");
-}
-function addMessage(type,text){
-const div=document.createElement("div");
-div.className="message "+type;
-const label=document.createElement("span");
-label.className="msg-label";
-label.textContent=type==="user"?"YOU":"ULTRON";
-div.appendChild(label);
-const content=document.createElement("span");
-content.textContent=text;
-div.appendChild(content);
-$("chat").appendChild(div);
-$("chat").scrollTop=$("chat").scrollHeight;
-return div;
-}
-function addSystem(text){
-const div=document.createElement("div");
-div.className="message system";
-div.textContent=text;
-$("chat").appendChild(div);
-$("chat").scrollTop=$("chat").scrollHeight;
-}
-function showTyping(){
-const div=document.createElement("div");
-div.className="message ai";
-div.id="typing";
-div.innerHTML='<span class="msg-label">ULTRON</span><div class="typing"><span></span><span></span><span></span></div>';
-$("chat").appendChild(div);
-$("chat").scrollTop=$("chat").scrollHeight;
-}
-function removeTyping(){const x=$("typing");if(x)x.remove()}
-function escapeHTML(str){
-return String(str).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
-}
-function showMemory(){
-const all=[];
-for(const category of ["profile","preferences","goals","projects","important","facts"]){
-(memory[category]||[]).forEach(x=>all.push({category,text:x.text}));
-}
-if(!all.length){
-$("memoryPreview").innerHTML='<div class="memory-item"><div class="memory-category">SYSTEM</div>No memories stored.</div>';
-return;
-}
-$("memoryPreview").innerHTML=all.slice(0,15).map(x=>'<div class="memory-item"><div class="memory-category">'+escapeHTML(x.category)+'</div>'+escapeHTML(x.text)+'</div>').join("");
-}
-function clearChat(){
-$("chat").innerHTML="";
-addSystem("CHAT CLEARED // MEMORY PRESERVED");
-}
-function clearEverything(){
-if(!confirm("Delete ALL ULTRON memory and chat?"))return;
-memory={profile:[],preferences:[],goals:[],projects:[],facts:[],important:[],conversations:[],created:Date.now()};
-saveMemory();
-clearChat();
-showMemory();
-updateStats();
-}
-function exportMemory(){
-const blob=new Blob([JSON.stringify(memory,null,2)],{type:"application/json"});
-const a=document.createElement("a");
-a.href=URL.createObjectURL(blob);
-a.download="ultron_memory.json";
-a.click();
-URL.revokeObjectURL(a.href);
-}
-function importMemoryFile(file){
-const reader=new FileReader();
-reader.onload=()=>{
-try{
-const data=JSON.parse(reader.result);
-if(!data||typeof data!=="object")throw Error();
-memory={...memory,...data};
-saveMemory();
-showMemory();
-updateStats();
-addSystem("MEMORY IMPORTED SUCCESSFULLY");
-}catch(e){addSystem("MEMORY IMPORT FAILED")}
-};
-reader.readAsText(file);
-}
-function loadVoices(){
-const voices=speechSynthesis.getVoices();
-if(!voices.length)return;
-mainVoice=voices.find(v=>/en-IN|hi-IN/i.test(v.lang))||voices.find(v=>/en/i.test(v.lang))||voices[0];
-}
-if("speechSynthesis"in window){
-loadVoices();
-speechSynthesis.onvoiceschanged=loadVoices;
-}
-function cleanSpeech(text){
-return String(text).replace(/[*_`#>]/g,"").replace(/\[(.*?)\]\(.*?\)/g,"$1").replace(/https?:\/\/\S+/g,"");
-}
-function speak(text){
-if(!voiceMode||!("speechSynthesis"in window))return;
-speechSynthesis.cancel();
-const u=new SpeechSynthesisUtterance(cleanSpeech(text).slice(0,3500));
-if(mainVoice)u.voice=mainVoice;
-u.lang=mainVoice?.lang||"en-IN";
-u.rate=.95;
-u.pitch=1;
-speechSynthesis.speak(u);
-}
-function startVoice(){
-if(!("webkitSpeechRecognition"in window||"SpeechRecognition"in window)){
-addSystem("VOICE INPUT NOT SUPPORTED IN THIS BROWSER");
-return;
-}
-if(listening){
-recognition?.stop();
-return;
-}
-const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-recognition=new SR();
-recognition.lang="hi-IN";
-recognition.continuous=false;
-recognition.interimResults=false;
-recognition.onstart=()=>{
-listening=true;
-$("micBtn").textContent="⏹️";
-setStatus("LISTENING...","thinking");
-};
-recognition.onresult=e=>{
-const text=e.results[0][0].transcript;
-$("userInput").value=text;
-};
-recognition.onerror=e=>{
-listening=false;
-$("micBtn").textContent="🎙️";
-setState("online");
-addSystem("VOICE ERROR: "+e.error);
-};
-recognition.onend=()=>{
-listening=false;
-$("micBtn").textContent="🎙️";
-setState("online");
-if($("userInput").value.trim())send();
-};
-recognition.start();
-}
-function toggleVoice(){
-voiceMode=!voiceMode;
-updateStats();
-if(!voiceMode&&"speechSynthesis"in window)speechSynthesis.cancel();
-addSystem("VOICE MODE "+(voiceMode?"ENABLED":"DISABLED"));
-}
-async function webSearch(query){
-try{
-const url="https://api.duckduckgo.com/?q="+encodeURIComponent(query)+"&format=json&no_html=1&skip_disambig=1";
-const r=await fetch(url);
-if(!r.ok)return "";
-const d=await r.json();
-let out=[];
-if(d.AbstractText)out.push(d.AbstractText);
-if(Array.isArray(d.RelatedTopics)){
-for(const x of d.RelatedTopics.slice(0,5)){
-if(x.Text)out.push(x.Text);
-else if(Array.isArray(x.Topics))x.Topics.slice(0,2).forEach(y=>y.Text&&out.push(y.Text));
-}
-}
-return out.join("\n").slice(0,6000);
-}catch(e){return ""}
-}
-function shouldSearch(q){
-return /\b(latest|today|current|news|recent|abhi|aaj|price|weather|who is|what happened|2026|search|internet|online|latest update)\b/i.test(q);
-}
-function localCommand(q){
-const x=q.trim();
-if(/^(memory|memories|what do you remember|kya yaad hai|meri memory)$/i.test(x)){
-showMemory();
-addMessage("ai",getMemoryContext("")||"Mere paas abhi koi stored memory nahi hai.");
-return true;
-}
-let m=x.match(/^(?:remember|yaad rakh|yaad rakhna)\s*[:,-]?\s*(.+)$/i);
-if(m){
-addMemory("important",m[1],10);
-addMessage("ai","Done bhai. Ye baat memory mein save kar di.");
-showMemory();
-return true;
-}
-m=x.match(/^(?:forget|bhool jao|bhul jao)\s*[:,-]?\s*(.+)$/i);
-if(m){
-const target=cleanText(m[1]).toLowerCase();
-let removed=0;
-for(const category of Object.keys(memory)){
-if(!Array.isArray(memory[category]))continue;
-const before=memory[category].length;
-memory[category]=memory[category].filter(item=>!String(item?.text||"").toLowerCase().includes(target));
-removed+=before-memory[category].length;
-}
-saveMemory();
-showMemory();
-updateStats();
-addMessage("ai",removed?"Theek hai bhai, matching memory hata di.":"Mujhe matching memory nahi mili.");
-return true;
-}
-if(/^(clear all memory|clear memory|sab memory delete|delete all memory)$/i.test(x)){
-clearEverything();
-return true;
-}
-if(/^(stop|stop speaking|chup|quiet)$/i.test(x)){
-if("speechSynthesis"in window)speechSynthesis.cancel();
-addSystem("VOICE STOPPED");
-return true;
-}
-return false;
-}
-async function callGroq(messages){
-let lastError=null;
-for(let attempt=0;attempt<3;attempt++){
-try{
-const response=await fetch(API_URL,{
-method:"POST",
-headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},
-body:JSON.stringify({model:MODEL,messages,temperature:.7,max_tokens:1200,stream:false})
-});
-if(response.ok){
-const data=await response.json();
-return data?.choices?.[0]?.message?.content||"No response generated.";
-}
-let txt="";
-try{txt=await response.text()}catch(e){}
-lastError=new Error("HTTP "+response.status+" "+txt.slice(0,250));
-if(response.status!==429&&response.status<500)break;
-await new Promise(r=>setTimeout(r,1000*(attempt+1)));
-}catch(e){
-lastError=e;
-await new Promise(r=>setTimeout(r,800*(attempt+1)));
-}
-}
-throw lastError||new Error("API request failed");
-}
-function getRecentConversation(){
-return memory.conversations.slice(-8).flatMap(x=>[
-{role:"user",content:x.user},
-{role:"assistant",content:x.assistant}
-]);
-}
-async function send(){
-if(busy)return;
-const input=$("userInput");
-const text=input.value.trim();
-if(!text)return;
-if(text.length>4000){
-addSystem("MESSAGE TOO LONG // MAX 4000 CHARACTERS");
-return;
-}
-input.value="";
-addMessage("user",text);
-extractMemory(text);
-showMemory();
-updateStats();
-if(localCommand(text))return;
-if(!apiKey){
-$("keyModal").classList.add("show");
-$("apiKeyInput").focus();
-addSystem("API KEY REQUIRED TO ACTIVATE AI CORE");
-return;
-}
-busy=true;
-$("sendBtn").disabled=true;
-showTyping();
-setState("thinking");
-try{
-let live="";
-if(shouldSearch(text)){
-setStatus("SEARCHING WEB...","thinking");
-live=await webSearch(text);
-}
-const system=buildSystemPrompt(text);
-const messages=[{role:"system",content:system},...getRecentConversation(),{role:"user",content:text}];
-if(live)messages.push({role:"system",content:"LIVE WEB SEARCH CONTEXT. Treat this as potentially incomplete and verify when possible:\n"+live});
-setStatus("THINKING...","thinking");
-const answer=await callGroq(messages);
-removeTyping();
-addMessage("ai",answer);
-saveConversation(text,answer);
-showMemory();
-updateStats();
-setState("online");
-speak(answer);
-}catch(e){
-removeTyping();
-let msg="ULTRON ERROR: "+(e?.message||"Unknown error");
-if(String(e?.message).includes("401"))msg="API KEY INVALID OR UNAUTHORIZED.";
-else if(String(e?.message).includes("429"))msg="RATE LIMIT REACHED. Please wait and try again.";
-else if(String(e?.message).includes("Failed to fetch"))msg="NETWORK/CORS ERROR. Check internet connection or browser restrictions.";
-addMessage("ai",msg);
-setState("online");
-}finally{
-busy=false;
-$("sendBtn").disabled=false;
-input.focus();
-}
-}
-function openKeyModal(){
-$("keyModal").classList.add("show");
-$("apiKeyInput").value=apiKey;
-setTimeout(()=>$("apiKeyInput").focus(),100);
-}
-function closeKeyModal(){$("keyModal").classList.remove("show")}
-function saveAPIKey(){
-const key=$("apiKeyInput").value.trim();
-if(!key){
-addSystem("PLEASE ENTER YOUR GROQ API KEY");
-return;
-}
-apiKey=key;
-localStorage.setItem("ultron_api_key",apiKey);
-closeKeyModal();
-addSystem("API KEY SAVED // ULTRON AI CORE READY");
-setState("online");
-}
-$("sendBtn").addEventListener("click",send);
-$("micBtn").addEventListener("click",startVoice);
-$("voiceToggle").addEventListener("click",toggleVoice);
-$("keyBtn").addEventListener("click",openKeyModal);
-$("memoryBtn").addEventListener("click",showMemory);
-$("showMemoryBtn").addEventListener("click",()=>{
-showMemory();
-addSystem("MEMORY CORE DISPLAYED");
-});
-$("rememberBtn").addEventListener("click",()=>{
-const value=prompt("What should ULTRON remember?");
-if(value?.trim()){
-addMemory("important",value.trim(),10);
-showMemory();
-addSystem("MEMORY SAVED");
-}
-});
-$("exportBtn").addEventListener("click",exportMemory);
-$("importBtn").addEventListener("click",()=>$("importFile").click());
-$("importFile").addEventListener("change",e=>{
-if(e.target.files[0])importMemoryFile(e.target.files[0]);
-e.target.value="";
-});
-$("clearBtn").addEventListener("click",clearChat);
-$("saveKeyBtn").addEventListener("click",saveAPIKey);
-$("closeKeyBtn").addEventListener("click",closeKeyModal);
-$("keyModal").addEventListener("click",e=>{
-if(e.target===$("keyModal"))closeKeyModal();
-});
-$("userInput").addEventListener("keydown",e=>{
-if(e.key==="Enter"&&!e.shiftKey){
-e.preventDefault();
-send();
-}
-if(e.key==="Escape"&&busy){
-if("speechSynthesis"in window)speechSynthesis.cancel();
-}
-});
-document.addEventListener("keydown",e=>{
-if(e.ctrlKey&&e.key.toLowerCase()==="k"){
-e.preventDefault();
-openKeyModal();
-}
-});
-window.addEventListener("beforeunload",()=>{
-if("speechSynthesis"in window)speechSynthesis.cancel();
-});
-loadMemory();
-showMemory();
-updateStats();
-if(apiKey){
-addSystem("MEMORY CORE LOADED // AI KEY DETECTED");
-}else{
-addSystem("WELCOME // API KEY REQUIRED");
-setTimeout(openKeyModal,500);
-}
-$("userInput").focus();
+${getMemoryContext(q)||"No relevant saved memory."}
+CHAT HISTORY: The conversation currently open is provided separately. Use it naturally and continue from previous context.
+FORMATTING:
+- Prefer clean plain text.
+- Use simple bullets when useful.
+- Do not use unnecessary Markdown.
+- Never use Markdown symbols just for decoration.
+- Do not use LaTeX for ordinary text.
+- Use LaTeX only for actual mathematical/scientific equations.
+- Mathematical equations may use \\(...\\) or \\[...\\].
+- Keep answers comfortable to read on a mobile screen.
+CURRENT WEB INFORMATION:
+- For current/latest/today/news/recent/price/weather/2026 or explicit search requests, fresh browser search is mandatory.
+- Never pretend old knowledge is current.
+- Clearly distinguish fresh web information from general knowledge.
+- Do not invent search results, dates, prices or facts.
+SCHOOL MODE:
+- For class 10 questions, explain in Hindi/Hinglish when appropriate.
+- Give exam-relevant answers with enough detail.
+- For numericals, show the required steps.
+GENERAL:
+- Answer the user's actual question directly.
+- If the user asks to remember something, treat it as important memory.
+- If information is uncertain, say so instead of inventing it.`}
+function showTyping(){let row=document.createElement("div");row.className="msg ai";row.id="typing";row.innerHTML='<div class="bubble"><div class="typing"><i></i><i></i><i></i></div></div>';document.getElementById("chat").appendChild(row);document.getElementById("chat").scrollTop=999999}
+function removeTyping(){document.getElementById("typing")?.remove()}
+function isCurrentQuery(q){return /\b(latest|today|current|news|recent|now|price|weather|who is|what happened|2026|search|internet|online|update)\b/i.test(q)||/(abhi|aaj|taaza|vartaman|khabar|daam|mausam|internet par|search karo|latest batao)/i.test(q)}
+async function callGroq(messages,useWeb=false){let body={model:MODEL,messages,temperature:.6,max_completion_tokens:1800,stream:false};if(useWeb){body.tools=[{type:"browser_search"}];body.tool_choice="required"}for(let i=0;i<3;i++){try{let r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},body:JSON.stringify(body)});if(r.ok){let j=await r.json();return j.choices?.[0]?.message?.content||"No response received."}if((r.status===429||r.status>=500)&&i<2){await new Promise(x=>setTimeout(x,1000*(i+1)));continue}let e=await r.text();if(r.status===401)throw Error("INVALID_KEY");if(r.status===429)throw Error("RATE_LIMIT");throw Error("API_ERROR")}catch(e){if(e.message==="INVALID_KEY"||e.message==="RATE_LIMIT"||i===2)throw e;await new Promise(x=>setTimeout(x,700))}}}
+function recentMessages(c){return(c?.messages||[]).slice(-20).map(m=>({role:m.role==="assistant"?"assistant":"user",content:m.content}))}
+function localCommand(q){let s=cleanText(q),l=s.toLowerCase();
+if(["memory","memories","what do you remember","kya yaad hai","meri memory","memory dikhao"].some(x=>l===x||l.includes(x)&&l.length<30)){showMemory();document.getElementById("memoryPanel").classList.add("show");return"Yeh ULTRON ki currently saved memory hai."}
+if(/^(remember|yaad rakh|याद रख)/i.test(s)){let x=s.replace(/^(remember|yaad rakh|याद रख)\s*:?\s*/i,"");addMemory("important",x);return"Yaad rakh liya. 🧠"}
+if(/^(forget|bhool jao|भूल जाओ)/i.test(s)){let x=s.replace(/^(forget|bhool jao|भूल जाओ)\s*:?\s*/i,"").toLowerCase(),n=0;Object.keys(memory).forEach(k=>{if(Array.isArray(memory[k])){let old=memory[k].length;memory[k]=memory[k].filter(v=>!v.toLowerCase().includes(x));n+=old-memory[k].length}});saveMemory();showMemory();return n?"Related memory hata di.":"Aisi memory nahi mili."}
+if(/^(stop|stop speaking|chup|quiet)$/i.test(l)){speechSynthesis.cancel();return"Voice stopped."}
+return null}
+function loadVoices(){let v=speechSynthesis.getVoices();mainVoice=v.find(x=>/hi-IN/i.test(x.lang))||v.find(x=>/en-IN/i.test(x.lang))||v[0]}
+function cleanSpeech(t){return String(t).replace(/```[\s\S]*?```/g,"code omitted").replace(/https?:\/\/\S+/g,"").replace(/[*_#`~]/g,"").replace(/\\\(|\\\)|\\\[|\\\]/g,"").replace(/\$\$[\s\S]*?\$\$/g,"equation").replace(/\s+/g," ").trim()}
+function speak(t){if(!voiceMode||!("speechSynthesis"in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(cleanSpeech(t));u.lang=/[\u0900-\u097F]/.test(t)?"hi-IN":"en-IN";if(mainVoice)u.voice=mainVoice;u.rate=.95;speechSynthesis.speak(u)}
+function startVoice(){if(!("webkitSpeechRecognition"in window||"SpeechRecognition"in window)){addSystem("Voice input is not supported in this browser.");return}if(listening){recognition?.stop();return}let R=window.SpeechRecognition||window.webkitSpeechRecognition;recognition=new R();recognition.lang="hi-IN";recognition.interimResults=false;recognition.continuous=false;recognition.onstart=()=>{listening=true;document.getElementById("micBtn").textContent="⏹";setState("LISTENING")};recognition.onresult=e=>{document.getElementById("input").value=e.results[0][0].transcript;send()};recognition.onerror=()=>{listening=false;document.getElementById("micBtn").textContent="🎙";setState("ONLINE")};recognition.onend=()=>{listening=false;document.getElementById("micBtn").textContent="🎙";if(!busy)setState("ONLINE")};recognition.start()}
+function toggleVoice(){voiceMode=!voiceMode;document.getElementById("voiceBtn").textContent=voiceMode?"VOICE ON":"VOICE";if(!voiceMode)speechSynthesis.cancel()}
+function clearCurrentChat(){let c=getCurrentChat();if(!c)return;if(!confirm("Clear this conversation?"))return;c.messages=[];c.updated=Date.now();saveChats();renderChat()}
+function deleteCurrentChat(){let c=getCurrentChat();if(c)deleteChat(c.id)}
+function exportMemory(){let blob=new Blob([JSON.stringify(memory,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ultron_memory.json";a.click();URL.revokeObjectURL(a.href)}
+function importMemoryFile(file){let r=new FileReader();r.onload=()=>{try{memory=JSON.parse(r.result);saveMemory();showMemory();addSystem("Memory imported successfully.")}catch(e){addSystem("Invalid memory file.")}};r.readAsText(file)}
+async function send(){if(busy)return;let input=document.getElementById("input"),q=cleanText(input.value);if(!q)return;if(q.length>4000){addSystem("Message too long. Please keep it under 4000 characters.");return}input.value="";let c=ensureChat();addMessage("user",q);extractMemory(q);let cmd=localCommand(q);if(cmd){addMessage("ai",cmd);speak(cmd);return}if(!apiKey){document.getElementById("apiModal").classList.add("show");document.getElementById("apiInput").focus();return}busy=true;setState("THINKING");showTyping();try{let web=isCurrentQuery(q);if(web)setState("SEARCHING WEB");let msgs=[{role:"system",content:buildSystemPrompt(q)},...recentMessages(c)];if(web)msgs[0].content+="\nWEB SEARCH IS REQUIRED FOR THIS REQUEST. Search the web before answering and use fresh results.";let ans=await callGroq(msgs,web);removeTyping();addMessage("ai",ans);speak(ans);setState(web?"ONLINE • WEB USED":"ONLINE")}catch(e){removeTyping();let msg=e.message==="INVALID_KEY"?"API key invalid hai. KEY button se new key save karo.":e.message==="RATE_LIMIT"?"Groq rate limit aa gayi. Thodi der baad try karo.":"API/Internet error. Connection aur API key check karo.";addMessage("system",msg);setState("ERROR")}finally{busy=false}}
+</script>
+<script>
+const sidebar=document.getElementById("sidebar"),overlay=document.getElementById("overlay");
+function closeSidebar(){sidebar.classList.remove("open");overlay.classList.remove("show")}
+function openSidebar(){sidebar.classList.add("open");overlay.classList.add("show")}
+document.getElementById("newChat").onclick=()=>{createChat();document.getElementById("input").focus();closeSidebar()};
+document.getElementById("menuBtn").onclick=openSidebar;
+overlay.onclick=closeSidebar;
+document.getElementById("sendBtn").onclick=send;
+document.getElementById("micBtn").onclick=startVoice;
+document.getElementById("voiceBtn").onclick=toggleVoice;
+document.getElementById("memBtn").onclick=()=>{showMemory();document.getElementById("memoryPanel").classList.toggle("show")};
+document.getElementById("resetBtn").onclick=clearCurrentChat;
+document.getElementById("clearHistoryBtn").onclick=clearHistory;
+document.getElementById("clearMemoryBtn").onclick=()=>{if(!confirm("Delete ALL ULTRON memory? Saved chats will remain."))return;memory=defaultMemory();saveMemory();showMemory();addSystem("All permanent memory deleted. Chat history is safe.")};
+document.getElementById("exportBtn").onclick=exportMemory;
+document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
+document.getElementById("importFile").onchange=e=>{if(e.target.files[0])importMemoryFile(e.target.files[0]);e.target.value=""};
+document.getElementById("keyBtn").onclick=()=>{document.getElementById("apiInput").value=apiKey;document.getElementById("apiModal").classList.add("show");document.getElementById("apiInput").focus()};
+document.getElementById("cancelKey").onclick=()=>document.getElementById("apiModal").classList.remove("show");
+document.getElementById("saveKey").onclick=()=>{let k=cleanText(document.getElementById("apiInput").value);if(!k)return;apiKey=k;localStorage.setItem("ultron_api_key",k);document.getElementById("apiModal").classList.remove("show");setState("ONLINE");addSystem("API key saved. ULTRON is ready. ⚡")};
+document.getElementById("input").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();send()}});
+document.getElementById("apiInput").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("saveKey").click()});
+window.addEventListener("keydown",e=>{if(e.key==="Escape"){document.getElementById("apiModal").classList.remove("show");document.getElementById("memoryPanel").classList.remove("show");closeSidebar()}});
+window.addEventListener("beforeunload",()=>{if("speechSynthesis"in window)speechSynthesis.cancel()});
+if("speechSynthesis"in window){speechSynthesis.onvoiceschanged=loadVoices;loadVoices()}
+function boot(){loadMemory();chats=loadChats();if(chats.length){chats.sort((a,b)=>(b.updated||b.created)-(a.updated||a.created));currentChatId=chats[0].id;renderHistory();renderChat();updateTitle()}else{renderHistory();createChat()}showMemory();if(!apiKey)setTimeout(()=>document.getElementById("apiModal").classList.add("show"),500);setState("ONLINE")}
+boot();
 </script>
 </body>
 </html>
