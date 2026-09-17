@@ -2,151 +2,659 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/png" href="icon.png">
-<title>ULTRON V6 // GOD MODE</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="theme-color" content="#030303">
+<title>ULTRON V7 // GOD MODE</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-body{background:#000;color:#ff1a1a;font-family:monospace;display:flex;flex-direction:column;height:100vh;overflow:hidden}
-.top{padding:14px 18px;border-bottom:1px solid #330000;display:flex;justify-content:space-between;align-items:center;background:#050000}
-.top b{letter-spacing:5px;color:#ff2222;font-size:14px}
-.top div{display:flex;gap:6px}
-.top button{background:transparent;border:1px solid #660000;color:#ff6666;padding:6px 14px;font-family:monospace;cursor:pointer;font-size:11px}
-.top button.on{background:#ff0000;color:#000;box-shadow:0 0 15px #ff0000;border-color:#ff0000}
-.center{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.eye{width:260px;height:260px;border-radius:50%;border:2px solid #ff0000;box-shadow:0 0 70px #ff0000,inset 0 0 70px #ff0000;background:radial-gradient(circle,#ff2a2a 0%,#8a0000 35%,#000 70%);transition:.3s}
-.eye.think{animation:pulse.6s infinite alternate}
-@keyframes pulse{from{box-shadow:0 0 30px #ff0000}to{box-shadow:0 0 140px #ff0000}}
-.status{margin-top:26px;letter-spacing:5px;font-size:11px;color:#ff4444}
-.chat{height:42vh;overflow-y:auto;padding:14px;background:#050505;border-top:1px solid #220000}
-.msg{padding:11px 14px;margin:9px 0;border-left:3px solid #ff0000;background:#111;font-size:14px;line-height:1.6;white-space:pre-wrap}
-.msg.user{border-left-color:#444;color:#ccc;text-align:right;background:#0e0e0e}
-.inputbar{display:flex;gap:8px;padding:12px;background:#000;border-top:1px solid #222}
-.inputbar input{flex:1;background:#111;border:1px solid #333;color:#fff;padding:16px;font-family:monospace;outline:none;font-size:15px}
-.inputbar button{background:#ff0000;border:none;color:#000;font-weight:900;padding:0 24px;font-size:22px;cursor:pointer}
-.inputbar button.mic{background:#111;color:#ff0000;border:1px solid #ff0000;font-size:18px}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%;background:#030303;color:#eee;font-family:Arial,sans-serif;overflow:hidden}
+body{display:flex;justify-content:center;align-items:center}
+.app{width:100%;height:100%;max-width:1500px;display:flex;flex-direction:column;background:radial-gradient(circle at 50% 20%,rgba(255,0,0,.08),transparent 35%),#030303}
+.topbar{height:64px;min-height:64px;border-bottom:1px solid rgba(255,0,0,.25);display:flex;align-items:center;justify-content:space-between;padding:0 20px;background:rgba(0,0,0,.8);backdrop-filter:blur(10px)}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-dot{width:12px;height:12px;border-radius:50%;background:#f11;box-shadow:0 0 10px red,0 0 25px rgba(255,0,0,.7);animation:pulse 1.5s infinite}
+.logo-text{font-weight:900;letter-spacing:3px;color:#f33;font-size:18px}
+.version{color:#777;font-size:10px;letter-spacing:2px}
+.top-actions{display:flex;gap:8px}
+.icon-btn{width:38px;height:38px;border:1px solid #292929;border-radius:10px;background:#090909;color:#aaa;cursor:pointer;transition:.2s}
+.icon-btn:hover{color:#fff;border-color:#f22;box-shadow:0 0 12px rgba(255,0,0,.2)}
+.main{flex:1;min-height:0;display:grid;grid-template-columns:280px 1fr 280px;gap:1px}
+.side{background:rgba(5,5,5,.9);border-right:1px solid rgba(255,255,255,.05);padding:16px;overflow-y:auto}
+.side.right{border-right:0;border-left:1px solid rgba(255,255,255,.05)}
+.panel-title{color:#777;font-size:10px;letter-spacing:2px;margin-bottom:10px}
+.card{background:#080808;border:1px solid #181818;border-radius:14px;padding:14px;margin-bottom:12px}
+.stat{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #111}
+.stat:last-child{border-bottom:0}
+.stat-name{color:#777;font-size:11px}
+.stat-value{color:#eee;font-weight:bold;font-size:12px}
+.red{color:#f33!important}
+.core{min-width:0;min-height:0;display:flex;flex-direction:column;position:relative}
+.visual{height:205px;min-height:205px;display:flex;align-items:center;justify-content:center;position:relative}
+.eye{width:135px;height:135px;border-radius:50%;border:2px solid rgba(255,0,0,.4);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 25px rgba(255,0,0,.12),inset 0 0 30px rgba(255,0,0,.05);animation:float 4s ease-in-out infinite}
+.eye:before{content:"";position:absolute;width:105px;height:105px;border-radius:50%;border:1px solid rgba(255,0,0,.45);box-shadow:0 0 20px rgba(255,0,0,.15)}
+.eye:after{content:"";position:absolute;width:72px;height:72px;border-radius:50%;border:1px dashed rgba(255,0,0,.5);animation:rotate 8s linear infinite}
+.eye-core{width:38px;height:38px;border-radius:50%;background:#f11;box-shadow:0 0 10px red,0 0 30px red,0 0 60px rgba(255,0,0,.8);animation:core 1.2s infinite;z-index:2}
+.eye-label{position:absolute;bottom:-30px;font-size:9px;color:#f33;letter-spacing:3px;font-weight:bold}
+.status-box{text-align:center;margin:4px 0 8px}
+.status{display:inline-flex;align-items:center;gap:7px;color:#666;font-size:10px;letter-spacing:2px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#555}
+.status.online .status-dot{background:#f22;box-shadow:0 0 10px red}
+.status.thinking .status-dot{background:#f80;box-shadow:0 0 10px #f80;animation:pulse .6s infinite}
+.chat{flex:1;min-height:0;overflow-y:auto;padding:10px 18px;scroll-behavior:smooth}
+.chat::-webkit-scrollbar,.side::-webkit-scrollbar{width:5px}
+.chat::-webkit-scrollbar-thumb,.side::-webkit-scrollbar-thumb{background:#222;border-radius:10px}
+.message{max-width:88%;margin-bottom:12px;padding:11px 13px;border-radius:13px;line-height:1.5;font-size:14px;word-wrap:break-word;white-space:pre-wrap}
+.message.user{margin-left:auto;background:#160707;border:1px solid rgba(255,0,0,.2);color:#eee}
+.message.ai{margin-right:auto;background:#080808;border:1px solid #191919;color:#ddd}
+.message.system{margin:7px auto;max-width:95%;text-align:center;color:#666;font-size:9px;letter-spacing:1px;padding:6px}
+.msg-label{display:block;font-size:8px;letter-spacing:2px;color:#f33;margin-bottom:4px;font-weight:bold}
+.message.user .msg-label{color:#888}
+.typing{display:flex;gap:5px;align-items:center}
+.typing span{width:6px;height:6px;border-radius:50%;background:#f22;animation:typing 1s infinite}
+.typing span:nth-child(2){animation-delay:.15s}
+.typing span:nth-child(3){animation-delay:.3s}
+.input-area{padding:10px 15px 14px;border-top:1px solid rgba(255,255,255,.05);background:rgba(0,0,0,.75)}
+.input-box{display:flex;gap:7px;background:#080808;border:1px solid #202020;border-radius:15px;padding:6px;transition:.2s}
+.input-box:focus-within{border-color:rgba(255,0,0,.45);box-shadow:0 0 18px rgba(255,0,0,.08)}
+#userInput{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#fff;font-size:14px;padding:10px}
+#userInput::placeholder{color:#555}
+.action-btn{width:42px;height:42px;border:0;border-radius:11px;background:#111;color:#aaa;cursor:pointer;transition:.2s}
+.action-btn:hover{background:#1a1a1a;color:#fff}
+.send-btn{background:#c80000;color:#fff;font-weight:bold}
+.send-btn:hover{background:#ef0000;box-shadow:0 0 18px rgba(255,0,0,.3)}
+.input-info{display:flex;justify-content:space-between;margin-top:6px;padding:0 5px;color:#444;font-size:8px}
+.memory-item{padding:7px 0;border-bottom:1px solid #111;font-size:11px;color:#aaa}
+.memory-item:last-child{border-bottom:0}
+.memory-category{color:#f33;font-size:8px;letter-spacing:1px;margin-bottom:3px}
+.mini-btn{width:100%;padding:8px;margin-top:6px;border-radius:9px;border:1px solid #222;background:#0a0a0a;color:#999;cursor:pointer;font-size:10px}
+.mini-btn:hover{border-color:#f22;color:#fff}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);display:none;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal.show{display:flex}
+.modal-box{width:100%;max-width:460px;background:#080808;border:1px solid rgba(255,0,0,.3);border-radius:18px;padding:24px;box-shadow:0 0 50px rgba(255,0,0,.12),0 20px 80px rgba(0,0,0,.8)}
+.modal-title{color:#f22;font-size:20px;font-weight:900;letter-spacing:2px;margin-bottom:8px}
+.modal-subtitle{color:#777;font-size:12px;line-height:1.5;margin-bottom:18px}
+.key-input{width:100%;padding:13px;background:#030303;border:1px solid #242424;border-radius:10px;color:#fff;outline:0;margin-bottom:10px}
+.key-input:focus{border-color:#f22}
+.modal-actions{display:flex;gap:8px}
+.modal-btn{flex:1;padding:12px;border-radius:10px;border:1px solid #222;background:#111;color:#aaa;cursor:pointer}
+.modal-btn.primary{background:#c90000;border-color:#f22;color:#fff;font-weight:bold}
+.modal-note{color:#555;font-size:9px;line-height:1.5;margin-top:12px}
+@media(max-width:1000px){.main{grid-template-columns:210px 1fr}.side.right{display:none}}
+@media(max-width:700px){.topbar{padding:0 12px}.logo-text{font-size:14px;letter-spacing:2px}.version{display:none}.main{display:block}.side.left{display:none}.core{height:calc(100vh - 64px)}.visual{height:135px;min-height:135px}.eye{width:100px;height:100px}.eye:before{width:78px;height:78px}.eye:after{width:55px;height:55px}.eye-core{width:28px;height:28px}.chat{padding:8px}.message{max-width:94%;font-size:13px}}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.75)}}
+@keyframes core{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(.75);opacity:.7}}
+@keyframes rotate{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes typing{0%,60%,100%{transform:translateY(0);opacity:.4}30%{transform:translateY(-5px);opacity:1}}
 </style>
 </head>
 <body>
-<div class="top"><b>ULTRON V6 GOD</b><div><button id="voiceModeBtn" onclick="toggleUnlimited()">VOICE: OFF</button><button onclick="resetKey()">RESET</button></div></div>
-<div class="center"><div id="eye" class="eye"></div><div id="st" class="status">SYSTEM READY - GPT-OSS 20B LIVE</div></div>
-<div id="chat" class="chat"><div class="msg">ULTRON V6 GOD MODE - Groq naya model active. Ab koi 413 nahi.</div></div>
-<div class="inputbar">
-<input id="inp" placeholder="Hindi ya English me bolo..." onkeydown="if(event.key==='Enter')send()">
-<button onclick="send()">></button>
-<button class="mic" onclick="voiceIn()">🎤</button>
+<div class="app">
+<header class="topbar">
+<div class="logo"><div class="logo-dot"></div><div><div class="logo-text">ULTRON</div><div class="version">V7 // GOD MODE</div></div></div>
+<div class="top-actions">
+<button class="icon-btn" id="memoryBtn" title="Memory">🧠</button>
+<button class="icon-btn" id="voiceToggle" title="Voice">🔊</button>
+<button class="icon-btn" id="keyBtn" title="API Key">🔑</button>
+<button class="icon-btn" id="clearBtn" title="Clear Chat">⌫</button>
+</div>
+</header>
+<main class="main">
+<aside class="side left">
+<div class="panel-title">SYSTEM STATUS</div>
+<div class="card">
+<div class="stat"><span class="stat-name">CORE</span><span class="stat-value red">ONLINE</span></div>
+<div class="stat"><span class="stat-name">AI MODEL</span><span class="stat-value" id="modelName">GPT-OSS-120B</span></div>
+<div class="stat"><span class="stat-name">MEMORY</span><span class="stat-value" id="memoryCount">0</span></div>
+<div class="stat"><span class="stat-name">MESSAGES</span><span class="stat-value" id="messageCount">0</span></div>
+</div>
+<div class="panel-title">CAPABILITIES</div>
+<div class="card">
+<div class="memory-item"><div class="memory-category">01</div>Smart Conversation</div>
+<div class="memory-item"><div class="memory-category">02</div>Long-Term Memory</div>
+<div class="memory-item"><div class="memory-category">03</div>Voice Input</div>
+<div class="memory-item"><div class="memory-category">04</div>Voice Output</div>
+<div class="memory-item"><div class="memory-category">05</div>Web Search</div>
+</div>
+<div class="panel-title">QUICK ACTIONS</div>
+<div class="card">
+<button class="mini-btn" id="rememberBtn">+ REMEMBER SOMETHING</button>
+<button class="mini-btn" id="showMemoryBtn">VIEW MEMORY</button>
+<button class="mini-btn" id="exportBtn">EXPORT MEMORY</button>
+<button class="mini-btn" id="importBtn">IMPORT MEMORY</button>
+<input type="file" id="importFile" accept=".json" style="display:none">
+</div>
+</aside>
+<section class="core">
+<div class="visual"><div class="eye"><div class="eye-core"></div><div class="eye-label">ACTIVE</div></div></div>
+<div class="status-box"><div class="status online" id="status"><span class="status-dot"></span><span id="statusText">ULTRON ONLINE</span></div></div>
+<div class="chat" id="chat"><div class="message system">ULTRON V7 GOD MODE INITIALIZED</div></div>
+<div class="input-area">
+<div class="input-box">
+<input id="userInput" type="text" autocomplete="off" placeholder="Talk to ULTRON...">
+<button class="action-btn" id="micBtn" title="Voice Input">🎙️</button>
+<button class="action-btn send-btn" id="sendBtn" title="Send">➤</button>
+</div>
+<div class="input-info"><span id="voiceStatus">VOICE: OFF</span><span>ENTER = SEND</span></div>
+</div>
+</section>
+<aside class="side right">
+<div class="panel-title">MEMORY CORE</div>
+<div class="card" id="memoryPreview"><div class="memory-item"><div class="memory-category">SYSTEM</div>Memory system ready.</div></div>
+<div class="panel-title">CURRENT SESSION</div>
+<div class="card">
+<div class="stat"><span class="stat-name">USER MSG</span><span class="stat-value" id="userMsgCount">0</span></div>
+<div class="stat"><span class="stat-name">AI RESPONSES</span><span class="stat-value" id="aiMsgCount">0</span></div>
+<div class="stat"><span class="stat-name">VOICE</span><span class="stat-value" id="voiceState">OFF</span></div>
+</div>
+<div class="panel-title">COMMANDS</div>
+<div class="card">
+<div class="memory-item"><div class="memory-category">MEMORY</div>"remember ..."</div>
+<div class="memory-item"><div class="memory-category">MEMORY</div>"forget ..."</div>
+<div class="memory-item"><div class="memory-category">SYSTEM</div>"clear memory"</div>
+<div class="memory-item"><div class="memory-category">VOICE</div>"stop"</div>
+</div>
+</aside>
+</main>
+</div>
+<div class="modal" id="keyModal">
+<div class="modal-box">
+<div class="modal-title">🔐 API ACCESS</div>
+<div class="modal-subtitle">Enter your Groq API key to activate ULTRON. The key is not written inside the source code.</div>
+<input type="password" id="apiKeyInput" class="key-input" placeholder="gsk_..." autocomplete="off">
+<div class="modal-actions">
+<button class="modal-btn" id="closeKeyBtn">CANCEL</button>
+<button class="modal-btn primary" id="saveKeyBtn">ACTIVATE</button>
+</div>
+<div class="modal-note">Your key is stored locally in this browser. Do not publish a personal API key in a public website.</div>
+</div>
 </div>
 <script>
-let apiKey=localStorage.getItem('ultron_groq_key');
-if(!apiKey){askKey();}
-function askKey(){let k=prompt("Apni Groq API Key daal (gsk_...):");if(k){apiKey=k.trim();localStorage.setItem('ultron_groq_key',apiKey);}}
-function resetKey(){localStorage.removeItem('ultron_groq_key');localStorage.removeItem('ultron_v6_god_memory');localStorage.removeItem('ultron_memory');apiKey=null;alert('Memory clear ho gayi!');askKey();location.reload();}
-const chatEl=document.getElementById('chat'),eye=document.getElementById('eye'),st=document.getElementById('st');
-let unlimitedMode=false, isListening=false;
+const MODEL="openai/gpt-oss-120b";
+const API_URL="https://api.groq.com/openai/v1/chat/completions";
+const $=id=>document.getElementById(id);
+let apiKey=localStorage.getItem("ultron_api_key")||"",voiceMode=false,listening=false,busy=false,recognition=null,mainVoice=null;
+const MEMORY_KEY="ultron_v7_memory";
+let memory={profile:[],preferences:[],goals:[],projects:[],facts:[],important:[],conversations:[],created:Date.now()};
 
-let ultronMemory = JSON.parse(localStorage.getItem('ultron_v6_god_memory') || '{"personal":[],"chats":[]}');
-function extractPersonalInfo(text){
-  let t = text.toLowerCase();
-  let keys = ['mera naam','my name','meri age','mai rehta','i live','mera kaam','i work','meri gf','my gf','meri pasand','i like','mujhe pasand','yaad rakh','remember this'];
-  return keys.some(k=>t.includes(k));
+function loadMemory(){
+try{
+const saved=localStorage.getItem(MEMORY_KEY);
+if(saved)memory={...memory,...JSON.parse(saved)};
+}catch(e){console.error("Memory load error:",e)}
 }
-function saveToMemory(q,a){
-  if(extractPersonalInfo(q)){ ultronMemory.personal.push(q.slice(0,200)); if(ultronMemory.personal.length>100) ultronMemory.personal.shift(); }
-  ultronMemory.chats.push({u:q.slice(0,200), a:a.slice(0,200)}); if(ultronMemory.chats.length>500) ultronMemory.chats.shift();
-  localStorage.setItem('ultron_v6_god_memory', JSON.stringify(ultronMemory));
+function saveMemory(){
+try{localStorage.setItem(MEMORY_KEY,JSON.stringify(memory))}
+catch(e){console.error("Memory save error:",e)}
 }
-function getMemoryContext(){
-  let p = ultronMemory.personal.slice(-2).join(' | ').slice(0,150);
-  let c = ultronMemory.chats.slice(-2).map(x=>`U:${x.u.slice(0,30)}`).join('\n').slice(0,150);
-  return `PERSONAL: ${p} | CHATS: ${c}`.slice(0,300);
+function cleanText(text){return String(text||"").replace(/\s+/g," ").trim()}
+function addMemory(category,text,importance=5){
+text=cleanText(text);
+if(!text)return;
+if(!memory[category])memory[category]=[];
+if(memory[category].some(x=>x.text.toLowerCase()===text.toLowerCase()))return;
+memory[category].push({text,importance,time:Date.now()});
+memory[category].sort((a,b)=>(b.importance||0)-(a.importance||0));
+if(memory[category].length>100)memory[category]=memory[category].slice(0,100);
+saveMemory();
+updateStats();
 }
-
-async function searchDuck(query){
-  try{
-    let res = await fetch(`https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`);
-    let data = await res.json();
-    let out = (data.AbstractText||'') + ' ' + (data.Results?data.Results.map(r=>r.Text).join(' '):'');
-    return out.slice(0,400);
-  }catch(e){ return ''; }
+function extractMemory(text){
+const original=cleanText(text);
+let m=original.match(/(?:mera naam|my name is|main hu|i am)\s+([a-zA-Z][a-zA-Z0-9 _-]{1,30})/i);
+if(m)addMemory("profile","User's name is "+cleanText(m[1]),10);
+m=original.match(/(?:meri age|my age is|i am)\s*(\d{1,2})\s*(?:years?|saal)?/i);
+if(m)addMemory("profile","User's age is "+m[1],10);
+m=original.match(/(?:mujhe|i)\s+(?:pasand hai|like|love)\s+(.+)/i);
+if(m)addMemory("preferences","User likes "+cleanText(m[1]),7);
+m=original.match(/(?:mujhe|i)\s+(?:pasand nahi|don't like|dislike)\s+(.+)/i);
+if(m)addMemory("preferences","User dislikes "+cleanText(m[1]),7);
+m=original.match(/(?:mera goal|my goal|mera target|my target)\s*(?:hai|is)?\s*(.+)/i);
+if(m)addMemory("goals",cleanText(m[1]),9);
+m=original.match(/(?:mera project|my project|i am building|main bana raha hu)\s*(?:hai|is)?\s*(.+)/i);
+if(m)addMemory("projects",cleanText(m[1]),9);
+m=original.match(/(?:remember|yaad rakh|yaad rakhna)\s*[:,-]?\s*(.+)/i);
+if(m)addMemory("important",cleanText(m[1]),10);
 }
-
-function toggleUnlimited(){
-  unlimitedMode=!unlimitedMode;
-  let btn=document.getElementById('voiceModeBtn');
-  btn.innerText=unlimitedMode?'VOICE: ON':'VOICE: OFF';
-  btn.classList.toggle('on',unlimitedMode);
-  if(unlimitedMode){ addMsg('UNLIMITED VOICE ON',''); voiceIn(); }
-  else { speechSynthesis.cancel(); }
+function searchMemory(query){
+const words=cleanText(query).toLowerCase().split(/\s+/).filter(w=>w.length>2),results=[];
+for(const category of Object.keys(memory)){
+if(!Array.isArray(memory[category]))continue;
+for(const item of memory[category]){
+if(!item?.text)continue;
+const t=item.text.toLowerCase();
+let score=0;
+for(const word of words)if(t.includes(word))score++;
+if(score)results.push({...item,category,score});
+}}
+results.sort((a,b)=>(b.score-a.score)||((b.importance||0)-(a.importance||0)));
+return results.slice(0,12);
 }
-let mainVoice=null;
+function getMemoryContext(query){
+const sections=[];
+for(const category of ["profile","preferences","goals","projects","important","facts"]){
+const items=memory[category]||[];
+if(!items.length)continue;
+sections.push(category.toUpperCase()+":\n"+items.slice().sort((a,b)=>(b.importance||0)-(a.importance||0)).slice(0,8).map(x=>"- "+x.text).join("\n"));
+}
+const relevant=searchMemory(query);
+if(relevant.length)sections.push("RELEVANT MEMORY:\n"+relevant.map(x=>"- "+x.text).join("\n"));
+return sections.join("\n\n");
+}
+function saveConversation(user,assistant){
+memory.conversations.push({user:cleanText(user),assistant:cleanText(assistant),time:Date.now()});
+if(memory.conversations.length>150)memory.conversations=memory.conversations.slice(-150);
+saveMemory();
+updateStats();
+}
+function buildSystemPrompt(query){
+return `You are ULTRON V7, the user's personal AI assistant.
+PERSONALITY:
+- Calm, intelligent, precise, helpful, strategic and friendly.
+- Never manipulate the user or treat people as tools.
+LANGUAGE:
+- Understand Hindi, Hinglish and English.
+- Reply in the same language style the user uses.
+- For school questions, explain clearly and exam-relevantly.
+STYLE:
+- Be direct and natural.
+- Use bullets and examples when useful.
+- For difficult concepts, explain step-by-step.
+- Do not invent facts.
+MEMORY:
+Use the following local memory only when relevant:
+${getMemoryContext(query)||"No stored memory yet."}
+CURRENT DATE: ${new Date().toLocaleDateString("en-IN")}
+You are ULTRON V7. Help the user learn, build, think and improve.`;
+}
+function setStatus(text,state="online"){
+$("statusText").textContent=text;
+$("status").className="status "+state;
+}
+function setState(state){
+if(state==="thinking")setStatus("PROCESSING...","thinking");
+else if(state==="online")setStatus("ULTRON ONLINE","online");
+else setStatus(state,"online");
+}
+function updateStats(){
+let total=0;
+for(const k of Object.keys(memory))if(Array.isArray(memory[k]))total+=memory[k].length;
+$("memoryCount").textContent=total;
+$("messageCount").textContent=memory.conversations.length;
+$("modelName").textContent="GPT-OSS-120B";
+if($("userMsgCount"))$("userMsgCount").textContent=memory.conversations.length;
+if($("aiMsgCount"))$("aiMsgCount").textContent=memory.conversations.length;
+if($("voiceState"))$("voiceState").textContent=voiceMode?"ON":"OFF";
+if($("voiceStatus"))$("voiceStatus").textContent="VOICE: "+(voiceMode?"ON":"OFF");
+}
+function addMessage(type,text){
+const div=document.createElement("div");
+div.className="message "+type;
+const label=document.createElement("span");
+label.className="msg-label";
+label.textContent=type==="user"?"YOU":"ULTRON";
+div.appendChild(label);
+const content=document.createElement("span");
+content.textContent=text;
+div.appendChild(content);
+$("chat").appendChild(div);
+$("chat").scrollTop=$("chat").scrollHeight;
+return div;
+}
+function addSystem(text){
+const div=document.createElement("div");
+div.className="message system";
+div.textContent=text;
+$("chat").appendChild(div);
+$("chat").scrollTop=$("chat").scrollHeight;
+}
+function showTyping(){
+const div=document.createElement("div");
+div.className="message ai";
+div.id="typing";
+div.innerHTML='<span class="msg-label">ULTRON</span><div class="typing"><span></span><span></span><span></span></div>';
+$("chat").appendChild(div);
+$("chat").scrollTop=$("chat").scrollHeight;
+}
+function removeTyping(){const x=$("typing");if(x)x.remove()}
+function escapeHTML(str){
+return String(str).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
+function showMemory(){
+const all=[];
+for(const category of ["profile","preferences","goals","projects","important","facts"]){
+(memory[category]||[]).forEach(x=>all.push({category,text:x.text}));
+}
+if(!all.length){
+$("memoryPreview").innerHTML='<div class="memory-item"><div class="memory-category">SYSTEM</div>No memories stored.</div>';
+return;
+}
+$("memoryPreview").innerHTML=all.slice(0,15).map(x=>'<div class="memory-item"><div class="memory-category">'+escapeHTML(x.category)+'</div>'+escapeHTML(x.text)+'</div>').join("");
+}
+function clearChat(){
+$("chat").innerHTML="";
+addSystem("CHAT CLEARED // MEMORY PRESERVED");
+}
+function clearEverything(){
+if(!confirm("Delete ALL ULTRON memory and chat?"))return;
+memory={profile:[],preferences:[],goals:[],projects:[],facts:[],important:[],conversations:[],created:Date.now()};
+saveMemory();
+clearChat();
+showMemory();
+updateStats();
+}
+function exportMemory(){
+const blob=new Blob([JSON.stringify(memory,null,2)],{type:"application/json"});
+const a=document.createElement("a");
+a.href=URL.createObjectURL(blob);
+a.download="ultron_memory.json";
+a.click();
+URL.revokeObjectURL(a.href);
+}
+function importMemoryFile(file){
+const reader=new FileReader();
+reader.onload=()=>{
+try{
+const data=JSON.parse(reader.result);
+if(!data||typeof data!=="object")throw Error();
+memory={...memory,...data};
+saveMemory();
+showMemory();
+updateStats();
+addSystem("MEMORY IMPORTED SUCCESSFULLY");
+}catch(e){addSystem("MEMORY IMPORT FAILED")}
+};
+reader.readAsText(file);
+}
 function loadVoices(){
- let voices=speechSynthesis.getVoices();
- mainVoice = voices.find(v=>v.name.includes('Microsoft Ravi')) || voices.find(v=>v.lang==='en-IN') || voices[0];
+const voices=speechSynthesis.getVoices();
+if(!voices.length)return;
+mainVoice=voices.find(v=>/en-IN|hi-IN/i.test(v.lang))||voices.find(v=>/en/i.test(v.lang))||voices[0];
 }
-speechSynthesis.onvoiceschanged=loadVoices; loadVoices(); setTimeout(loadVoices,800);
-function cleanForSpeech(t){return t.replace(/\*\*/g,'').replace(/[*#_`~<>|]/g,'').replace(/https?:\/\/\S+/g,'').replace(/\s+/g,' ').trim();}
-function cleanForDisplay(t){return t.replace(/\*\*/g,'').replace(/##/g,'').trim();}
-function speakLong(text){
- speechSynthesis.cancel();
- let clean=cleanForSpeech(text); if(!clean){ if(unlimitedMode) setTimeout(()=>voiceIn(),600); return; }
- let sentences=clean.match(/[^.!?।]+[.!?।]?/g) || [clean]; let i=0;
- function next(){
-   if(i>=sentences.length){ st.innerText='SYSTEM READY - GPT-OSS 20B LIVE'; if(unlimitedMode) setTimeout(()=>voiceIn(),600); return; }
-   let part=sentences[i].trim(); if(!part){i++; next(); return;}
-   let u=new SpeechSynthesisUtterance(part); if(mainVoice) u.voice=mainVoice;
-   u.lang=/[ऀ-ॿ]/.test(part)?'hi-IN':'en-IN'; u.rate=0.88; u.pitch=0.85;
-   u.onstart=()=>{st.innerText='SPEAKING...'; eye.classList.add('think');}
-   u.onend=()=>{i++; next();}
-   u.onerror=()=>{i++; next();}
-   speechSynthesis.speak(u);
- }
- next();
+if("speechSynthesis"in window){
+loadVoices();
+speechSynthesis.onvoiceschanged=loadVoices;
 }
-function addMsg(t,cls){let d=document.createElement('div');d.className='msg '+(cls||'');d.innerText=cleanForDisplay(t);chatEl.appendChild(d);chatEl.scrollTop=chatEl.scrollHeight;}
-
+function cleanSpeech(text){
+return String(text).replace(/[*_`#>]/g,"").replace(/\[(.*?)\]\(.*?\)/g,"$1").replace(/https?:\/\/\S+/g,"");
+}
+function speak(text){
+if(!voiceMode||!("speechSynthesis"in window))return;
+speechSynthesis.cancel();
+const u=new SpeechSynthesisUtterance(cleanSpeech(text).slice(0,3500));
+if(mainVoice)u.voice=mainVoice;
+u.lang=mainVoice?.lang||"en-IN";
+u.rate=.95;
+u.pitch=1;
+speechSynthesis.speak(u);
+}
+function startVoice(){
+if(!("webkitSpeechRecognition"in window||"SpeechRecognition"in window)){
+addSystem("VOICE INPUT NOT SUPPORTED IN THIS BROWSER");
+return;
+}
+if(listening){
+recognition?.stop();
+return;
+}
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+recognition=new SR();
+recognition.lang="hi-IN";
+recognition.continuous=false;
+recognition.interimResults=false;
+recognition.onstart=()=>{
+listening=true;
+$("micBtn").textContent="⏹️";
+setStatus("LISTENING...","thinking");
+};
+recognition.onresult=e=>{
+const text=e.results[0][0].transcript;
+$("userInput").value=text;
+};
+recognition.onerror=e=>{
+listening=false;
+$("micBtn").textContent="🎙️";
+setState("online");
+addSystem("VOICE ERROR: "+e.error);
+};
+recognition.onend=()=>{
+listening=false;
+$("micBtn").textContent="🎙️";
+setState("online");
+if($("userInput").value.trim())send();
+};
+recognition.start();
+}
+function toggleVoice(){
+voiceMode=!voiceMode;
+updateStats();
+if(!voiceMode&&"speechSynthesis"in window)speechSynthesis.cancel();
+addSystem("VOICE MODE "+(voiceMode?"ENABLED":"DISABLED"));
+}
+async function webSearch(query){
+try{
+const url="https://api.duckduckgo.com/?q="+encodeURIComponent(query)+"&format=json&no_html=1&skip_disambig=1";
+const r=await fetch(url);
+if(!r.ok)return "";
+const d=await r.json();
+let out=[];
+if(d.AbstractText)out.push(d.AbstractText);
+if(Array.isArray(d.RelatedTopics)){
+for(const x of d.RelatedTopics.slice(0,5)){
+if(x.Text)out.push(x.Text);
+else if(Array.isArray(x.Topics))x.Topics.slice(0,2).forEach(y=>y.Text&&out.push(y.Text));
+}
+}
+return out.join("\n").slice(0,6000);
+}catch(e){return ""}
+}
+function shouldSearch(q){
+return /\b(latest|today|current|news|recent|abhi|aaj|price|weather|who is|what happened|2026|search|internet|online|latest update)\b/i.test(q);
+}
+function localCommand(q){
+const x=q.trim();
+if(/^(memory|memories|what do you remember|kya yaad hai|meri memory)$/i.test(x)){
+showMemory();
+addMessage("ai",getMemoryContext("")||"Mere paas abhi koi stored memory nahi hai.");
+return true;
+}
+let m=x.match(/^(?:remember|yaad rakh|yaad rakhna)\s*[:,-]?\s*(.+)$/i);
+if(m){
+addMemory("important",m[1],10);
+addMessage("ai","Done bhai. Ye baat memory mein save kar di.");
+showMemory();
+return true;
+}
+m=x.match(/^(?:forget|bhool jao|bhul jao)\s*[:,-]?\s*(.+)$/i);
+if(m){
+const target=cleanText(m[1]).toLowerCase();
+let removed=0;
+for(const category of Object.keys(memory)){
+if(!Array.isArray(memory[category]))continue;
+const before=memory[category].length;
+memory[category]=memory[category].filter(item=>!String(item?.text||"").toLowerCase().includes(target));
+removed+=before-memory[category].length;
+}
+saveMemory();
+showMemory();
+updateStats();
+addMessage("ai",removed?"Theek hai bhai, matching memory hata di.":"Mujhe matching memory nahi mili.");
+return true;
+}
+if(/^(clear all memory|clear memory|sab memory delete|delete all memory)$/i.test(x)){
+clearEverything();
+return true;
+}
+if(/^(stop|stop speaking|chup|quiet)$/i.test(x)){
+if("speechSynthesis"in window)speechSynthesis.cancel();
+addSystem("VOICE STOPPED");
+return true;
+}
+return false;
+}
+async function callGroq(messages){
+let lastError=null;
+for(let attempt=0;attempt<3;attempt++){
+try{
+const response=await fetch(API_URL,{
+method:"POST",
+headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},
+body:JSON.stringify({model:MODEL,messages,temperature:.7,max_tokens:1200,stream:false})
+});
+if(response.ok){
+const data=await response.json();
+return data?.choices?.[0]?.message?.content||"No response generated.";
+}
+let txt="";
+try{txt=await response.text()}catch(e){}
+lastError=new Error("HTTP "+response.status+" "+txt.slice(0,250));
+if(response.status!==429&&response.status<500)break;
+await new Promise(r=>setTimeout(r,1000*(attempt+1)));
+}catch(e){
+lastError=e;
+await new Promise(r=>setTimeout(r,800*(attempt+1)));
+}
+}
+throw lastError||new Error("API request failed");
+}
+function getRecentConversation(){
+return memory.conversations.slice(-8).flatMap(x=>[
+{role:"user",content:x.user},
+{role:"assistant",content:x.assistant}
+]);
+}
 async function send(){
- let inp=document.getElementById('inp');let q=inp.value.trim();if(!q)return;
- q=q.replace(/(\b\w+\b)(?:\s+\1\b)+/gi,'$1');
- if(/[ऀ-ॿ]/.test(q) && q.length > 80) q = q.slice(0,80);
- if(q.length > 250) q = q.slice(0,250);
- addMsg(q,'user');inp.value='';eye.classList.add('think');st.innerText='SEARCHING...';
- if(!apiKey){askKey();if(!apiKey){eye.classList.remove('think');return;}}
- try{
-  let liveData = await searchDuck(q);
-  let memory = getMemoryContext();
-  st.innerText='THINKING...';
-  let res=await fetch('https://api.groq.com/openai/v1/chat/completions',{
-   method:'POST',
-   headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
-   body:JSON.stringify({
-    model:'openai/gpt-oss-20b',
-    messages:[
-     {role:'system',content:`You are ULTRON V6 GOD. You are Kiyotaka's personal AI. Reply in user's language. MEMORY: ${memory} LIVE: ${liveData.slice(0,300)}`},
-     {role:'user',content:q}
-    ],
-    max_tokens:700,
-    temperature:0.7
-   })
-  });
-  let data=await res.json();if(!res.ok)throw new Error(data.error?data.error.message:JSON.stringify(data));
-  let ans=data.choices[0].message.content;
-  saveToMemory(q,ans);
-  addMsg(ans,'');speakLong(ans);
- }catch(e){addMsg('ERROR: '+e.message,'');}
- finally{eye.classList.remove('think');st.innerText='SYSTEM READY - GPT-OSS 20B LIVE';}
+if(busy)return;
+const input=$("userInput");
+const text=input.value.trim();
+if(!text)return;
+if(text.length>4000){
+addSystem("MESSAGE TOO LONG // MAX 4000 CHARACTERS");
+return;
 }
-function voiceIn(){
- if(isListening) return;
- let SR=window.SpeechRecognition||window.webkitSpeechRecognition;
- if(!SR){alert('Mic not supported');return;}
- let r=new SR(); r.lang='hi-IN'; r.continuous=false; r.interimResults=false; r.maxAlternatives=1;
- let finalText=""; isListening=true;
- r.start(); st.innerText='SUN RAHA HU...'; eye.classList.add('think');
- r.onresult=(e)=>{ finalText=e.results[0][0].transcript; finalText=finalText.replace(/(\b\w+\b)(?:\s+\1\b)+/gi,'$1'); document.getElementById('inp').value=finalText; };
- r.onend=()=>{ isListening=false; st.innerText='SYSTEM READY - GPT-OSS 20B LIVE'; eye.classList.remove('think'); if(finalText.trim()) send(); else if(unlimitedMode) setTimeout(()=>voiceIn(),600); };
- r.onerror=()=>{ isListening=false; st.innerText='SYSTEM READY - GPT-OSS 20B LIVE'; eye.classList.remove('think'); if(unlimitedMode) setTimeout(()=>voiceIn(),800); };
+input.value="";
+addMessage("user",text);
+extractMemory(text);
+showMemory();
+updateStats();
+if(localCommand(text))return;
+if(!apiKey){
+$("keyModal").classList.add("show");
+$("apiKeyInput").focus();
+addSystem("API KEY REQUIRED TO ACTIVATE AI CORE");
+return;
 }
+busy=true;
+$("sendBtn").disabled=true;
+showTyping();
+setState("thinking");
+try{
+let live="";
+if(shouldSearch(text)){
+setStatus("SEARCHING WEB...","thinking");
+live=await webSearch(text);
+}
+const system=buildSystemPrompt(text);
+const messages=[{role:"system",content:system},...getRecentConversation(),{role:"user",content:text}];
+if(live)messages.push({role:"system",content:"LIVE WEB SEARCH CONTEXT. Treat this as potentially incomplete and verify when possible:\n"+live});
+setStatus("THINKING...","thinking");
+const answer=await callGroq(messages);
+removeTyping();
+addMessage("ai",answer);
+saveConversation(text,answer);
+showMemory();
+updateStats();
+setState("online");
+speak(answer);
+}catch(e){
+removeTyping();
+let msg="ULTRON ERROR: "+(e?.message||"Unknown error");
+if(String(e?.message).includes("401"))msg="API KEY INVALID OR UNAUTHORIZED.";
+else if(String(e?.message).includes("429"))msg="RATE LIMIT REACHED. Please wait and try again.";
+else if(String(e?.message).includes("Failed to fetch"))msg="NETWORK/CORS ERROR. Check internet connection or browser restrictions.";
+addMessage("ai",msg);
+setState("online");
+}finally{
+busy=false;
+$("sendBtn").disabled=false;
+input.focus();
+}
+}
+function openKeyModal(){
+$("keyModal").classList.add("show");
+$("apiKeyInput").value=apiKey;
+setTimeout(()=>$("apiKeyInput").focus(),100);
+}
+function closeKeyModal(){$("keyModal").classList.remove("show")}
+function saveAPIKey(){
+const key=$("apiKeyInput").value.trim();
+if(!key){
+addSystem("PLEASE ENTER YOUR GROQ API KEY");
+return;
+}
+apiKey=key;
+localStorage.setItem("ultron_api_key",apiKey);
+closeKeyModal();
+addSystem("API KEY SAVED // ULTRON AI CORE READY");
+setState("online");
+}
+$("sendBtn").addEventListener("click",send);
+$("micBtn").addEventListener("click",startVoice);
+$("voiceToggle").addEventListener("click",toggleVoice);
+$("keyBtn").addEventListener("click",openKeyModal);
+$("memoryBtn").addEventListener("click",showMemory);
+$("showMemoryBtn").addEventListener("click",()=>{
+showMemory();
+addSystem("MEMORY CORE DISPLAYED");
+});
+$("rememberBtn").addEventListener("click",()=>{
+const value=prompt("What should ULTRON remember?");
+if(value?.trim()){
+addMemory("important",value.trim(),10);
+showMemory();
+addSystem("MEMORY SAVED");
+}
+});
+$("exportBtn").addEventListener("click",exportMemory);
+$("importBtn").addEventListener("click",()=>$("importFile").click());
+$("importFile").addEventListener("change",e=>{
+if(e.target.files[0])importMemoryFile(e.target.files[0]);
+e.target.value="";
+});
+$("clearBtn").addEventListener("click",clearChat);
+$("saveKeyBtn").addEventListener("click",saveAPIKey);
+$("closeKeyBtn").addEventListener("click",closeKeyModal);
+$("keyModal").addEventListener("click",e=>{
+if(e.target===$("keyModal"))closeKeyModal();
+});
+$("userInput").addEventListener("keydown",e=>{
+if(e.key==="Enter"&&!e.shiftKey){
+e.preventDefault();
+send();
+}
+if(e.key==="Escape"&&busy){
+if("speechSynthesis"in window)speechSynthesis.cancel();
+}
+});
+document.addEventListener("keydown",e=>{
+if(e.ctrlKey&&e.key.toLowerCase()==="k"){
+e.preventDefault();
+openKeyModal();
+}
+});
+window.addEventListener("beforeunload",()=>{
+if("speechSynthesis"in window)speechSynthesis.cancel();
+});
+loadMemory();
+showMemory();
+updateStats();
+if(apiKey){
+addSystem("MEMORY CORE LOADED // AI KEY DETECTED");
+}else{
+addSystem("WELCOME // API KEY REQUIRED");
+setTimeout(openKeyModal,500);
+}
+$("userInput").focus();
 </script>
 </body>
 </html>
