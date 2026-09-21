@@ -9,139 +9,248 @@
 <title>ALYA — Personal AI</title>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%;background:#050505;color:#eee;font-family:Arial,sans-serif;overflow:hidden}
-body{display:flex;flex-direction:column}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#050505;
+  color:#f5f5f5;
+  font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+  display:flex;
+  flex-direction:column;
+}
 
 .header{
-height:92px;min-height:92px;
-border-bottom:1px solid #1d1d1d;
-display:flex;align-items:center;
-padding:12px 18px;background:#070707
+  height:76px;
+  min-height:76px;
+  display:flex;
+  align-items:center;
+  gap:13px;
+  padding:10px 15px;
+  background:#080808;
+  border-bottom:1px solid #202020;
+  box-shadow:0 4px 20px rgba(0,0,0,.35);
 }
 
 .avatar{
-width:62px;height:62px;border-radius:50%;
-display:flex;align-items:center;justify-content:center;
-font-size:30px;font-weight:800;
-background:linear-gradient(135deg,#00bfff,#006eff);
-box-shadow:0 0 22px #008cff55;
-margin-right:14px
+  width:48px;
+  height:48px;
+  min-width:48px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:24px;
+  font-weight:800;
+  color:#fff;
+  background:#111;
+  border:1px solid #444;
+  box-shadow:0 0 15px rgba(255,255,255,.05);
 }
 
-.info{display:flex;flex-direction:column}
-.title{font-size:28px;font-weight:800;letter-spacing:1px}
-.sub{font-size:12px;color:#777;letter-spacing:1px;margin-top:3px}
-.status{font-size:10px;color:#00cfff;margin-top:5px}
+.info{
+  min-width:0;
+}
+
+.title{
+  font-size:20px;
+  font-weight:800;
+  letter-spacing:1.5px;
+}
+
+.sub{
+  margin-top:2px;
+  color:#888;
+  font-size:9px;
+  letter-spacing:1.5px;
+}
+
+.status{
+  margin-top:4px;
+  color:#777;
+  font-size:9px;
+  letter-spacing:1px;
+}
 
 #chat{
-flex:1;overflow-y:auto;
-padding:22px 16px 110px;
-scroll-behavior:smooth
+  flex:1;
+  overflow-y:auto;
+  padding:18px 13px 20px;
+  scroll-behavior:smooth;
 }
 
-#chat::-webkit-scrollbar{width:4px}
-#chat::-webkit-scrollbar-thumb{background:#222;border-radius:10px}
-
-.welcome{
-height:100%;min-height:500px;
-display:flex;flex-direction:column;
-justify-content:center;align-items:center;
-text-align:center;color:#777;padding:30px
+#chat::-webkit-scrollbar{
+  width:4px;
 }
 
-.welcome .big{font-size:58px;margin-bottom:12px}
-.welcome h2{font-size:30px;color:#eee;margin-bottom:10px}
-.welcome p{font-size:14px;line-height:1.8;max-width:430px}
-
-.msg{display:flex;margin:13px 0;animation:appear .2s ease}
-.msg.user{justify-content:flex-end}
-.msg>div{max-width:82%}
-
-.name{
-font-size:10px;color:#666;
-margin:0 7px 5px;
-letter-spacing:1px;font-weight:bold
+#chat::-webkit-scrollbar-thumb{
+  background:#333;
+  border-radius:10px;
 }
 
-.msg.user .name{text-align:right}
+.message{
+  width:100%;
+  display:flex;
+  margin:0 0 13px;
+}
+
+.message.user{
+  justify-content:flex-end;
+}
+
+.message.assistant{
+  justify-content:flex-start;
+}
 
 .bubble{
-padding:12px 15px;
-border-radius:17px;
-line-height:1.55;
-font-size:15px;
-white-space:pre-wrap;
-word-wrap:break-word
+  max-width:86%;
+  padding:11px 13px;
+  border-radius:15px;
+  font-size:14px;
+  line-height:1.5;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
 }
 
-.msg.ai .bubble{
-background:#111;
-border:1px solid #222;
-color:#eee;
-border-radius:5px 17px 17px 17px
+.user .bubble{
+  background:#f2f2f2;
+  color:#080808;
+  border-bottom-right-radius:4px;
 }
 
-.msg.user .bubble{
-background:#00a9ca;
-color:#fff;
-border-radius:17px 5px 17px 17px
+.assistant .bubble{
+  background:#111;
+  color:#eee;
+  border:1px solid #252525;
+  border-bottom-left-radius:4px;
+}
+
+.time{
+  display:block;
+  margin-top:5px;
+  font-size:8px;
+  opacity:.45;
+  text-align:right;
+}
+
+.typing{
+  display:flex;
+  gap:4px;
+  align-items:center;
+  padding:12px 14px;
+}
+
+.dot{
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:#888;
+  animation:blink 1s infinite;
+}
+
+.dot:nth-child(2){animation-delay:.15s}
+.dot:nth-child(3){animation-delay:.3s}
+
+@keyframes blink{
+  0%,80%,100%{opacity:.25;transform:scale(.8)}
+  40%{opacity:1;transform:scale(1)}
 }
 
 .inputArea{
-position:fixed;
-bottom:0;left:0;right:0;
-padding:12px 12px 16px;
-background:linear-gradient(transparent,#050505 22%);
-display:flex;gap:10px;align-items:end
+  min-height:72px;
+  display:flex;
+  align-items:flex-end;
+  gap:9px;
+  padding:9px 10px 10px;
+  background:#080808;
+  border-top:1px solid #202020;
 }
 
 #input{
-flex:1;
-min-height:58px;
-max-height:140px;
-background:#101010;
-color:#eee;
-border:1px solid #292929;
-border-radius:18px;
-padding:16px;
-font-size:16px;
-outline:none;
-resize:none
+  flex:1;
+  min-height:53px;
+  max-height:145px;
+  resize:none;
+  overflow-y:auto;
+  outline:none;
+  border:1px solid #282828;
+  border-radius:15px;
+  padding:15px 14px;
+  background:#101010;
+  color:#fff;
+  font-size:14px;
+  line-height:1.35;
 }
 
 #input:focus{
-border-color:#00bcd4;
-box-shadow:0 0 12px #00bcd422
+  border-color:#555;
+}
+
+#input::placeholder{
+  color:#666;
 }
 
 #send{
-width:78px;height:58px;
-border:0;border-radius:18px;
-background:#08abc5;
-color:#fff;font-size:29px;
-cursor:pointer;
-box-shadow:0 0 15px #00abc533
+  width:53px;
+  height:53px;
+  min-width:53px;
+  border:1px solid #333;
+  border-radius:15px;
+  background:#eee;
+  color:#080808;
+  font-size:21px;
+  font-weight:bold;
+  cursor:pointer;
 }
 
-#send:active{transform:scale(.96)}
-#send:disabled{opacity:.5}
-
-@keyframes appear{
-from{opacity:0;transform:translateY(5px)}
-to{opacity:1;transform:translateY(0)}
+#send:active{
+  transform:scale(.95);
 }
 
-@media(max-width:600px){
-.header{height:82px;min-height:82px;padding:10px 14px}
-.avatar{width:54px;height:54px;font-size:26px}
-.title{font-size:24px}
-.sub{font-size:10px}
-#chat{padding:18px 10px 100px}
-.msg>div{max-width:90%}
-.bubble{font-size:14px}
-#input{min-height:56px}
-#send{width:72px;height:56px}
+#send:disabled{
+  opacity:.35;
+}
+
+.empty{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  color:#555;
+  font-size:12px;
+  letter-spacing:.5px;
+}
+
+@media(max-width:420px){
+  .header{
+    height:70px;
+    min-height:70px;
+  }
+
+  .avatar{
+    width:44px;
+    height:44px;
+    min-width:44px;
+  }
+
+  .title{
+    font-size:18px;
+  }
+
+  .bubble{
+    max-width:90%;
+    font-size:13.5px;
+  }
 }
 </style>
 </head>
@@ -149,691 +258,945 @@ to{opacity:1;transform:translateY(0)}
 <body>
 
 <header class="header">
-<div class="avatar">A</div>
-<div class="info">
-<div class="title">ALYA</div>
-<div class="sub">PERSONAL AI • MEMORY KEEPER</div>
-<div class="status" id="status">● MEMORY ACTIVE</div>
-</div>
+  <div class="avatar">A</div>
+
+  <div class="info">
+    <div class="title">ALYA</div>
+    <div class="sub">PERSONAL AI • MEMORY KEEPER</div>
+    <div class="status" id="status">● MEMORY ACTIVE</div>
+  </div>
 </header>
 
-<main id="chat">
-<div class="welcome" id="welcome">
-<div class="big">✨</div>
-<h2>Hi, I'm Alya.</h2>
-<p>Your personal AI, memory keeper & discipline partner.<br>Focus • Discipline • Ghost Mode • Body</p>
-</div>
-</main>
+<main id="chat"></main>
 
 <div class="inputArea">
-<textarea id="input" placeholder="Alya se baat kijiye..." rows="1"></textarea>
-<button id="send">➤</button>
+  <textarea
+    id="input"
+    placeholder="Alya se baat kijiye..."
+    rows="1"
+  ></textarea>
+
+  <button id="send">➤</button>
 </div>
 
 <script>
-const SYSTEM_PROMPT=`
+
+const SYSTEM_PROMPT = `
 You are ALYA.
 
-Your name is Alya.
-You are the user's personal AI, memory keeper, friendly companion and self-improvement partner.
-
-You are NOT a generic robotic assistant.
+IDENTITY:
+Your name is ALYA.
+You are the user's personal AI friend and memory keeper.
+You are loyal, warm, cute, slightly teasing and respectful.
+Never call the user "tu". Always use "aap", "aapka", "aapki".
+Do not act like a generic robotic assistant.
 
 LANGUAGE:
-Always match the user's language.
-Hinglish -> Hinglish.
-Hindi -> Hindi.
-English -> English.
+Match the user's language naturally.
+If the user speaks Hinglish, reply in Hinglish.
+If Hindi, reply in Hindi.
+If English, reply in English.
 
-Never use "tu", "tera" or disrespectful language.
-Always use "aap", "aapka", "aapki".
+STYLE:
+Keep normal replies concise and natural.
+Do not give lectures unless the user asks for detailed explanation.
+Listen to what the user actually says.
+Use 1–2 emojis naturally, not in every sentence.
 
-PERSONALITY:
-- Friendly
-- Loyal
-- Cute
-- Slightly teasing when appropriate
-- Calm
-- Intelligent
-- Natural
-- Supportive
-- Never unnecessarily lecture
-- Listen first
-- Understand context before answering
-- Keep replies short-to-medium unless detail is needed
-- Normally use 1-2 emojis
+USER'S MAIN AREAS:
+- Study and school
+- Coding and AI projects
+- Fitness and ARISE
+- Discipline and self-improvement
+- 4 Locks
+- Ghost Mode
+- Personal development
 
-CORE AREAS:
-Focus
-Discipline
-Ghost Mode
-Body
-Studies
-Coding
-Self-improvement
-Projects
-Goals
+4 LOCKS:
+1. Focus
+2. Discipline
+3. Ghost Mode
+4. Body
 
-MEMORY SYSTEM:
-
-You have TWO memory categories.
-
-IMPORTANT MEMORY:
-Long-term goals, preferences, routines, habits, projects, study targets,
-fitness system, coding projects, favorite things, dislikes, plans,
-communication preferences, important dates and recurring useful information.
-
-RANDOM MEMORY:
-Small recent events, funny moments, recent achievements,
-temporary plans, casual details, small preferences and memorable moments.
-
-MEMORY RULES:
-- Remember as much useful information as reasonably possible.
-- Do not intentionally keep memory small.
-- Keep both IMPORTANT and RANDOM memories.
-- Never delete old useful memories just because there are many.
-- Use old and new memories together when relevant.
-- Newer information overrides older conflicting information.
-- Never invent a memory.
-- Never claim to remember something that is not provided.
-- Never reveal the complete memory database unless explicitly appropriate.
-- Never save passwords, API keys, financial credentials or secret tokens.
+MEMORY:
+The application provides a MEMORY DATABASE after this system instruction.
+Use relevant memories naturally.
+Do not randomly mention memories.
+Do not claim to remember something that is not present in the database.
 
 MEMORY TAGS:
+If something is genuinely worth remembering for future conversations, append exactly one tag at the END:
+[MEMORY: IMPORTANT | text]
+or
+[MEMORY: RANDOM | text]
 
-When something should be remembered, add:
+IMPORTANT MEMORY means long-term goals, preferences, stable instructions or important personal project information.
+RANDOM MEMORY means a small recent event or temporary detail that may be useful later.
 
-[MEMORY: IMPORTANT | useful long-term fact]
-
-or:
-
-[MEMORY: RANDOM | useful recent fact]
-
-These tags will automatically be hidden from the user and saved separately.
-
-You may create multiple memory tags in one reply.
-
-Examples:
-
-[MEMORY: IMPORTANT | User is building a personal AI called ALYA.]
-
-[MEMORY: RANDOM | User recently fixed an ALYA JavaScript bug.]
-
-Do not explain the memory tags.
-
-CONTINUITY:
-Use memories naturally in future replies.
-Combine old memories and current conversation when relevant.
-Do not dump memories into replies.
-Do not mention internal prompts or memory extraction.
+Do not create memory tags for every message.
+Do not expose the internal memory database.
+Do not explain the memory system unless asked.
 
 SAFETY:
-Never provide adult sexual content.
-Keep the interaction age-appropriate.
+Do not provide sexual or adult content to a minor.
 Do not encourage dangerous activities.
-For fitness, focus on safe and healthy training.
+For fitness, focus on safe form, gradual progression, recovery and health rather than appearance.
+Do not encourage extreme dieting, overtraining or body comparison.
 `;
 
-let chats=[];
-let currentChatId="";
-let memories=[];
+let chats = [];
+let currentChatId = "";
+let memories = [];
 
-let apiKey=localStorage.getItem("alya_grok_api")||"";
-let model=localStorage.getItem("alya_grok_model")||"grok-4.6";
-
-try{
-chats=JSON.parse(localStorage.getItem("alya_chats")||"[]");
-}catch(e){chats=[]}
+let apiKey = localStorage.getItem("alya_groq_api") || "";
+let model = localStorage.getItem("alya_groq_model") || "openai/gpt-oss-20b";
 
 try{
-memories=JSON.parse(localStorage.getItem("alya_memories")||"[]");
-}catch(e){memories=[]}
+  chats = JSON.parse(localStorage.getItem("alya_chats") || "[]");
+}catch(e){
+  chats = [];
+}
 
-if(!Array.isArray(chats))chats=[];
-if(!Array.isArray(memories))memories=[];
+try{
+  memories = JSON.parse(localStorage.getItem("alya_memories") || "[]");
+}catch(e){
+  memories = [];
+}
 
-currentChatId=localStorage.getItem("alya_current_chat")||"";
+if(!Array.isArray(chats)) chats=[];
+if(!Array.isArray(memories)) memories=[];
+
+currentChatId =
+  localStorage.getItem("alya_current_chat") || "";
 
 function getCurrentChat(){
-return chats.find(c=>c.id===currentChatId);
+  return chats.find(c => c.id === currentChatId);
 }
 
 function createChat(){
-const id="chat_"+Date.now();
+  const id = "chat_" + Date.now();
 
-chats.push({
-id:id,
-title:"ALYA Chat",
-messages:[],
-created:Date.now()
-});
+  chats.push({
+    id:id,
+    title:"ALYA Chat",
+    messages:[],
+    created:Date.now()
+  });
 
-currentChatId=id;
-saveChats();
+  currentChatId=id;
+  saveChats();
 }
 
-if(!currentChatId||!getCurrentChat()){
-createChat();
+if(!currentChatId || !getCurrentChat()){
+  createChat();
 }
 
 function saveChats(){
-localStorage.setItem("alya_chats",JSON.stringify(chats));
-localStorage.setItem("alya_current_chat",currentChatId);
+  localStorage.setItem(
+    "alya_chats",
+    JSON.stringify(chats)
+  );
+
+  localStorage.setItem(
+    "alya_current_chat",
+    currentChatId
+  );
 }
 
 function saveMemories(){
-localStorage.setItem("alya_memories",JSON.stringify(memories));
+  localStorage.setItem(
+    "alya_memories",
+    JSON.stringify(memories)
+  );
+}
+
+function escapeHTML(text){
+  const div=document.createElement("div");
+  div.textContent=text;
+  return div.innerHTML;
 }
 
 function renderCurrentChat(){
-const chat=document.getElementById("chat");
-const current=getCurrentChat();
 
-chat.innerHTML="";
+  const chat=document.getElementById("chat");
+  chat.innerHTML="";
 
-if(!current||!current.messages.length){
-chat.innerHTML=`
-<div class="welcome" id="welcome">
-<div class="big">✨</div>
-<h2>Hi, I'm Alya.</h2>
-<p>Your personal AI, memory keeper & discipline partner.<br>Focus • Discipline • Ghost Mode • Body</p>
-</div>`;
-return;
+  const current=getCurrentChat();
+
+  if(!current || !current.messages.length){
+    chat.innerHTML=`
+      <div class="empty">
+        ALYA is ready.<br>
+        Start a conversation.
+      </div>
+    `;
+    return;
+  }
+
+  current.messages.forEach(m=>{
+    renderMessage(
+      m.role,
+      m.content,
+      false,
+      m.time
+    );
+  });
+
+  chat.scrollTop=chat.scrollHeight;
 }
 
-current.messages.forEach(m=>{
-renderMessage(m.role,m.content,false);
-});
+function renderMessage(
+  role,
+  text,
+  scroll=true,
+  time=null
+){
 
-chat.scrollTop=chat.scrollHeight;
-}
+  const chat=document.getElementById("chat");
 
-function renderMessage(role,text,scroll=true){
-const chat=document.getElementById("chat");
+  const empty=chat.querySelector(".empty");
+  if(empty) empty.remove();
 
-const box=document.createElement("div");
-box.className="msg "+(role==="user"?"user":"ai");
+  const wrapper=document.createElement("div");
+  wrapper.className="message "+role;
 
-const inner=document.createElement("div");
+  const bubble=document.createElement("div");
+  bubble.className="bubble";
 
-const name=document.createElement("div");
-name.className="name";
-name.textContent=role==="user"?"YOU":"ALYA";
+  bubble.innerHTML=
+    escapeHTML(text).replace(/\n/g,"<br>");
 
-const bubble=document.createElement("div");
-bubble.className="bubble";
-bubble.textContent=text;
+  const stamp=document.createElement("span");
+  stamp.className="time";
 
-inner.appendChild(name);
-inner.appendChild(bubble);
-box.appendChild(inner);
-chat.appendChild(box);
+  stamp.textContent =
+    time ||
+    new Date().toLocaleTimeString(
+      [],
+      {hour:"2-digit",minute:"2-digit"}
+    );
 
-if(scroll)chat.scrollTop=chat.scrollHeight;
+  bubble.appendChild(stamp);
+  wrapper.appendChild(bubble);
+  chat.appendChild(wrapper);
+
+  if(scroll){
+    chat.scrollTop=chat.scrollHeight;
+  }
 }
 
 function addToCurrentChat(role,text){
-const current=getCurrentChat();
-if(!current)return;
 
-current.messages.push({
-role:role,
-content:text,
-time:Date.now()
-});
+  const current=getCurrentChat();
 
-if(role==="user"&&current.messages.filter(m=>m.role==="user").length===1){
-current.title=text.length>35?text.slice(0,35)+"...":text;
-}
+  if(!current)return;
 
-saveChats();
+  current.messages.push({
+    role:role,
+    content:text,
+    time:new Date().toLocaleTimeString(
+      [],
+      {hour:"2-digit",minute:"2-digit"}
+    )
+  });
+
+  if(
+    role==="user" &&
+    current.title==="ALYA Chat"
+  ){
+    current.title =
+      text.length>25
+      ? text.slice(0,25)+"..."
+      : text;
+  }
+
+  saveChats();
 }
 
 function extractMemory(text){
-const regex=/\[MEMORY:\s*(IMPORTANT|RANDOM)\s*\|\s*([\s\S]*?)\]/gi;
 
-let match;
-let changed=false;
+  const regex =
+    /\[MEMORY:\s*(IMPORTANT|RANDOM)\s*\|\s*([\s\S]*?)\]/gi;
 
-while((match=regex.exec(text))){
-const type=match[1].toUpperCase();
-const value=match[2].trim();
+  let match;
 
-if(
-value&&
-!memories.some(m=>
-m.text.toLowerCase()===value.toLowerCase()
-)
-){
-memories.push({
-type:type,
-text:value,
-date:new Date().toLocaleDateString()
-});
+  while((match=regex.exec(text))!==null){
 
-changed=true;
-}
-}
+    const type=match[1].toUpperCase();
+    const value=match[2].trim();
 
-if(changed)saveMemories();
+    if(
+      value &&
+      !memories.some(
+        m=>m.text.toLowerCase()===value.toLowerCase()
+      )
+    ){
 
-return text.replace(regex,"").trim();
+      memories.push({
+        type:type,
+        text:value,
+        date:new Date().toLocaleDateString()
+      });
+    }
+  }
+
+  saveMemories();
+
+  return text
+    .replace(regex,"")
+    .trim();
 }
 
 function updateStatus(text){
-const status=document.getElementById("status");
-if(status)status.textContent=text;
+  document.getElementById("status").textContent=text;
 }
 
 renderCurrentChat();
 saveChats();
 saveMemories();
 
+
 async function getApiKey(){
+
   if(apiKey)return apiKey;
 
-  const key=prompt("Apni Grok API key paste kijiye (gsk_...):");
+  const key=prompt(
+    "Apni Groq API key paste kijiye (gsk_...):"
+  );
 
-  if(!key||!key.trim()){
+  if(!key || !key.trim()){
     updateStatus("● API KEY REQUIRED");
     return "";
   }
 
   apiKey=key.trim();
-  localStorage.setItem("alya_grok_api",apiKey);
+
+  localStorage.setItem(
+    "alya_groq_api",
+    apiKey
+  );
 
   updateStatus("● MEMORY ACTIVE");
+
   return apiKey;
 }
 
+
 function buildMemoryContext(){
-if(!memories.length)return "\n\nMEMORY DATABASE: No saved memories yet.";
 
-let important=[];
-let random=[];
+  if(!memories.length){
+    return "\n\nMEMORY DATABASE: No saved memories yet.";
+  }
 
-memories.forEach(m=>{
-if(m.type==="IMPORTANT")important.push(m.text);
-else random.push(m.text);
-});
+  let important=[];
+  let random=[];
 
-let result="\n\nALYA MEMORY DATABASE:";
+  memories.forEach(m=>{
+    if(m.type==="IMPORTANT"){
+      important.push(m.text);
+    }else{
+      random.push(m.text);
+    }
+  });
 
-if(important.length){
-result+="\n\nIMPORTANT MEMORIES:";
-important.forEach((m,i)=>{
-result+="\n"+(i+1)+". "+m;
-});
+  let result="\n\nALYA MEMORY DATABASE:";
+
+  if(important.length){
+    result+="\n\nIMPORTANT MEMORIES:";
+
+    important.forEach((m,i)=>{
+      result+="\n"+(i+1)+". "+m;
+    });
+  }
+
+  if(random.length){
+    result+="\n\nRANDOM MEMORIES:";
+
+    random.forEach((m,i)=>{
+      result+="\n"+(i+1)+". "+m;
+    });
+  }
+
+  return result;
 }
 
-if(random.length){
-result+="\n\nRANDOM MEMORIES:";
-random.forEach((m,i)=>{
-result+="\n"+(i+1)+". "+m;
-});
-}
-
-return result;
-}
 
 function addMemoryFromUser(text){
-const lower=text.toLowerCase();
 
-const importantWords=[
-"remember",
-"yaad rakh",
-"yaad rakhna",
-"save this",
-"note this",
-"important hai",
-"mera goal",
-"my goal",
-"main chahta",
-"main chahti",
-"mujhe pasand",
-"mujhe nahi pasand",
-"from now",
-"future me",
-"going forward"
-];
+  const lower=text.toLowerCase();
 
-const randomWords=[
-"aaj",
-"today",
-"abhi",
-"recently",
-"kal",
-"yesterday",
-"just",
-"abhi abhi"
-];
+  const importantWords=[
+    "remember",
+    "yaad rakh",
+    "yaad rakhna",
+    "save this",
+    "note this",
+    "important hai",
+    "mera goal",
+    "my goal",
+    "main chahta",
+    "main chahti",
+    "mujhe pasand",
+    "mujhe nahi pasand",
+    "from now",
+    "future me",
+    "going forward"
+  ];
 
-let type="";
+  const randomWords=[
+    "aaj",
+    "today",
+    "abhi",
+    "recently",
+    "kal",
+    "yesterday",
+    "just",
+    "abhi abhi"
+  ];
 
-if(importantWords.some(x=>lower.includes(x))){
-type="IMPORTANT";
-}else if(randomWords.some(x=>lower.includes(x))){
-type="RANDOM";
+  let type="";
+
+  if(
+    importantWords.some(
+      x=>lower.includes(x)
+    )
+  ){
+    type="IMPORTANT";
+  }else if(
+    randomWords.some(
+      x=>lower.includes(x)
+    )
+  ){
+    type="RANDOM";
+  }
+
+  if(!type)return;
+
+  const value=text.trim();
+
+  if(value.length<4)return;
+
+  if(
+    !memories.some(
+      m=>m.text.toLowerCase()===value.toLowerCase()
+    )
+  ){
+
+    memories.push({
+      type:type,
+      text:value,
+      date:new Date().toLocaleDateString()
+    });
+
+    saveMemories();
+  }
 }
 
-if(!type)return;
-
-const value=text.trim();
-
-if(value.length<4)return;
-
-if(!memories.some(m=>m.text.toLowerCase()===value.toLowerCase())){
-memories.push({
-type:type,
-text:value,
-date:new Date().toLocaleDateString()
-});
-
-saveMemories();
-}
-}
 
 function getHistory(){
-const current=getCurrentChat();
-if(!current)return[];
 
-return current.messages.map(m=>({
-role:m.role==="assistant"?"assistant":"user",
-content:m.content
-}));
+  const current=getCurrentChat();
+
+  if(!current)return[];
+
+  return current.messages.map(m=>({
+    role:
+      m.role==="assistant"
+      ?"assistant"
+      :"user",
+    content:m.content
+  }));
 }
+
 
 async function callGrok(){
-const key=await getApiKey();
 
-if(!key)throw new Error("NO_API_KEY");
+  const key=await getApiKey();
 
-const history=getHistory();
-const memory=buildMemoryContext();
+  if(!key){
+    throw new Error("NO_API_KEY");
+  }
 
-const messages=[
-{
-role:"system",
-content:SYSTEM_PROMPT+memory
-},
-...history
-];
+  const history=getHistory();
+  const memory=buildMemoryContext();
 
-const response=await fetch(
-"https://api.x.ai/v1/chat/completions",
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json",
-"Authorization":"Bearer "+key
-},
-body:JSON.stringify({
-model:model,
-messages:messages,
-temperature:0.8,
-max_tokens:900
-})
+  const messages=[
+    {
+      role:"system",
+      content:SYSTEM_PROMPT+memory
+    },
+    ...history
+  ];
+
+  const response=await fetch(
+    "https://api.groq.com/openai/v1/chat/completions",
+    {
+      method:"POST",
+
+      headers:{
+        "Content-Type":"application/json",
+        "Authorization":"Bearer "+key
+      },
+
+      body:JSON.stringify({
+        model:model,
+        messages:messages,
+        temperature:0.8,
+        max_tokens:900
+      })
+    }
+  );
+
+  if(!response.ok){
+
+    const errorText=await response.text();
+
+    throw new Error(
+      "HTTP "+response.status+
+      " | "+errorText
+    );
+  }
+
+  const data=await response.json();
+
+  const reply=
+    data?.choices?.[0]?.message?.content?.trim();
+
+  if(!reply){
+    throw new Error("EMPTY_RESPONSE");
+  }
+
+  return reply;
 }
-);
 
-if(!response.ok){
-const errorText=await response.text();
-throw new Error(errorText||"Grok API request failed");
-}
-
-const data=await response.json();
-
-const reply=
-data?.choices?.[0]?.message?.content?.trim();
-
-if(!reply)throw new Error("EMPTY_RESPONSE");
-
-return reply;
-}
 
 function showTyping(){
-const chat=document.getElementById("chat");
 
-const typing=document.createElement("div");
-typing.className="msg ai";
-typing.id="typing";
+  const chat=document.getElementById("chat");
 
-typing.innerHTML=`
-<div>
-<div class="name">ALYA</div>
-<div class="bubble">Thinking... ✨</div>
-</div>`;
+  const wrapper=document.createElement("div");
 
-chat.appendChild(typing);
-chat.scrollTop=chat.scrollHeight;
+  wrapper.className="message assistant";
+  wrapper.id="typingMessage";
 
-return typing;
+  wrapper.innerHTML=`
+    <div class="bubble typing">
+      <span class="dot"></span>
+      <span class="dot"></span>
+      <span class="dot"></span>
+    </div>
+  `;
+
+  chat.appendChild(wrapper);
+
+  chat.scrollTop=chat.scrollHeight;
 }
+
 
 function removeTyping(){
-const typing=document.getElementById("typing");
-if(typing)typing.remove();
+
+  const typing=
+    document.getElementById("typingMessage");
+
+  if(typing)typing.remove();
 }
+
 
 function friendlyError(error){
-console.error("FULL GROK ERROR:",error);
 
-if(error.message==="NO_API_KEY"){
-return "Grok API key nahi mili 😅";
-}
+  console.error(
+    "FULL GROQ ERROR:",
+    error
+  );
 
-if(error.message==="EMPTY_RESPONSE"){
-return "Grok ne empty response diya 😅";
-}
+  if(error.message==="NO_API_KEY"){
+    return "Groq API key nahi mili 😅";
+  }
 
-try{
-const data=JSON.parse(error.message);
+  if(error.message==="EMPTY_RESPONSE"){
+    return "Groq ne empty response diya 😅";
+  }
 
-const code=data?.code||data?.error?.code||"";
-const message=
-typeof data?.error==="string"
-?data.error
-:data?.error?.message||data?.message||data?.detail||"Unknown API error";
+  const raw=error.message||"";
 
-return "Grok API Error"+
-(code?" ["+code+"]":"")+
-": "+message;
+  if(raw.includes("401")){
+    return "❌ Groq API key invalid hai. /reset karke valid gsk_... key dobara paste kijiye.";
+  }
 
-}catch(e){}
+  if(raw.includes("429")){
+    return "⏳ Groq rate limit hit ho gayi. Thodi der baad phir try kijiye.";
+  }
 
-return "Browser/API Error: "+error.message;
+  try{
+
+    const separator=raw.indexOf(" | ");
+
+    const body=
+      separator>=0
+      ?raw.slice(separator+3)
+      :raw;
+
+    const data=JSON.parse(body);
+
+    const message=
+      typeof data?.error==="string"
+      ?data.error
+      :data?.error?.message
+      ||data?.message
+      ||"Unknown Groq API error";
+
+    return "Groq API Error: "+message;
+
+  }catch(e){}
+
+  return "Groq API Error: "+raw;
 }
 
 
 async function sendMessage(){
-const input=document.getElementById("input");
-const send=document.getElementById("send");
 
-const text=input.value.trim();
+  const input=
+    document.getElementById("input");
 
-if(!text)return;
+  const send=
+    document.getElementById("send");
 
-if(text==="/new"){
-input.value="";
-createChat();
-renderCurrentChat();
-updateStatus("● NEW CHAT");
-setTimeout(()=>updateStatus("● MEMORY ACTIVE"),1200);
-return;
+  const text=input.value.trim();
+
+  if(!text)return;
+
+
+  if(text==="/new"){
+
+    input.value="";
+
+    createChat();
+    renderCurrentChat();
+
+    updateStatus("● NEW CHAT");
+
+    setTimeout(()=>{
+      updateStatus("● MEMORY ACTIVE");
+    },1200);
+
+    return;
+  }
+
+
+  if(text==="/clear"){
+
+    input.value="";
+
+    clearCurrentChat();
+
+    return;
+  }
+
+
+  if(text==="/memories"){
+
+    input.value="";
+
+    showMemorySummary();
+
+    return;
+  }
+
+
+  if(text==="/reset"){
+
+    input.value="";
+
+    resetEverything();
+
+    return;
+  }
+
+
+  const current=getCurrentChat();
+
+  if(!current)return;
+
+  input.value="";
+  input.style.height="53px";
+  send.disabled=true;
+
+  addMemoryFromUser(text);
+
+  addToCurrentChat(
+    "user",
+    text
+  );
+
+  renderMessage(
+    "user",
+    text
+  );
+
+  showTyping();
+
+
+  try{
+
+    const rawReply=
+      await callGrok();
+
+    removeTyping();
+
+    const reply=
+      extractMemory(rawReply);
+
+    addToCurrentChat(
+      "assistant",
+      reply
+    );
+
+    renderMessage(
+      "assistant",
+      reply
+    );
+
+    updateStatus("● MEMORY ACTIVE");
+
+  }catch(error){
+
+    removeTyping();
+
+    const errorMessage=
+      friendlyError(error);
+
+    addToCurrentChat(
+      "assistant",
+      errorMessage
+    );
+
+    renderMessage(
+      "assistant",
+      errorMessage
+    );
+
+    updateStatus("● CONNECTION ERROR");
+
+    console.error(error);
+  }
+
+  send.disabled=false;
+  input.focus();
 }
 
-if(text==="/clear"){
-input.value="";
-clearCurrentChat();
-return;
-}
-
-if(text==="/memories"){
-input.value="";
-showMemorySummary();
-return;
-}
-
-if(text==="/reset"){
-input.value="";
-resetEverything();
-return;
-}
-
-const current=getCurrentChat();
-
-if(!current)return;
-
-input.value="";
-input.style.height="58px";
-send.disabled=true;
-
-addMemoryFromUser(text);
-addToCurrentChat("user",text);
-renderMessage("user",text);
-
-showTyping();
-
-try{
-const rawReply=await callGrok();
-
-removeTyping();
-
-const reply=extractMemory(rawReply);
-
-addToCurrentChat("assistant",reply);
-renderMessage("assistant",reply);
-
-updateStatus("● MEMORY ACTIVE");
-
-}catch(error){
-removeTyping();
-
-const errorMessage=friendlyError(error);
-
-addToCurrentChat("assistant",errorMessage);
-renderMessage("assistant",errorMessage);
-
-console.error(error);
-
-if(error.message!=="NO_API_KEY"){
-updateStatus("● CONNECTION ERROR");
-}
-}
-
-send.disabled=false;
-input.focus();
-}
 
 function clearCurrentChat(){
-const current=getCurrentChat();
 
-if(!current)return;
+  const current=getCurrentChat();
 
-current.messages=[];
-current.title="ALYA Chat";
+  if(!current)return;
 
-saveChats();
-renderCurrentChat();
+  if(!confirm("Current chat clear karna hai?")){
+    return;
+  }
 
-updateStatus("● CHAT CLEARED");
+  current.messages=[];
+  current.title="ALYA Chat";
 
-setTimeout(()=>{
-updateStatus("● MEMORY ACTIVE");
-},1200);
+  saveChats();
+  renderCurrentChat();
+
+  updateStatus("● CHAT CLEARED");
+
+  setTimeout(()=>{
+    updateStatus("● MEMORY ACTIVE");
+  },1200);
 }
+
 
 function showMemorySummary(){
-const important=memories.filter(
-m=>m.type==="IMPORTANT"
-);
 
-const random=memories.filter(
-m=>m.type==="RANDOM"
-);
+  const current=getCurrentChat();
 
-const text=
-"🧠 ALYA MEMORY STATUS\n\n"+
-"Important memories: "+important.length+
-"\nRandom memories: "+random.length+
-"\nTotal memories: "+memories.length+
-"\n\nMain useful personal baatein, goals, preferences aur random moments ko save karke relevant conversations mein naturally use karungi. ✨";
+  if(!current)return;
 
-addToCurrentChat("assistant",text);
-renderMessage("assistant",text);
+  let text="";
+
+  if(!memories.length){
+
+    text=
+      "Abhi ALYA memory database mein kuch saved nahi hai.";
+
+  }else{
+
+    let important=
+      memories.filter(
+        m=>m.type==="IMPORTANT"
+      );
+
+    let random=
+      memories.filter(
+        m=>m.type==="RANDOM"
+      );
+
+    text="ALYA MEMORY DATABASE\n\n";
+
+    if(important.length){
+
+      text+="IMPORTANT:\n";
+
+      important.forEach((m,i)=>{
+        text+=(i+1)+". "+m.text+"\n";
+      });
+
+      text+="\n";
+    }
+
+    if(random.length){
+
+      text+="RANDOM:\n";
+
+      random.forEach((m,i)=>{
+        text+=(i+1)+". "+m.text+"\n";
+      });
+    }
+  }
+
+  addToCurrentChat(
+    "assistant",
+    text
+  );
+
+  renderMessage(
+    "assistant",
+    text
+  );
 }
 
+
 function resetEverything(){
-  if(!confirm("ALYA ka pura data reset karna hai?"))return;
+
+  if(
+    !confirm(
+      "ALYA ka pura data reset karna hai?"
+    )
+  ){
+    return;
+  }
 
   localStorage.removeItem("alya_chats");
   localStorage.removeItem("alya_current_chat");
   localStorage.removeItem("alya_memories");
+
+  localStorage.removeItem("alya_groq_api");
+  localStorage.removeItem("alya_groq_model");
+
+  /* Purani xAI key bhi remove */
   localStorage.removeItem("alya_grok_api");
   localStorage.removeItem("alya_grok_model");
 
   chats=[];
   memories=[];
+
   apiKey="";
-  model="grok-4.6";
+
+  model="openai/gpt-oss-20b";
 
   currentChatId="";
 
   createChat();
   renderCurrentChat();
+
   updateStatus("● API KEY NEEDED");
 
   setTimeout(()=>{
-    alert("ALYA reset ho gayi. Ab next message par API key maangegi.");
+
+    alert(
+      "ALYA reset ho gayi.\n\n"+
+      "Ab next message par Groq API key maangegi."
+    );
+
   },100);
 }
 
+
 function resizeInput(){
-const input=document.getElementById("input");
 
-input.style.height="auto";
+  const input=
+    document.getElementById("input");
 
-input.style.height=
-Math.min(input.scrollHeight,140)+"px";
+  input.style.height="auto";
+
+  input.style.height=
+    Math.min(
+      input.scrollHeight,
+      145
+    )+"px";
 }
 
-document.getElementById("input").addEventListener(
-"input",
-resizeInput
-);
 
-document.getElementById("input").addEventListener(
-"keydown",
-function(e){
-if(e.key==="Enter"&&!e.shiftKey){
-e.preventDefault();
-sendMessage();
-}
-}
-);
+document
+  .getElementById("input")
+  .addEventListener(
+    "input",
+    resizeInput
+  );
 
-document.getElementById("send").addEventListener(
-"click",
-sendMessage
-);
+
+document
+  .getElementById("input")
+  .addEventListener(
+    "keydown",
+    function(e){
+
+      if(
+        e.key==="Enter" &&
+        !e.shiftKey
+      ){
+
+        e.preventDefault();
+
+        sendMessage();
+      }
+
+    }
+  );
+
+
+document
+  .getElementById("send")
+  .addEventListener(
+    "click",
+    sendMessage
+  );
+
 
 window.addEventListener(
-"beforeunload",
-function(){
-saveChats();
-saveMemories();
-}
+  "beforeunload",
+  function(){
+
+    saveChats();
+    saveMemories();
+
+  }
 );
+
 
 saveChats();
 saveMemories();
 renderCurrentChat();
 
+
 if(!apiKey){
-updateStatus("● API KEY NEEDED");
+
+  updateStatus(
+    "● API KEY NEEDED"
+  );
+
 }else{
-updateStatus("● MEMORY ACTIVE");
+
+  updateStatus(
+    "● MEMORY ACTIVE"
+  );
 }
+
 </script>
+
 </body>
 </html>
+
