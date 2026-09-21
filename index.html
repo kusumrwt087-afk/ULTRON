@@ -430,16 +430,20 @@ saveChats();
 saveMemories();
 
 async function getApiKey(){
-if(apiKey)return apiKey;
-const key=prompt("Apni Grok API key paste kijiye (gsk_...):");
-if(!key||!key.trim()){
-updateStatus("● API KEY REQUIRED");
-return "";
-}
-apiKey=key.trim();
-localStorage.setItem("alya_grok_api",apiKey);
-updateStatus("● MEMORY ACTIVE");
-return apiKey;
+  if(apiKey)return apiKey;
+
+  const key=prompt("Apni Grok API key paste kijiye (gsk_...):");
+
+  if(!key||!key.trim()){
+    updateStatus("● API KEY REQUIRED");
+    return "";
+  }
+
+  apiKey=key.trim();
+  localStorage.setItem("alya_grok_api",apiKey);
+
+  updateStatus("● MEMORY ACTIVE");
+  return apiKey;
 }
 
 function buildMemoryContext(){
