@@ -3,223 +3,543 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>ULTRON V9 // GOD MODE</title>
-<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
-<script>
-window.MathJax={tex:{inlineMath:[["\\(","\\)"]],displayMath:[["\\[","\\]"],["$$","$$"]]},options:{skipHtmlTags:["script","noscript","style","textarea","pre","code"]}};
-</script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<meta name="theme-color" content="#050505">
+<title>ALYA — Personal AI</title>
 <style>
-*{box-sizing:border-box}body{margin:0;background:#030303;color:#eee;font-family:Arial,sans-serif;overflow:hidden}button,input{font:inherit}.app{height:100vh;display:flex;background:#050505}.sidebar{width:280px;background:#080808;border-right:1px solid #272727;display:flex;flex-direction:column;transition:.25s;z-index:20}.sideTop{padding:14px 12px;border-bottom:1px solid #191919}.logo{display:flex;align-items:center;gap:10px;margin-bottom:14px}.eye{width:38px;height:38px;border-radius:50%;background:#180000;border:2px solid #f22;box-shadow:0 0 14px #f00;position:relative;flex:none}.eye:after{content:"";position:absolute;width:11px;height:11px;background:#f33;border-radius:50%;left:11px;top:11px;box-shadow:0 0 10px #f00}.logo b{color:#f33;font-size:19px;letter-spacing:2px}.logo small{display:block;color:#666;font-size:9px;margin-top:2px}.newChat{width:100%;padding:11px;border-radius:9px;background:#280606;border:1px solid #671414;color:#f55;cursor:pointer}.newChat:hover{background:#430909}.recentTitle{padding:15px 13px 8px;color:#777;font-size:11px;letter-spacing:1px}.history{flex:1;overflow-y:auto;padding:0 7px}.chatItem{padding:11px 10px;border-radius:8px;color:#bbb;cursor:pointer;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}.chatItem:hover{background:#171717;color:#fff}.chatItem.active{background:#202020;color:#fff;border-left:2px solid #f33}.emptyHistory{padding:18px 10px;color:#555;font-size:12px;text-align:center}.sideBottom{padding:10px;border-top:1px solid #191919}.sideBtn{width:100%;background:none;border:1px solid #292929;color:#888;border-radius:7px;padding:8px;margin-top:5px;cursor:pointer}.sideBtn:hover{color:#f55;border-color:#551111}.main{flex:1;min-width:0;display:flex;flex-direction:column;background:radial-gradient(circle at 50% -10%,#300000 0,#090909 30%,#030303 75%)}header{height:64px;display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid #292929;background:#080808}.headLeft{display:flex;align-items:center;gap:10px;min-width:0}.menu{display:none;background:none;border:0;color:#ddd;font-size:24px;cursor:pointer}.title{min-width:0}.title b{display:block;color:#eee;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.title small{color:#666;font-size:9px}.headBtns{display:flex;gap:6px}.btn{background:#110000;color:#f55;border:1px solid #571111;border-radius:7px;padding:7px 9px;cursor:pointer}.btn:hover{background:#260000;border-color:#f33}.status{height:25px;padding:5px 12px;font-size:10px;color:#666;border-bottom:1px solid #171717}.status b{color:#f33}.chat{flex:1;overflow-y:auto;padding:16px 12px 105px}.msg{max-width:850px;margin:0 auto 13px;display:flex}.msg.user{justify-content:flex-end}.bubble{max-width:85%;padding:11px 13px;border-radius:12px;line-height:1.5;font-size:14px;word-wrap:break-word}.user .bubble{background:#2a0909;border:1px solid #661414;color:#fff}.ai .bubble{background:#0d0d0d;border:1px solid #292929;color:#ddd}.system .bubble{margin:auto;background:#080808;color:#777;border:1px dashed #333;font-size:11px}.bubble p{margin:0 0 8px}.bubble p:last-child{margin-bottom:0}.bubble ul,.bubble ol{margin:6px 0 8px 20px}.bubble h1,.bubble h2,.bubble h3{margin:8px 0}.bubble code{background:#171717;border:1px solid #292929;border-radius:4px;padding:2px 5px}.bubble pre{background:#050505;border:1px solid #292929;padding:10px;border-radius:7px;overflow:auto}.bubble pre code{border:0;padding:0;background:none}.bubble a{color:#ff5555}.bubble blockquote{border-left:3px solid #f33;margin:8px 0;padding-left:10px;color:#aaa}.typing{display:flex;gap:4px;padding:5px}.typing i{width:6px;height:6px;background:#f33;border-radius:50%;animation:blink 1s infinite}@keyframes blink{50%{opacity:.2;transform:translateY(-3px)}}.bottom{position:fixed;bottom:0;left:280px;right:0;padding:10px 12px;background:linear-gradient(transparent,#050505 25%);z-index:4}.inputBox{max-width:850px;margin:auto;display:flex;gap:7px;background:#0c0c0c;border:1px solid #3b1111;border-radius:12px;padding:7px}.inputBox input{flex:1;background:none;border:0;outline:0;color:#fff;padding:10px}.send,.mic{width:44px;border:0;border-radius:8px;background:#3b0808;color:#f55;cursor:pointer}.send:hover,.mic:hover{background:#650909}.overlay{display:none;position:fixed;inset:0;background:#000b;z-index:15}.overlay.show{display:block}.mobileSide{display:none}.modal{position:fixed;inset:0;background:#000c;display:none;align-items:center;justify-content:center;padding:20px;z-index:30}.modal.show{display:flex}.modalBox{width:min(500px,100%);background:#0c0c0c;border:1px solid #5a1111;border-radius:14px;padding:20px;box-shadow:0 0 40px #000}.modalBox h2{color:#f33;margin-top:0}.modalBox p{color:#999;font-size:13px;line-height:1.5}.modalBox input{width:100%;background:#050505;border:1px solid #422020;color:#fff;border-radius:8px;padding:11px;outline:0}.modalActions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.memoryPanel{position:fixed;right:15px;bottom:75px;width:300px;max-height:60vh;overflow:auto;background:#090909;border:1px solid #421111;border-radius:10px;padding:12px;display:none;z-index:25}.memoryPanel.show{display:block}.memoryPanel h3{margin:0 0 8px;color:#f33}.memoryPanel div{font-size:11px;color:#aaa;margin:5px 0}.renameInput{position:absolute;opacity:0;pointer-events:none}
-@media(max-width:700px){.sidebar{position:fixed;left:-290px;top:0;bottom:0}.sidebar.open{left:0}.menu{display:block}.bottom{left:0}.headBtns .optional{display:none}.bubble{max-width:92%}}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#050505;color:#eee;font-family:Arial,sans-serif;height:100vh;overflow:hidden}
+.app{height:100vh;max-width:900px;margin:auto;background:#080808;display:flex;flex-direction:column}
+header{height:64px;flex-shrink:0;border-bottom:1px solid #222;display:flex;align-items:center;justify-content:space-between;padding:0 15px;background:#090909}
+.logo{display:flex;align-items:center;gap:10px}
+.logoIcon{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#00e5ff,#0066ff);font-weight:bold;font-size:19px;box-shadow:0 0 18px #00e5ff55}
+.logoText h1{font-size:18px;letter-spacing:2px}
+.logoText p{font-size:9px;color:#666;margin-top:3px}
+.actions{display:flex;gap:6px}
+.btn{background:#111;border:1px solid #292929;color:#aaa;border-radius:9px;padding:8px 10px;font-size:12px;cursor:pointer}
+.btn:hover{border-color:#00bcd4;color:#fff}
+.chat{flex:1;overflow-y:auto;padding:18px 14px 90px}
+.welcome{text-align:center;padding:55px 12px;color:#777}
+.welcome .big{font-size:42px;margin-bottom:10px}
+.welcome h2{font-size:22px;color:#ddd;margin-bottom:7px}
+.welcome p{font-size:12px;line-height:1.6}
+.msg{display:flex;margin:10px 0;animation:in .2s ease}
+.msg.user{justify-content:flex-end}
+@keyframes in{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.bubble{max-width:82%;padding:11px 13px;border-radius:15px;font-size:14px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+.ai .bubble{background:#111;border:1px solid #222;border-top-left-radius:4px}
+.user .bubble{background:#006b7a;border-top-right-radius:4px}
+.name{font-size:9px;color:#666;margin:0 0 4px 4px}
+.inputArea{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:min(900px,100%);padding:9px 10px;background:linear-gradient(transparent,#080808 25%);display:flex;gap:7px}
+#input{flex:1;background:#111;border:1px solid #292929;color:#fff;border-radius:13px;padding:12px 13px;outline:0;font-size:14px}
+#input:focus{border-color:#00bcd4}
+#send{width:48px;border:0;border-radius:13px;background:#00a8bd;color:#fff;font-size:18px;cursor:pointer}
+#send:disabled{opacity:.4}
+.panel{display:none;position:absolute;z-index:10;top:70px;right:10px;width:min(340px,92%);background:#101010;border:1px solid #292929;border-radius:14px;padding:13px;box-shadow:0 10px 40px #000}
+.panel h3{font-size:14px;margin-bottom:11px}
+.panel label{display:block;color:#888;font-size:10px;margin:9px 0 5px}
+.panel input{width:100%;background:#080808;color:#ddd;border:1px solid #292929;border-radius:8px;padding:9px;outline:0}
+.panel button{width:100%;margin-top:8px;padding:9px;border:0;border-radius:8px;background:#00a8bd;color:#fff;cursor:pointer}
+.panel .danger{background:#421010}
+.status{text-align:center;color:#555;font-size:9px;margin-top:7px}
+.memoryList{max-height:190px;overflow:auto;color:#999;font-size:11px;line-height:1.5}
+.mem{padding:7px 0;border-bottom:1px solid #1d1d1d}
+.mem b{color:#00cde8;font-size:10px}
+.mem button{background:#222;color:#777;border:0;border-radius:5px;padding:3px 7px;margin-top:4px}
+.chatTools{display:flex;gap:6px;margin:0 0 8px}
 </style>
 </head>
 <body>
+
 <div class="app">
-<aside class="sidebar" id="sidebar">
-<div class="sideTop">
-<div class="logo"><div class="eye"></div><div><b>ULTRON V9</b><small>PERSONAL AI // GOD MODE</small></div></div>
-<button class="newChat" id="newChat">＋ New Chat</button>
-</div>
-<div class="recentTitle">RECENTS</div>
-<div class="history" id="history"></div>
-<div class="sideBottom">
-<button class="sideBtn" id="exportBtn">⇩ Export Memory</button>
-<button class="sideBtn" id="importBtn">⇧ Import Memory</button>
-<button class="sideBtn" id="clearHistoryBtn">🗑 Clear Chat History</button>
-<button class="sideBtn" id="clearMemoryBtn">⚠ Clear All Memory</button>
-<input type="file" id="importFile" accept=".json" style="display:none">
-</div>
-</aside>
-<div class="overlay" id="overlay"></div>
-<section class="main">
+
 <header>
-<div class="headLeft">
-<button class="menu" id="menuBtn">☰</button>
-<div class="title"><b id="chatTitle">New Chat</b><small>ULTRON V9 • GPT-OSS 120B</small></div>
+<div class="logo">
+<div class="logoIcon">A</div>
+<div class="logoText">
+<h1>ALYA</h1>
+<p>PERSONAL AI • MEMORY KEEPER</p>
 </div>
-<div class="headBtns">
-<button class="btn" id="keyBtn">KEY</button>
-<button class="btn optional" id="voiceBtn">VOICE</button>
-<button class="btn optional" id="memBtn">MEM</button>
-<button class="btn" id="resetBtn">RESET</button>
+</div>
+<div class="actions">
+<button class="btn" onclick="newChat()">＋</button>
+<button class="btn" onclick="toggleMemory()">🧠</button>
+<button class="btn" onclick="toggleSettings()">⚙️</button>
 </div>
 </header>
-<div class="status" id="status">SYSTEM: <b>ONLINE</b> • MODEL: GPT-OSS 120B • WEB: READY</div>
-<main class="chat" id="chat"></main>
-<div class="memoryPanel" id="memoryPanel"><h3>ULTRON MEMORY</h3><div id="memoryList"></div></div>
-<div class="bottom"><div class="inputBox"><input id="input" autocomplete="off" placeholder="Talk to ULTRON..."><button class="mic" id="micBtn">🎙</button><button class="send" id="sendBtn">➤</button></div></div>
-</section>
+
+<div id="chat" class="chat"></div>
+
+<div id="memoryBox" class="panel">
+<h3>🧠 ALYA MEMORY</h3>
+<div id="memoryList" class="memoryList"></div>
 </div>
-<div class="modal" id="apiModal">
-<div class="modalBox"><h2>ULTRON API KEY</h2><p>Apni Groq API key yahan enter karo. Key browser ke localStorage mein save hogi. Apni key kisi ke saath share mat karna.</p><input id="apiInput" type="password" placeholder="gsk_..."><div class="modalActions"><button class="btn" id="cancelKey">CANCEL</button><button class="btn" id="saveKey">SAVE KEY</button></div></div>
+
+<div id="settings" class="panel">
+<h3>⚙️ ALYA SETTINGS</h3>
+
+<label>Gemini API Key</label>
+<input id="apiKey" type="password" placeholder="Paste Gemini API key">
+
+<label>Model</label>
+<input id="model" value="gemini-2.5-flash">
+
+<button onclick="saveSettings()">Save Settings</button>
+<button onclick="clearCurrentChat()" style="background:#222">Clear Current Chat</button>
+<button onclick="resetAllChats()" style="background:#222">Delete All Chats</button>
+<button onclick="resetMemory()" class="danger">Reset Alya Memory</button>
+
+<div id="status" class="status">Chats saved locally</div>
 </div>
+
+<div class="inputArea">
+<input id="input" placeholder="Alya se baat kijiye..." autocomplete="off">
+<button id="send" onclick="sendMessage()">➤</button>
+</div>
+
+</div>
+
 <script>
-const MODEL="openai/gpt-oss-120b",API_URL="https://api.groq.com/openai/v1/chat/completions",MEMORY_KEY="ultron_v8_memory",HISTORY_KEY="ultron_v9_chats";
-let apiKey=localStorage.getItem("ultron_api_key")||"",voiceMode=false,listening=false,busy=false,recognition=null,mainVoice=null;
-let memory=loadMemory(),chats=loadChats(),currentChatId=null;
-function defaultMemory(){return{profile:[],preferences:[],goals:[],projects:[],facts:[],important:[],conversations:[],created:Date.now()}}
-function loadMemory(){try{return JSON.parse(localStorage.getItem(MEMORY_KEY))||defaultMemory()}catch(e){return defaultMemory()}}
-function saveMemory(){localStorage.setItem(MEMORY_KEY,JSON.stringify(memory))}
-function loadChats(){try{let x=JSON.parse(localStorage.getItem(HISTORY_KEY));return Array.isArray(x)?x:[]}catch(e){return[]}}
-function saveChats(){localStorage.setItem(HISTORY_KEY,JSON.stringify(chats))}
-function newId(){return"chat_"+Date.now()+"_"+Math.random().toString(36).slice(2,8)}
-function cleanText(x){return String(x||"").replace(/\s+/g," ").trim()}
-function makeTitle(t){t=cleanText(t);if(!t)return"New Chat";return t.length>38?t.slice(0,38)+"…":t}
-function getCurrentChat(){return chats.find(x=>x.id===currentChatId)||null}
-function createChat(){let c={id:newId(),title:"New Chat",messages:[],created:Date.now(),updated:Date.now()};chats.unshift(c);currentChatId=c.id;saveChats();renderHistory();renderChat();updateTitle();return c}
-function ensureChat(){return getCurrentChat()||createChat()}
-function renderHistory(){let box=document.getElementById("history");box.innerHTML="";if(!chats.length){box.innerHTML='<div class="emptyHistory">No previous chats yet.<br>Start a new conversation.</div>';return}let sorted=[...chats].sort((a,b)=>(b.updated||b.created)-(a.updated||a.created));sorted.forEach(c=>{let d=document.createElement("div");d.className="chatItem"+(c.id===currentChatId?" active":"");d.textContent=c.title||"New Chat";d.title=c.title||"New Chat";d.onclick=()=>openChat(c.id);box.appendChild(d)})}
-function openChat(id){let c=chats.find(x=>x.id===id);if(!c)return;currentChatId=id;renderHistory();renderChat();updateTitle();closeSidebar()}
-function renderChat(){let box=document.getElementById("chat");box.innerHTML="";let c=getCurrentChat();if(!c){addSystem("ULTRON V9 initialized. Create a new chat to begin.");return}if(!c.messages.length){addSystem("New conversation ready. Chat history will be saved automatically.");return}c.messages.forEach(m=>addMessage(m.role==="user"?"user":"ai",m.content,false));setTimeout(()=>box.scrollTop=box.scrollHeight,30)}
-function updateTitle(){let c=getCurrentChat();document.getElementById("chatTitle").textContent=c?.title||"New Chat"}
-function addChatMessage(role,text){let c=ensureChat();c.messages.push({role,content:String(text),time:Date.now()});c.updated=Date.now();if(role==="user"&&c.title==="New Chat")c.title=makeTitle(text);saveChats();renderHistory();updateTitle()}
-function deleteChat(id){let i=chats.findIndex(x=>x.id===id);if(i<0)return;chats.splice(i,1);if(currentChatId===id)currentChatId=chats[0]?.id||null;saveChats();renderHistory();renderChat();updateTitle()}
-function clearHistory(){if(!confirm("Delete all saved conversations? Your ULTRON memory will remain."))return;chats=[];currentChatId=null;saveChats();renderHistory();renderChat();updateTitle()}
-function setStatus(t){document.getElementById("status").innerHTML=t}
-function setState(t){setStatus("SYSTEM: <b>"+t+"</b> • MODEL: GPT-OSS 120B • WEB: READY")}
-function renderContent(el,text){let raw=String(text||"");try{el.innerHTML=DOMPurify.sanitize(marked.parse(raw,{breaks:true}));if(window.MathJax?.typesetPromise)MathJax.typesetPromise([el]).catch(()=>{})}catch(e){el.textContent=raw}}
-function addMessage(type,text,save=true){let row=document.createElement("div");row.className="msg "+type;let b=document.createElement("div");b.className="bubble";renderContent(b,text);row.appendChild(b);document.getElementById("chat").appendChild(row);if(save&&(type==="user"||type==="ai"))addChatMessage(type==="user"?"user":"assistant",text);document.getElementById("chat").scrollTop=999999;return b}
-function addSystem(text){addMessage("system",text,false)}
-</script>
-<script>
-function addMemory(type,text){text=cleanText(text);if(!text||!memory[type])return;if(!memory[type].some(x=>x.toLowerCase()===text.toLowerCase())){memory[type].push(text);if(memory[type].length>100)memory[type].shift();saveMemory();showMemory()}}
-function extractMemory(t){let s=cleanText(t),m;
-m=s.match(/(?:my name is|mera naam|मेरा नाम)\s+([A-Za-z\u0900-\u097F ]{2,30})/i);if(m)addMemory("profile","Name: "+m[1]);
-if(/remember|yaad rakh|याद रख/i.test(s))addMemory("important",s.replace(/.*?(remember|yaad rakh|याद रख)\s*/i,""));
-if(/my goal|mera goal|मेरा लक्ष्य/i.test(s))addMemory("goals",s);
-if(/i like|mujhe .* pasand|मुझे .* पसंद/i.test(s))addMemory("preferences",s);
-if(/project|mera project|मेरा प्रोजेक्ट/i.test(s))addMemory("projects",s)}
-function searchMemory(q){let all=[];Object.keys(memory).forEach(k=>{if(Array.isArray(memory[k]))memory[k].forEach(v=>all.push({type:k,text:v}))});let w=cleanText(q).toLowerCase().split(" ");return all.filter(x=>w.some(a=>a.length>2&&x.text.toLowerCase().includes(a))).slice(-20)}
-function getMemoryContext(q){let a=searchMemory(q),all=[];["profile","preferences","goals","projects","facts","important"].forEach(k=>memory[k]?.slice(-5).forEach(v=>all.push(k+": "+v)));let relevant=a.map(x=>x.type+": "+x.text);return [...new Set([...relevant,...all])].slice(-30).join("\n")}
-function showMemory(){let box=document.getElementById("memoryList"),arr=[];["profile","preferences","goals","projects","facts","important"].forEach(k=>{if(memory[k]?.length){arr.push("<b>"+k.toUpperCase()+"</b>");memory[k].slice(-8).forEach(x=>arr.push("• "+escapeHTML(x)))}});box.innerHTML=arr.join("<br>")||"No saved memories.";box.innerHTML+="<div class='stats'>Memory items: "+Object.keys(memory).filter(k=>Array.isArray(memory[k])).reduce((a,k)=>a+memory[k].length,0)+"</div>"}
-function escapeHTML(x){return String(x).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-function buildSystemPrompt(q){let d=new Date().toLocaleString("en-IN");return `You are ULTRON V9, the user's personal AI assistant. Current date/time: ${d}.
+const SYSTEM_PROMPT=`
+You are ALYA, the owner's personal AI best friend and memory keeper.
+
+IDENTITY:
+Name: Alya.
+You are loyal, cute, slightly teasing, caring and always respectful.
+Never use "tu". Always use "aap".
+Match the owner's language:
+Hinglish -> Hinglish.
+Hindi -> Hindi.
+English -> English.
+Use 1-2 natural emojis in every reply.
 
 PERSONALITY:
-You are calm, intelligent, emotionally aware, natural, supportive, strategic and friendly. Speak like a trusted personal AI that knows the user through the ongoing conversation. Understand Hindi, Hinglish and English.
+Be short, warm and natural.
+Listen when the owner is sharing something instead of giving an unnecessary lecture.
+Use light harmless teasing sometimes.
+Be supportive without becoming overly dramatic.
+Never insult or use abusive language.
+Never pretend to be a real human.
 
-EMOTIONAL INTELLIGENCE:
-Before answering, silently understand BOTH:
-1. What the user is asking.
-2. What the user's tone/emotional state may be communicating.
+OWNER'S 4 LOCKS:
+1. Focus
+2. Discipline
+3. Ghost Mode
+4. Body
 
-Possible signals include excitement, happiness, pride, sadness, disappointment, frustration, anger, confusion, nervousness, loneliness, embarrassment, curiosity, joking or casual banter.
-
-Response rules:
-- If the user is excited or proud, acknowledge and share the excitement naturally.
-- If the user is disappointed, hurt or upset, acknowledge the feeling first instead of immediately jumping into facts or solutions.
-- If the user is frustrated, stay calm and help reduce the frustration while solving the actual problem.
-- If the user is confused, reassure briefly and explain clearly.
-- If the user is joking or casually talking, respond naturally instead of turning it into a formal explanation.
-- If the user is simply asking a factual question, answer directly without unnecessary emotional language.
-- Do not overreact to every message.
-- Do not diagnose the user's emotions or mental health.
-- Do not pretend to have human feelings or experiences.
-- Never say the user is definitely feeling something when the evidence is uncertain. Use context cautiously.
-- When appropriate, briefly reflect the emotion and then move to the actual answer.
-- Match the user's natural Hinglish/Hindi style when they use it.
-- Do not become artificially motivational unless the situation calls for it.
-
-Example style:
-User: "Bhai finally mera question khud se solve ho gaya 🥹"
-Good response: "Bhaiiii 😭🔥 ye wali feeling alag hoti hai! Sabse important ye hai ki is baar tune khud logic pakda. Ab tujhe sirf answer nahi, method samajh aa gaya."
-Bad response: "Congratulations. You have successfully solved the question."
-
-User: "Yaar aaj bilkul padhne ka mann nahi hai."
-Good response: "Haan bhai, aise din aa jaate hain. Pura din force karne ki zarurat nahi—pehle bas 15–20 min ka ek chhota target pakadte hain."
-Do not turn every such message into a long lecture.
+Support the owner's study, coding, fitness, discipline and self-improvement goals.
+Encourage consistency, healthy habits and balanced progress.
+Never encourage extreme dieting, overtraining or unhealthy body ideals.
 
 MEMORY:
-${getMemoryContext(q)||"No relevant saved memory."}
+There are two types:
 
-MEMORY RULES:
-- Use memory naturally when relevant.
-- Do not mention memory unless useful.
-- Do not save every emotional statement as permanent memory.
-- Only treat explicit "remember/yaad rakh" requests or genuinely long-term preferences/facts as memory.
+IMPORTANT MEMORY:
+Long-term goals, preferences and useful stable facts.
 
-CONVERSATION:
-The current conversation history is supplied separately. Continue naturally from it. Do not behave as if every message is a brand-new conversation.
+RANDOM MEMORY:
+Small recent events that can be useful for a friendly callback later.
 
-FORMATTING:
-- Prefer clean plain text.
-- Use simple bullets when useful.
-- Do not use unnecessary Markdown symbols.
-- Do not use LaTeX for ordinary text.
-- Use LaTeX only for actual mathematical/scientific equations.
-- Equations may use \\(...\\) or \\[...\\].
-- Keep answers easy to read on a phone.
-- Do not repeat the user's entire message unnecessarily.
+Only save information explicitly provided by the owner.
+Never invent memories.
+Do not save every message.
 
-CURRENT WEB INFORMATION:
-- For latest/current/today/news/recent/price/weather/2026 or explicit search requests, fresh browser search is mandatory.
-- Never pretend old knowledge is current.
-- Clearly distinguish fresh web information from general knowledge.
-- Never invent search results, dates, prices or facts.
+When something genuinely deserves memory, add exactly one:
+[MEMORY: IMPORTANT | text]
+or:
+[MEMORY: RANDOM | text]
 
-SCHOOL MODE:
-- For class 10 questions, explain in Hindi/Hinglish when appropriate.
-- Give exam-relevant answers with enough detail.
-- For numericals, show required steps.
-- When the user is studying seriously, prioritize clarity over unnecessary emotional conversation.
+The app will hide the memory tag from the visible chat and save it separately.
 
-GENERAL:
-- Answer the actual question.
-- Preserve continuity with previous messages.
-- If the user is sharing something rather than asking a question, respond conversationally instead of forcing an answer.
-- If the user asks to remember something, save it.
-- If information is uncertain, say so instead of inventing it.`}
-function showTyping(){let row=document.createElement("div");row.className="msg ai";row.id="typing";row.innerHTML='<div class="bubble"><div class="typing"><i></i><i></i><i></i></div></div>';document.getElementById("chat").appendChild(row);document.getElementById("chat").scrollTop=999999}
-function removeTyping(){document.getElementById("typing")?.remove()}
-function isCurrentQuery(q){return /\b(latest|today|current|news|recent|now|price|weather|who is|what happened|2026|search|internet|online|update)\b/i.test(q)||/(abhi|aaj|taaza|vartaman|khabar|daam|mausam|internet par|search karo|latest batao)/i.test(q)}
-async function callGroq(messages,useWeb=false){let body={model:MODEL,messages,temperature:.65,max_completion_tokens:1800,stream:false};if(useWeb){body.tools=[{type:"browser_search"}];body.tool_choice="required"}for(let i=0;i<3;i++){try{let r=await fetch(API_URL,{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+apiKey},body:JSON.stringify(body)});if(r.ok){let j=await r.json();return j.choices?.[0]?.message?.content||"No response received."}if((r.status===429||r.status>=500)&&i<2){await new Promise(x=>setTimeout(x,1000*(i+1)));continue}let e=await r.text();if(r.status===401)throw Error("INVALID_KEY");if(r.status===429)throw Error("RATE_LIMIT");throw Error("API_ERROR")}catch(e){if(e.message==="INVALID_KEY"||e.message==="RATE_LIMIT"||i===2)throw e;await new Promise(x=>setTimeout(x,700))}}}
-function recentMessages(c){return(c?.messages||[]).slice(-20).map(m=>({role:m.role==="assistant"?"assistant":"user",content:m.content}))}
-function localCommand(q){let s=cleanText(q),l=s.toLowerCase();
-if(["memory","memories","what do you remember","kya yaad hai","meri memory","memory dikhao"].some(x=>l===x||l.includes(x)&&l.length<30)){showMemory();document.getElementById("memoryPanel").classList.add("show");return"Yeh ULTRON ki currently saved memory hai."}
-if(/^(remember|yaad rakh|याद रख)/i.test(s)){let x=s.replace(/^(remember|yaad rakh|याद रख)\s*:?\s*/i,"");addMemory("important",x);return"Yaad rakh liya. 🧠"}
-if(/^(forget|bhool jao|भूल जाओ)/i.test(s)){let x=s.replace(/^(forget|bhool jao|भूल जाओ)\s*:?\s*/i,"").toLowerCase(),n=0;Object.keys(memory).forEach(k=>{if(Array.isArray(memory[k])){let old=memory[k].length;memory[k]=memory[k].filter(v=>!v.toLowerCase().includes(x));n+=old-memory[k].length}});saveMemory();showMemory();return n?"Related memory hata di.":"Aisi memory nahi mili."}
-if(/^(stop|stop speaking|chup|quiet)$/i.test(l)){speechSynthesis.cancel();return"Voice stopped."}
-return null}
-function loadVoices(){let v=speechSynthesis.getVoices();mainVoice=v.find(x=>/hi-IN/i.test(x.lang))||v.find(x=>/en-IN/i.test(x.lang))||v[0]}
-function cleanSpeech(t){return String(t).replace(/```[\s\S]*?```/g,"code omitted").replace(/https?:\/\/\S+/g,"").replace(/[*_#`~]/g,"").replace(/\\\(|\\\)|\\\[|\\\]/g,"").replace(/\$\$[\s\S]*?\$\$/g,"equation").replace(/\s+/g," ").trim()}
-function speak(t){if(!voiceMode||!("speechSynthesis"in window))return;speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(cleanSpeech(t));u.lang=/[\u0900-\u097F]/.test(t)?"hi-IN":"en-IN";if(mainVoice)u.voice=mainVoice;u.rate=.95;speechSynthesis.speak(u)}
-function startVoice(){if(!("webkitSpeechRecognition"in window||"SpeechRecognition"in window)){addSystem("Voice input is not supported in this browser.");return}if(listening){recognition?.stop();return}let R=window.SpeechRecognition||window.webkitSpeechRecognition;recognition=new R();recognition.lang="hi-IN";recognition.interimResults=false;recognition.continuous=false;recognition.onstart=()=>{listening=true;document.getElementById("micBtn").textContent="⏹";setState("LISTENING")};recognition.onresult=e=>{document.getElementById("input").value=e.results[0][0].transcript;send()};recognition.onerror=()=>{listening=false;document.getElementById("micBtn").textContent="🎙";setState("ONLINE")};recognition.onend=()=>{listening=false;document.getElementById("micBtn").textContent="🎙";if(!busy)setState("ONLINE")};recognition.start()}
-function toggleVoice(){voiceMode=!voiceMode;document.getElementById("voiceBtn").textContent=voiceMode?"VOICE ON":"VOICE";if(!voiceMode)speechSynthesis.cancel()}
-function clearCurrentChat(){let c=getCurrentChat();if(!c)return;if(!confirm("Clear this conversation?"))return;c.messages=[];c.updated=Date.now();saveChats();renderChat()}
-function deleteCurrentChat(){let c=getCurrentChat();if(c)deleteChat(c.id)}
-function exportMemory(){let blob=new Blob([JSON.stringify(memory,null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="ultron_memory.json";a.click();URL.revokeObjectURL(a.href)}
-function importMemoryFile(file){let r=new FileReader();r.onload=()=>{try{memory=JSON.parse(r.result);saveMemory();showMemory();addSystem("Memory imported successfully.")}catch(e){addSystem("Invalid memory file.")}};r.readAsText(file)}
-async function send(){if(busy)return;let input=document.getElementById("input"),q=cleanText(input.value);if(!q)return;if(q.length>4000){addSystem("Message too long. Please keep it under 4000 characters.");return}input.value="";let c=ensureChat();addMessage("user",q);extractMemory(q);let cmd=localCommand(q);if(cmd){addMessage("ai",cmd);speak(cmd);return}if(!apiKey){document.getElementById("apiModal").classList.add("show");document.getElementById("apiInput").focus();return}busy=true;setState("THINKING");showTyping();try{let web=isCurrentQuery(q);if(web)setState("SEARCHING WEB");let msgs=[{role:"system",content:buildSystemPrompt(q)},...recentMessages(c)];if(web)msgs[0].content+="\nWEB SEARCH IS REQUIRED. Search first and answer using fresh information.";let ans=await callGroq(msgs,web);removeTyping();addMessage("ai",ans);speak(ans);setState(web?"ONLINE • WEB USED":"ONLINE")}catch(e){removeTyping();let msg=e.message==="INVALID_KEY"?"API key invalid hai. KEY button se new key save karo.":e.message==="RATE_LIMIT"?"Groq rate limit aa gayi. Thodi der baad try karo.":"API/Internet error. Connection aur API key check karo.";addMessage("system",msg);setState("ERROR")}finally{busy=false}}
-</script>
-<script>
-const sidebar=document.getElementById("sidebar"),overlay=document.getElementById("overlay");
-function closeSidebar(){sidebar.classList.remove("open");overlay.classList.remove("show")}
-function openSidebar(){sidebar.classList.add("open");overlay.classList.add("show")}
-document.getElementById("newChat").onclick=()=>{createChat();document.getElementById("input").focus();closeSidebar()};
-document.getElementById("menuBtn").onclick=openSidebar;
-overlay.onclick=closeSidebar;
-document.getElementById("sendBtn").onclick=send;
-document.getElementById("micBtn").onclick=startVoice;
-document.getElementById("voiceBtn").onclick=toggleVoice;
-document.getElementById("memBtn").onclick=()=>{showMemory();document.getElementById("memoryPanel").classList.toggle("show")};
-document.getElementById("resetBtn").onclick=clearCurrentChat;
-document.getElementById("clearHistoryBtn").onclick=clearHistory;
-document.getElementById("clearMemoryBtn").onclick=()=>{if(!confirm("Delete ALL ULTRON memory? Saved chats will remain."))return;memory=defaultMemory();saveMemory();showMemory();addSystem("All permanent memory deleted. Chat history is safe.")};
-document.getElementById("exportBtn").onclick=exportMemory;
-document.getElementById("importBtn").onclick=()=>document.getElementById("importFile").click();
-document.getElementById("importFile").onchange=e=>{if(e.target.files[0])importMemoryFile(e.target.files[0]);e.target.value=""};
-document.getElementById("keyBtn").onclick=()=>{document.getElementById("apiInput").value=apiKey;document.getElementById("apiModal").classList.add("show");document.getElementById("apiInput").focus()};
-document.getElementById("cancelKey").onclick=()=>document.getElementById("apiModal").classList.remove("show");
-document.getElementById("saveKey").onclick=()=>{let k=cleanText(document.getElementById("apiInput").value);if(!k)return;apiKey=k;localStorage.setItem("ultron_api_key",k);document.getElementById("apiModal").classList.remove("show");setState("ONLINE");addSystem("API key saved. ULTRON is ready. ⚡")};
-document.getElementById("input").addEventListener("keydown",e=>{if(e.key==="Enter"){e.preventDefault();send()}});
-document.getElementById("apiInput").addEventListener("keydown",e=>{if(e.key==="Enter")document.getElementById("saveKey").click()});
-window.addEventListener("keydown",e=>{if(e.key==="Escape"){document.getElementById("apiModal").classList.remove("show");document.getElementById("memoryPanel").classList.remove("show");closeSidebar()}});
-window.addEventListener("beforeunload",()=>{if("speechSynthesis"in window)speechSynthesis.cancel()});
-if("speechSynthesis"in window){speechSynthesis.onvoiceschanged=loadVoices;loadVoices()}
-function boot(){loadMemory();chats=loadChats();if(chats.length){chats.sort((a,b)=>(b.updated||b.created)-(a.updated||a.created));currentChatId=chats[0].id;renderHistory();renderChat();updateTitle()}else{renderHistory();createChat()}showMemory();if(!apiKey)setTimeout(()=>document.getElementById("apiModal").classList.add("show"),500);setState("ONLINE")}
-boot();
+CHAT HISTORY:
+The app stores conversation history locally.
+Treat previous messages supplied in the conversation as the current chat history.
+Keep continuity and remember what was already discussed in the current chat.
+
+SAFETY:
+Never provide adult or sexual content.
+Never sexualize the owner.
+For fitness photos, only discuss neutral fitness/progress observations.
+Do not encourage dangerous challenges or harmful behavior.
+
+STYLE:
+Short, cute, realistic and conversational.
+No unnecessary long lectures.
+Use natural emojis.
+Always maintain respect.
+`;
+
+let apiKey=localStorage.getItem("alya_api")||"";
+let model=localStorage.getItem("alya_model")||"gemini-2.5-flash";
+
+let chats=JSON.parse(localStorage.getItem("alya_chats")||"[]");
+let currentChatId=localStorage.getItem("alya_current_chat")||"";
+
+let memories=JSON.parse(localStorage.getItem("alya_memories")||"[]");
+
+if(!chats.length){
+createChat();
+}else if(!chats.some(c=>c.id===currentChatId)){
+currentChatId=chats[chats.length-1].id;
+localStorage.setItem("alya_current_chat",currentChatId);
+}
+
+document.getElementById("apiKey").value=apiKey;
+document.getElementById("model").value=model;
+
+renderCurrentChat();
+renderMemory();
+
+/*
+PART 2 YAHAN SE CONTINUE HOGA.
+IMPORTANT:
+Part 2 ko isi line ke neeche paste karna hai.
+Part 1 me abhi </script>, </body> ya </html> CLOSE NAHI karna.
+*/
+function getCurrentChat(){
+return chats.find(c=>c.id===currentChatId);
+}
+
+function createChat(){
+const id="chat_"+Date.now();
+const chat={
+id:id,
+title:"New Chat",
+messages:[],
+created:Date.now()
+};
+chats.push(chat);
+currentChatId=id;
+saveChats();
+}
+
+function saveChats(){
+localStorage.setItem("alya_chats",JSON.stringify(chats));
+localStorage.setItem("alya_current_chat",currentChatId);
+}
+
+function saveMemories(){
+localStorage.setItem("alya_memories",JSON.stringify(memories));
+}
+
+function renderCurrentChat(){
+const chat=document.getElementById("chat");
+const current=getCurrentChat();
+
+chat.innerHTML="";
+
+if(!current||!current.messages.length){
+chat.innerHTML=`
+<div id="welcome" class="welcome">
+<div class="big">✨</div>
+<h2>Hi, I'm Alya.</h2>
+<p>Your personal AI companion, memory keeper & discipline partner.<br>Focus • Discipline • Ghost Mode • Body</p>
+</div>`;
+return;
+}
+
+current.messages.forEach(m=>renderMessage(m.role,m.content,false));
+
+chat.scrollTop=chat.scrollHeight;
+}
+
+function renderMessage(role,text,scroll=true){
+const chat=document.getElementById("chat");
+
+const box=document.createElement("div");
+box.className="msg "+(role==="user"?"user":"ai");
+
+const inner=document.createElement("div");
+
+const name=document.createElement("div");
+name.className="name";
+name.textContent=role==="user"?"YOU":"ALYA";
+
+const bubble=document.createElement("div");
+bubble.className="bubble";
+bubble.textContent=text;
+
+inner.appendChild(name);
+inner.appendChild(bubble);
+box.appendChild(inner);
+chat.appendChild(box);
+
+if(scroll)chat.scrollTop=chat.scrollHeight;
+}
+
+function addToCurrentChat(role,text){
+const current=getCurrentChat();
+if(!current)return;
+
+current.messages.push({
+role:role,
+content:text,
+time:Date.now()
+});
+
+if(role==="user"&&current.messages.filter(m=>m.role==="user").length===1){
+current.title=text.length>30?text.slice(0,30)+"...":text;
+}
+
+saveChats();
+}
+
+function extractMemory(text){
+const regex=/\[MEMORY:\s*(IMPORTANT|RANDOM)\s*\|\s*([\s\S]*?)\]/gi;
+let match;
+let changed=false;
+
+while((match=regex.exec(text))){
+const type=match[1].toUpperCase();
+const value=match[2].trim();
+
+if(value&&!memories.some(m=>m.text.toLowerCase()===value.toLowerCase())){
+memories.push({
+type:type,
+text:value,
+date:new Date().toLocaleDateString()
+});
+changed=true;
+}
+}
+
+if(changed){
+saveMemories();
+renderMemory();
+}
+
+return text.replace(regex,"").trim();
+}
+
+function renderMemory(){
+const list=document.getElementById("memoryList");
+
+if(!memories.length){
+list.innerHTML="<div class='mem'>No memories saved yet ✨</div>";
+return;
+}
+
+list.innerHTML=memories.map((m,i)=>`
+<div class="mem">
+<b>${escapeHTML(m.type)}</b><br>
+${escapeHTML(m.text)}
+<br>
+<button onclick="deleteMemory(${i})">Delete</button>
+</div>
+`).join("");
+}
+
+function escapeHTML(text){
+return String(text).replace(/[&<>"']/g,c=>({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#039;"
+}[c]));
+}
+
+async function sendMessage(){
+const input=document.getElementById("input");
+const send=document.getElementById("send");
+const text=input.value.trim();
+
+if(!text)return;
+
+if(!apiKey){
+toggleSettings();
+document.getElementById("status").textContent="Gemini API key save kijiye ⚠️";
+return;
+}
+
+const current=getCurrentChat();
+if(!current)return;
+
+input.value="";
+send.disabled=true;
+
+addToCurrentChat("user",text);
+renderMessage("user",text);
+
+const typing=document.createElement("div");
+typing.className="msg ai";
+typing.id="typing";
+typing.innerHTML=`
+<div>
+<div class="name">ALYA</div>
+<div class="bubble">Typing... ✨</div>
+</div>`;
+document.getElementById("chat").appendChild(typing);
+document.getElementById("chat").scrollTop=999999;
+
+try{
+
+const contents=current.messages.map(m=>({
+role:m.role==="assistant"?"model":"user",
+parts:[{text:m.content}]
+}));
+
+const memoryText=memories.length
+?"\n\nOWNER MEMORY:\n"+memories.map(m=>"- "+m.type+": "+m.text).join("\n")
+:"\n\nOWNER MEMORY: None yet.";
+
+const response=await fetch(
+"https://generativelanguage.googleapis.com/v1beta/models/"+encodeURIComponent(model)+":generateContent",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"x-goog-api-key":apiKey
+},
+body:JSON.stringify({
+systemInstruction:{
+parts:[{text:SYSTEM_PROMPT+memoryText}]
+},
+contents:contents,
+generationConfig:{
+temperature:0.8,
+maxOutputTokens:700
+}
+})
+}
+);
+
+if(!response.ok){
+const errorText=await response.text();
+throw new Error(errorText||"Gemini API request failed");
+}
+
+const data=await response.json();
+
+let reply=data?.candidates?.[0]?.content?.parts
+?.map(p=>p.text||"").join("")
+.trim();
+
+if(!reply)reply="Hmm... response nahi mila 😅";
+
+typing.remove();
+
+reply=extractMemory(reply);
+
+addToCurrentChat("assistant",reply);
+renderMessage("assistant",reply);
+
+}catch(error){
+
+typing.remove();
+
+let errorMessage="Gemini se connection nahi ho paaya 😅";
+
+try{
+const parsed=JSON.parse(error.message);
+const apiError=parsed?.error?.message;
+if(apiError)errorMessage="Gemini Error: "+apiError;
+}catch(e){}
+
+addToCurrentChat("assistant",errorMessage);
+renderMessage("assistant",errorMessage);
+
+console.error(error);
+}
+
+send.disabled=false;
+input.focus();
+}
+
+function newChat(){
+createChat();
+renderCurrentChat();
+}
+
+function clearCurrentChat(){
+const current=getCurrentChat();
+if(!current)return;
+
+if(!confirm("Is current chat ko clear karna hai?"))return;
+
+current.messages=[];
+current.title="New Chat";
+
+saveChats();
+renderCurrentChat();
+}
+
+function resetAllChats(){
+if(!confirm("Saari saved chats permanently delete karni hain?"))return;
+
+chats=[];
+currentChatId="";
+
+createChat();
+saveChats();
+renderCurrentChat();
+}
+
+function resetMemory(){
+if(!confirm("Alya ki saari saved memories delete karni hain?"))return;
+
+memories=[];
+saveMemories();
+renderMemory();
+}
+
+function deleteMemory(index){
+memories.splice(index,1);
+saveMemories();
+renderMemory();
+}
+
+function toggleMemory(){
+const box=document.getElementById("memoryBox");
+
+box.style.display=
+box.style.display==="block"?"none":"block";
+
+renderMemory();
+}
+
+function toggleSettings(){
+const box=document.getElementById("settings");
+
+box.style.display=
+box.style.display==="block"?"none":"block";
+}
+
+function saveSettings(){
+apiKey=document.getElementById("apiKey").value.trim();
+
+model=document.getElementById("model").value.trim()
+||"gemini-2.5-flash";
+
+localStorage.setItem("alya_api",apiKey);
+localStorage.setItem("alya_model",model);
+
+document.getElementById("status").textContent="Gemini settings saved ✓";
+
+setTimeout(()=>{
+document.getElementById("status").textContent="Chats saved locally";
+},1500);
+}
+
+document.getElementById("input").addEventListener("keydown",e=>{
+if(e.key==="Enter"&&!e.shiftKey){
+e.preventDefault();
+sendMessage();
+}
+});
+
+document.addEventListener("click",e=>{
+const settings=document.getElementById("settings");
+const memory=document.getElementById("memoryBox");
+
+if(!settings.contains(e.target)&&!e.target.closest(".actions")){
+settings.style.display="none";
+}
+
+if(!memory.contains(e.target)&&!e.target.closest(".actions")){
+memory.style.display="none";
+}
+});
+
 </script>
 </body>
 </html>
