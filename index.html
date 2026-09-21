@@ -764,29 +764,28 @@ renderMessage("assistant",text);
 }
 
 function resetEverything(){
-const ok=confirm(
-"ALYA ki saari chats aur memories delete karni hain?"
-);
+  if(!confirm("ALYA ka pura data reset karna hai?"))return;
 
-if(!ok)return;
+  localStorage.removeItem("alya_chats");
+  localStorage.removeItem("alya_current_chat");
+  localStorage.removeItem("alya_memories");
+  localStorage.removeItem("alya_grok_api");
+  localStorage.removeItem("alya_grok_model");
 
-localStorage.removeItem("alya_chats");
-localStorage.removeItem("alya_current_chat");
-localStorage.removeItem("alya_memories");
+  chats=[];
+  memories=[];
+  apiKey="";
+  model="grok-4.6";
 
-chats=[];
-memories=[];
-currentChatId="";
+  currentChatId="";
 
-createChat();
-saveMemories();
-renderCurrentChat();
+  createChat();
+  renderCurrentChat();
+  updateStatus("● API KEY NEEDED");
 
-updateStatus("● MEMORY RESET");
-
-setTimeout(()=>{
-updateStatus("● MEMORY ACTIVE");
-},1500);
+  setTimeout(()=>{
+    alert("ALYA reset ho gayi. Ab next message par API key maangegi.");
+  },100);
 }
 
 function resizeInput(){
