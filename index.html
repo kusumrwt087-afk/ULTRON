@@ -612,35 +612,29 @@ if(typing)typing.remove();
 }
 
 function friendlyError(error){
+console.error("FULL GROK ERROR:",error);
+
 if(error.message==="NO_API_KEY"){
 return "Grok API key nahi mili 😅";
 }
 
 if(error.message==="EMPTY_RESPONSE"){
-return "Grok se response nahi mila. Ek baar phir try kijiye 😅";
+return "Grok ne empty response diya 😅";
 }
 
 try{
 const data=JSON.parse(error.message);
-const msg=data?.error?.message||data?.message;
+const e=data?.error||data;
+const msg=e?.message||e?.detail||"Unknown API error";
+const code=e?.code||"";
 
-if(msg){
-const low=msg.toLowerCase();
+return "Grok API Error"+
+(code?" ["+code+"]":"")+": "+msg;
+}catch(x){}
 
-if(low.includes("unauthorized")||low.includes("api key")){
-return "Grok API key invalid lag rahi hai 😅";
+return "Browser/API Error: "+error.message;
 }
 
-if(low.includes("quota")||low.includes("limit")){
-return "Grok API usage limit reach ho gayi hai. Thodi der baad try kijiye 😅";
-}
-
-return "Grok Error: "+msg;
-}
-}catch(e){}
-
-return "Grok se connection nahi ho paaya 😅 Ek baar phir try kijiye.";
-}
 
 async function sendMessage(){
 const input=document.getElementById("input");
